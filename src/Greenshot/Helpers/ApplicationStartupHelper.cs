@@ -46,7 +46,7 @@ namespace Greenshot.Helpers
         {
             config.WelcomeShown = true;
             LOG.Info("Showing the welcome window.");
-            WelcomeWindow.ShowWelcome();
+            // Start directly; upstream marketing and recipe onboarding are not part of this product.
         }
 
         /// <summary>

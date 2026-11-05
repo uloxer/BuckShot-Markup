@@ -236,12 +236,10 @@ namespace Greenshot.Shell
                 menu.Items.Add(ThemedMenu.CreateSeparator());
             }
 
-            menu.Items.Add(ThemedMenu.CreateItem(Texts.Core.ContextmenuHelp, GetIcon("contextmenu_help.Image"), () => AsyncCommand.Run(HelpFileLoader.LoadHelpAsync, "Load the help")));
 
             var now = DateTime.Now;
             bool showPresent = (now.Month == 12 && now.Day > 19 && now.Day < 27) || // christmas
                                (now.Month == 3 && now.Day > 13 && now.Day < 21); // birthday
-            AddItem(menu, Texts.Core.ContextmenuDonate, showPresent ? "contextmenu_present.Image" : "contextmenu_donate.Image", TrayActions.OpenDonatePage);
             AddItem(menu, Texts.Core.ContextmenuAbout, null, () => _shell.ShowAbout());
             menu.Items.Add(ThemedMenu.CreateSeparator());
 
@@ -573,7 +571,7 @@ namespace Greenshot.Shell
                 quickSettings.Items.Add(effects);
             }
 
-            AddRecipeQuickSettings(quickSettings);
+            // Public recipe options are not exposed in BuckShot Markup.
             return quickSettings;
         }
 

@@ -50,7 +50,7 @@ namespace Greenshot.Recipes.Approval
 
         private static string StoreFilePath => _storeFilePathOverride ?? Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "Greenshot",
+            "BuckShot-Markup",
             "recipe_trust.dat"
         );
 

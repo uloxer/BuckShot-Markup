@@ -37,7 +37,7 @@ namespace Greenshot.Base.Native.Toasts
     [ClassInterface(ClassInterfaceType.None)]
     public sealed class ToastActivator : INotificationActivationCallback
     {
-        public const string Clsid = "DD8B2638-A274-4988-9CC7-23A6D40BACEB";
+        public const string Clsid = "34C2D221-917F-4666-8367-119C43A08666";
 
         private static readonly ILog Log = LogManager.GetLogger(typeof(ToastActivator));
 

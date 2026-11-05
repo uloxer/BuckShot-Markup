@@ -68,7 +68,7 @@ namespace Greenshot.Base.Core
 
         [DataMember(Name = "Destinations")]
         [Description("Which destinations? Possible options (more might be added by plugins) are: Editor, FileDefault, FileWithDialog, Clipboard, Printer, EMail, Picker, DestinationWindow")]
-        [DefaultValue("Picker")]
+        [DefaultValue("Clipboard,FileDefault")]
         List<string> OutputDestinations { get; set; }
 
         [Description("Specify which formats we copy on the clipboard? Options are: PNG, HTML, HTMLDATAURL and DIB")]

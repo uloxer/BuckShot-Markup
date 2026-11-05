@@ -539,7 +539,7 @@ namespace Greenshot.Recipes
         /// </summary>
         internal static bool RecipeFilesSupported => false;
 #else
-        internal static bool RecipeFilesSupported => true;
+        internal static bool RecipeFilesSupported => false;
 #endif
 
         /// <summary>

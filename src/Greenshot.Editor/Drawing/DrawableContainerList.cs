@@ -1,20 +1,20 @@
-/*
+﻿/*
  * Greenshot - a free and open source screenshot tool
  * Copyright (C) 2007-2026 Thomas Braun, Jens Klingen, Robin Krom
- * 
+ *
  * For more information see: https://getgreenshot.org/
  * The Greenshot project is hosted on GitHub https://github.com/greenshot/greenshot
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -456,7 +456,7 @@ namespace Greenshot.Editor.Drawing
         }
 
         /// <summary>
-        /// Indicates whether the given list of elements can be pulled up, 
+        /// Indicates whether the given list of elements can be pulled up,
         /// i.e. whether there is at least one unselected element higher in hierarchy
         /// </summary>
         /// <param name="elements">list of elements to pull up</param>
@@ -528,7 +528,7 @@ namespace Greenshot.Editor.Drawing
             {
                 if (dc is not AbstractFieldHolderWithChildren fh) continue;
                 if (!fh.HasField(field)) continue;
-                
+
                 fh.SetFieldValue(field, color);
             }
         }
@@ -585,7 +585,7 @@ namespace Greenshot.Editor.Drawing
         }
 
         /// <summary>
-        /// Indicates whether the given list of elements can be pushed down, 
+        /// Indicates whether the given list of elements can be pushed down,
         /// i.e. whether there is at least one unselected element lower in hierarchy
         /// </summary>
         /// <param name="elements">list of elements to push down</param>
@@ -651,7 +651,7 @@ namespace Greenshot.Editor.Drawing
         }
 
         /// <summary>
-        /// swaps two elements in hierarchy (z-index), 
+        /// swaps two elements in hierarchy (z-index),
         /// checks both indices to be in range
         /// </summary>
         /// <param name="index1">index of the 1st element</param>
@@ -735,7 +735,7 @@ namespace Greenshot.Editor.Drawing
             // Copy
             item = new ToolStripMenuItem(Texts.Editor.Copytoclipboard)
             {
-                Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "copyToolStripMenuItem.Image")
+                Image = EditorIconFactory.Create("copyToolStripMenuItem.Image")
             };
             item.Click += delegate { DrawableContainerClipboard.Copy(this); };
             menu.Items.Add(item);
@@ -743,7 +743,7 @@ namespace Greenshot.Editor.Drawing
             // Cut
             item = new ToolStripMenuItem(Texts.Editor.Cuttoclipboard)
             {
-                Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "btnCut.Image")
+                Image = EditorIconFactory.Create("btnCut.Image")
             };
             item.Click += delegate
             {
@@ -765,7 +765,7 @@ namespace Greenshot.Editor.Drawing
             // Delete
             item = new ToolStripMenuItem(Texts.Editor.Deleteelement)
             {
-                Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "removeObjectToolStripMenuItem.Image")
+                Image = EditorIconFactory.Create("removeObjectToolStripMenuItem.Image")
             };
             item.Click += delegate { surface.RemoveElements(this); };
             menu.Items.Add(item);
@@ -813,7 +813,7 @@ namespace Greenshot.Editor.Drawing
             bool hasMenu = this.Cast<DrawableContainer>().Any(container => container.HasContextMenu);
 
             if (!hasMenu) return;
-            
+
             ContextMenuStrip menu = new ContextMenuStrip();
             menu.SetupAutoDispose();
             AddContextMenuItems(menu, surface, mouseEventArgs);
@@ -898,7 +898,7 @@ namespace Greenshot.Editor.Drawing
             }
 
             Expansion expansion = GetExpansionFromSize(direction, targetElement.Bounds.Size);
-            
+
             surface.ResizeCanvas(expansion);
 
             Size surfaceSize = GetSurfaceSize(surface);
@@ -958,7 +958,7 @@ namespace Greenshot.Editor.Drawing
             // Top
             var item = new ToolStripMenuItem(Texts.Editor.AlignTop)
             {
-                Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "PushOut-Top.Image")
+                Image = EditorIconFactory.Create("PushOut-Top.Image")
             };
             item.Click += delegate
             {
@@ -972,7 +972,7 @@ namespace Greenshot.Editor.Drawing
             // Right
             item = new ToolStripMenuItem(Texts.Editor.AlignRight)
             {
-                Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "PushOut-Right.Image")
+                Image = EditorIconFactory.Create("PushOut-Right.Image")
             };
             item.Click += delegate
             {
@@ -986,7 +986,7 @@ namespace Greenshot.Editor.Drawing
             // Bottom
             item = new ToolStripMenuItem(Texts.Editor.AlignBottom)
             {
-                Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "PushOut-Bottom.Image")
+                Image = EditorIconFactory.Create("PushOut-Bottom.Image")
             };
             item.Click += delegate
             {
@@ -1000,7 +1000,7 @@ namespace Greenshot.Editor.Drawing
             // Left
             item = new ToolStripMenuItem(Texts.Editor.AlignLeft)
             {
-                Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "PushOut-Left.Image")
+                Image = EditorIconFactory.Create("PushOut-Left.Image")
             };
             item.Click += delegate
             {
@@ -1021,7 +1021,7 @@ namespace Greenshot.Editor.Drawing
             // Fit width
             var item = new ToolStripMenuItem(Texts.Editor.ResizeWidth)
             {
-                Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "Fit-width.Image")
+                Image = EditorIconFactory.Create("Fit-width.Image")
             };
             item.Click += delegate
             {
@@ -1032,7 +1032,7 @@ namespace Greenshot.Editor.Drawing
             // Fit height
             item = new ToolStripMenuItem(Texts.Editor.ResizeHeight)
             {
-                Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "Fit-height.Image")
+                Image = EditorIconFactory.Create("Fit-height.Image")
             };
             item.Click += delegate
             {
@@ -1079,7 +1079,7 @@ namespace Greenshot.Editor.Drawing
             // Snap to top
             var item = new ToolStripMenuItem(Texts.Editor.AlignTop)
             {
-                Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "Snap-top.Image")
+                Image = EditorIconFactory.Create("Snap-top.Image")
             };
             item.Click += delegate
             {
@@ -1090,7 +1090,7 @@ namespace Greenshot.Editor.Drawing
             // Snap right
             item = new ToolStripMenuItem(Texts.Editor.AlignRight)
             {
-                Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "Snap-right.Image")
+                Image = EditorIconFactory.Create("Snap-right.Image")
             };
             item.Click += delegate
             {
@@ -1101,7 +1101,7 @@ namespace Greenshot.Editor.Drawing
             // Snap to bottom
             item = new ToolStripMenuItem(Texts.Editor.AlignBottom)
             {
-                Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "Snap-bottom.Image")
+                Image = EditorIconFactory.Create("Snap-bottom.Image")
             };
             item.Click += delegate
             {
@@ -1112,7 +1112,7 @@ namespace Greenshot.Editor.Drawing
             // Snap left
             item = new ToolStripMenuItem(Texts.Editor.AlignLeft)
             {
-                Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "Snap-left.Image")
+                Image = EditorIconFactory.Create("Snap-left.Image")
             };
             item.Click += delegate
             {

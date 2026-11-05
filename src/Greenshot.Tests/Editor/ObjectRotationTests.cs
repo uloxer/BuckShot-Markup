@@ -10,6 +10,7 @@ using System.Text;
 using Dapplo.Windows.Common.Extensions;
 using Dapplo.Windows.Common.Structs;
 using Greenshot.Base.Interfaces.Drawing;
+using Greenshot.Base.Interfaces;
 using Greenshot.Editor.Drawing;
 using Greenshot.Editor.Drawing.Adorners;
 using Greenshot.Editor.Drawing.Fields;
@@ -215,6 +216,100 @@ namespace Greenshot.Tests.Editor
         }
 
         private static MouseEventArgs Mouse(Point p) => new MouseEventArgs(MouseButtons.Left, 1, p.X, p.Y, 0);
+        [Fact]
+        public void RotationHandle_MouseDispatchPreviewsFromOriginalCommitsOneUndoAndNeverExports()
+        {
+            Sta(() =>
+            {
+                using var form = new Form(); using var surface = new Surface(new Bitmap(300, 300));
+                form.Controls.Add(surface); form.Show(); Application.DoEvents();
+                var box = Box(surface); surface.Modified = false;
+                Assert.True(surface.TryGetRotationHandle(out var handle));
+                using (var export = (Bitmap)surface.GetImageForExport()) Assert.Equal(0, export.GetPixel((int)handle.X, (int)handle.Y).A);
+                Dispatch(surface, "OnMouseDown", Point.Round(handle));
+                Dispatch(surface, "OnMouseMove", new Point(140, 100));
+                Assert.InRange(box.ObjectAngle, 89, 91);
+                Dispatch(surface, "OnMouseMove", new Point(100, 140));
+                Assert.InRange(Math.Abs(box.ObjectAngle), 179, 180);
+                Dispatch(surface, "OnMouseUp", new Point(100, 140));
+                Assert.True(surface.Modified); Assert.True(surface.CanUndo);
+                surface.Undo(); Assert.False(box.HasObjectTransform); Assert.False(surface.CanUndo);
+                surface.Redo(); Assert.InRange(Math.Abs(box.ObjectAngle), 179, 180);
+                string folder = Path.Combine(Path.GetTempPath(), "BuckShot-Markup-stage2"); Directory.CreateDirectory(folder);
+                using var screenshot = new Bitmap(surface.Width, surface.Height);
+                surface.DrawToBitmap(screenshot, new Rectangle(Point.Empty, screenshot.Size));
+                screenshot.Save(Path.Combine(folder, "rotation-handle.png"));
+            });
+        }
+
+        [Theory]
+        [InlineData("capture")]
+        [InlineData("escape")]
+        [InlineData("selection")]
+        [InlineData("tool")]
+        public void RotationHandle_CancelRestoresExactAffineStateWithoutUndo(string cause)
+        {
+            Sta(() =>
+            {
+                using var form = new Form(); using var surface = new Surface(new Bitmap(300, 300));
+                form.Controls.Add(surface); form.Show(); Application.DoEvents();
+                var box = Box(surface); box.RotateObject(31, 100, 100);
+                var before = box.ObjectTransformState; surface.Modified = false;
+                Assert.True(surface.TryGetRotationHandle(out var handle));
+                Dispatch(surface, "OnMouseDown", Point.Round(handle)); Dispatch(surface, "OnMouseMove", new Point(180, 170));
+                Assert.NotEqual(before, box.ObjectTransformState);
+                if (cause == "capture") surface.Capture = false;
+                if (cause == "escape") surface.ProcessCmdKey(Keys.Escape);
+                if (cause == "selection") surface.DeselectAllElements();
+                if (cause == "tool") surface.DrawingMode = DrawingModes.Line;
+                Assert.Equal(before, box.ObjectTransformState); Assert.False(surface.CanUndo); Assert.False(surface.Modified);
+            });
+        }
+
+        private static void Dispatch(Surface surface, string method, Point point) => typeof(Control).GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic).Invoke(surface, new object[] { Mouse(point) });
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(4)]
+        public void RotationHandle_ZoomKeepsScreenOffsetAndShiftUsesInjectedInput(int zoom)
+        {
+            Sta(() =>
+            {
+                var previous = Greenshot.Base.Core.InputState.ModifierKeysSource;
+                try
+                {
+                    Greenshot.Base.Core.InputState.ModifierKeysSource = () => Keys.Shift;
+                    using var form = new Form(); using var surface = new Surface(new Bitmap(300, 300));
+                    form.Controls.Add(surface); form.Show(); Application.DoEvents(); var box = Box(surface);
+                    surface.ZoomFactor = new Greenshot.Base.Core.Fraction((uint)zoom, 1);
+                    Assert.True(surface.TryGetRotationHandle(out var handle));
+                    Assert.InRange((90 - handle.Y) * zoom, 43, 45);
+                    Dispatch(surface, "OnMouseDown", new Point((int)(handle.X * zoom), (int)(handle.Y * zoom)));
+                    var end = new Point(119 * zoom, 54 * zoom);
+                    Dispatch(surface, "OnMouseMove", end); Dispatch(surface, "OnMouseUp", end);
+                    Assert.Equal(15, box.ObjectAngle, 6); surface.Undo(); Assert.False(box.HasObjectTransform);
+                }
+                finally { Greenshot.Base.Core.InputState.ModifierKeysSource = previous; }
+            });
+        }
+        [Fact]
+        public void RotationHandle_NearCanvasTopStaysReachableAndCommitsOneUndo()
+        {
+            Sta(() =>
+            {
+                using var form = new Form(); using var surface = new Surface(new Bitmap(200, 160));
+                form.Controls.Add(surface); form.Show(); Application.DoEvents();
+                var box = Box(surface, 20, 0); box.Height = 60;
+                Assert.True(surface.TryGetRotationHandle(out var handle));
+                Assert.InRange(handle.X, 12, 188); Assert.InRange(handle.Y, 12, 148);
+                Dispatch(surface, "OnMouseDown", Point.Round(handle));
+                Dispatch(surface, "OnMouseMove", new Point(120, 30));
+                Dispatch(surface, "OnMouseUp", new Point(120, 30));
+                Assert.Equal(90, box.ObjectAngle, 6);
+                surface.Undo(); Assert.False(box.HasObjectTransform); Assert.False(surface.CanUndo);
+            });
+        }
+
         private static void Sta(Action action)
         {
             Exception error = null; var thread = new Thread(() => { try { action(); } catch (Exception e) { error = e; } });

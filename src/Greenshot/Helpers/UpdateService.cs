@@ -42,8 +42,8 @@ namespace Greenshot.Helpers
         private readonly object _lifecycleLock = new object();
         private static readonly ILog Log = LogManager.GetLogger(typeof(UpdateService));
         private static readonly ICoreConfiguration CoreConfig = IniConfigRegistry.GetSection<ICoreConfiguration>();
-        private static readonly Uri UpdateFeed = new Uri("https://getgreenshot.org/update-feed.json");
-        private static readonly Uri Downloads = new Uri("https://getgreenshot.org/downloads");
+        private static readonly Uri UpdateFeed = new Uri("https://raw.githubusercontent.com/uloxer/BuckShot-Markup/main/update-feed.json");
+        private static readonly Uri Downloads = new Uri(ProductIdentity.SourceUrl + "/releases");
         // The longest single wait of the background loop, Task.Delay throws above about 24.8 days
         private static readonly TimeSpan MaxWait = TimeSpan.FromDays(1);
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();

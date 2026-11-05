@@ -123,16 +123,16 @@ public class GreenshotMain
         // Ensure any design-time / test fallback configuration is removed before production startup
         IniConfigHelper.UnregisterDesignTimeConfig();
 
-        var builder = IniConfigRegistry.ForFile("greenshot.ini")
+        var builder = IniConfigRegistry.ForFile(IniConfigHelper.NormalConfigName)
 
-            .AddAppDataPath("Greenshot")
+            .AddAppDataPath(ProductIdentity.StorageName)
             .AddSearchPath(startupPath)
             // Ignored when not given, the directory is created when missing and greenshot-fixed.ini is never read from it.
             // An unusable directory is logged (IniListener.OnError) and the search paths are used instead.
             .SetOverrideDirectory(options.IniDirectory);
 
-        builder.AddDefaultsFile("greenshot-defaults.ini")
-               .AddConstantsFile("greenshot-fixed.ini")
+        builder.AddDefaultsFile("buckshot-markup-defaults.ini")
+               .AddConstantsFile("buckshot-markup-fixed.ini")
                .WithWriterOptions(new IniWriterOptions
                {
                    AssignmentSeparator = "=",
@@ -158,7 +158,7 @@ public class GreenshotMain
                .AutoSaveInterval(TimeSpan.FromSeconds(2))
                .EmptyWhenNull()
                .LockFile()
-               .EnableMetadata(applicationName: "Greenshot")
+               .EnableMetadata(applicationName: ProductIdentity.Name)
                // Also logs errors of the background work (auto-save, save on exit), which are only reported to listeners
                .AddListener(new IniListener());
 

@@ -117,7 +117,7 @@ namespace Greenshot.Settings.ViewModels
         /// <summary>
         /// The recipe editor (not in Greenshot Light) changes a hotkey written in the recipe file
         /// </summary>
-        public bool CanOpenRecipeEditor => _hotkey.IsInRecipeFile && SimpleServiceProvider.Current.GetInstance<IRecipeEditorService>(isOptional: true) != null;
+        public bool CanOpenRecipeEditor => false;
 
         public ICommand OpenRecipeEditorCommand { get; }
 

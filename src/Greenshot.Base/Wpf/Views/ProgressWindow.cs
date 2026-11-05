@@ -78,7 +78,7 @@ namespace Greenshot.Base.Wpf.Views
                 Background = WpfThemeHelper.CardBorder,
                 BorderThickness = new Thickness(0)
             };
-            AutomationProperties.SetName(_progressBar, title ?? "Greenshot");
+            AutomationProperties.SetName(_progressBar, title ?? "BuckShot Markup");
             _cancelButton = ThemedControls.CreateButton(Texts.Core.Cancel ?? "Cancel", false, true);
             _cancelButton.IsEnabled = cancel != null;
             _cancelButton.Click += (s, e) =>

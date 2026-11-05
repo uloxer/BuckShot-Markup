@@ -1,5 +1,5 @@
 ; GreenShotPlus full installer, with current-user installation as the default.
-#define AppDisplayName "GreenShotPlus"
+#define AppDisplayName "BuckShot Markup"
 #define OutputSuffix "-Plus"
 #define PreferCurrentUser 1
 

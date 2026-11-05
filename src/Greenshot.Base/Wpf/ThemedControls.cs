@@ -36,7 +36,7 @@ namespace Greenshot.Base.Wpf
         /// </summary>
         public static void ApplyDialogLook(Window window, string title)
         {
-            window.Title = title ?? "Greenshot";
+            window.Title = title ?? "BuckShot Markup";
             window.WindowStyle = WindowStyle.None;
             window.ResizeMode = ResizeMode.NoResize;
             window.SizeToContent = SizeToContent.WidthAndHeight;
@@ -55,7 +55,7 @@ namespace Greenshot.Base.Wpf
         {
             var header = new TextBlock
             {
-                Text = text ?? "Greenshot",
+                Text = text ?? "BuckShot Markup",
                 FontWeight = FontWeights.SemiBold,
                 TextWrapping = TextWrapping.Wrap,
                 Foreground = WpfThemeHelper.TextPrimary,

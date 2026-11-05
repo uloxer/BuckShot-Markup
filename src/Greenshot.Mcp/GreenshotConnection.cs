@@ -49,13 +49,14 @@ namespace Greenshot.Mcp
     /// </summary>
     public static class GreenshotConnection
     {
-        private const string PipePrefix = "Greenshot_";
+        private const string PipePrefix = "BuckShot-Markup_";
         private const int ConnectTimeoutMilliseconds = 2000;
         private const int StartupTimeoutMilliseconds = 20000;
         // A capture of several 4K displays as base64 PNG can be large
         private const int MaxReplySize = 256 * 1024 * 1024;
 
-        public static string McpServerVersion => typeof(GreenshotConnection).Assembly.GetName().Version?.ToString() ?? "1.0.0";
+        public static string McpServerVersion => new Version(System.Reflection.CustomAttributeExtensions
+            .GetCustomAttribute<System.Reflection.AssemblyFileVersionAttribute>(typeof(GreenshotConnection).Assembly)!.Version).ToString(3);
 
         /// <summary>
         /// Sends the request and returns Greenshot's final reply, with streamed stdout / stderr text collected in

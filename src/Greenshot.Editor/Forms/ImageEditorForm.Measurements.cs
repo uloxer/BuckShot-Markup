@@ -54,17 +54,17 @@ namespace Greenshot.Editor.Forms
             _scaleButton = new ToolStripButton("Scale")
             {
                 DisplayStyle = ToolStripItemDisplayStyle.Image,
-                ToolTipText = "Scale: click two points; hold Shift to snap the angle", AccessibleName = "Scale", Image = CreateScaleIcon()
+                ToolTipText = "Scale: click two points; hold Shift to snap the angle", AccessibleName = "Scale", Image = GetEditorImage("calibrate.Image")
             };
-            _polygonButton = new ToolStripButton("Polygon") { DisplayStyle = ToolStripItemDisplayStyle.Image, AccessibleName = "Polygon", Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "btnPolygon.Image"), ToolTipText = "Polygon: click vertices, then the first vertex to close; Esc cancels" };
+            _polygonButton = new ToolStripButton("Polygon") { DisplayStyle = ToolStripItemDisplayStyle.Image, AccessibleName = "Polygon", Image = GetEditorImage("btnPolygon.Image"), ToolTipText = "Polygon: click vertices, then the first vertex to close; Esc cancels" };
             _polygonButton.Click += (s, e) => { if (_surface == null) return; _surface.DrawingMode = DrawingModes.Polygon; FocusCanvas(fromKeyboard: false); };
             toolsToolStrip.Items.Insert(toolsToolStrip.Items.IndexOf(btnFreehand) + 1, _polygonButton);
-            _groupButton = new ToolStripButton("Group") { DisplayStyle = ToolStripItemDisplayStyle.Image, AccessibleName = "Group", Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "btnGroup.Image"), ToolTipText = "Group selected objects (Ctrl+Alt+G)", Enabled = false };
-            _ungroupButton = new ToolStripButton("Ungroup") { DisplayStyle = ToolStripItemDisplayStyle.Image, AccessibleName = "Ungroup", Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "btnUngroup.Image"), ToolTipText = "Ungroup selected objects (Ctrl+Shift+G)", Enabled = false };
+            _groupButton = new ToolStripButton("Group") { DisplayStyle = ToolStripItemDisplayStyle.Image, AccessibleName = "Group", Image = GetEditorImage("btnGroup.Image"), ToolTipText = "Group selected objects (Ctrl+Alt+G)", Enabled = false };
+            _ungroupButton = new ToolStripButton("Ungroup") { DisplayStyle = ToolStripItemDisplayStyle.Image, AccessibleName = "Ungroup", Image = GetEditorImage("btnUngroup.Image"), ToolTipText = "Ungroup selected objects (Ctrl+Shift+G)", Enabled = false };
             _groupButton.Click += (s, e) => { _surface?.GroupSelectedElements(); FocusCanvas(fromKeyboard: false); };
             _ungroupButton.Click += (s, e) => { _surface?.UngroupSelectedElements(); FocusCanvas(fromKeyboard: false); };
             toolsToolStrip.Items.Add(_groupButton); toolsToolStrip.Items.Add(_ungroupButton);
-            _rotateObjectButton = new ToolStripButton("Rotate…") { DisplayStyle = ToolStripItemDisplayStyle.Image, AccessibleName = "Rotate", Image = EmbeddedResources.GetImage(typeof(ImageEditorForm), "btnObjectRotate.Image"), Enabled = false, ToolTipText = "Rotate selected objects by an angle" };
+            _rotateObjectButton = new ToolStripButton("Rotate…") { DisplayStyle = ToolStripItemDisplayStyle.Image, AccessibleName = "Rotate", Image = GetEditorImage("btnObjectRotate.Image"), Enabled = false, ToolTipText = "Rotate selected objects by an angle" };
             _rotateObjectButton.Click += (s, e) => RotateObjects();
             toolsToolStrip.Items.Add(_rotateObjectButton);
             _scaleButton.Click += (s, e) => BeginCalibration();
@@ -155,6 +155,7 @@ namespace Greenshot.Editor.Forms
             _surface.MeasurementsChanged -= SelectedGeometryChanged;
             _surface.DimensionStyleChanged -= SelectedGeometryChanged;
             _surface.ScaleLineCompleted -= CompleteCalibration;
+            _surface.CancelRotationGesture();
             _surface.CancelScalePreview();
             _surface.CancelPolygonInteraction();
             _surface.CancelSelectionBox();

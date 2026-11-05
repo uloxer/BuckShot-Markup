@@ -51,7 +51,7 @@ namespace Greenshot.Base.Core
             }
         }
 
-        public static string GetGreenshotVersion(bool shortVersion = false) => GetVersion(Assembly.GetExecutingAssembly(), shortVersion);
+        public static string GetGreenshotVersion(bool shortVersion = false) => ProductIdentity.Version;
 
         /// <summary>
         /// The version of an assembly as the build made it: the informational version (e.g. 1.4.123 - g1a2b3c4), the short one is

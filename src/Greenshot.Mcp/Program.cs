@@ -42,27 +42,16 @@ builder.Services
     {
         options.ServerInfo = new Implementation
         {
-            Name = "greenshot",
-            Title = "Greenshot",
+            Name = "buckshot-markup",
+            Title = "BuckShot Markup",
             Version = GreenshotConnection.McpServerVersion
         };
-        options.ServerInstructions =
-            "Greenshot is the screenshot tool running on the user's Windows desktop. " +
-            "Use list_windows to see the open windows and displays, then capture_window with a window id to see the exact contents of a window " +
-            "(also when it is covered by other windows), capture_region to zoom in on details and capture_screen for all displays; " +
-            "ocr=true adds the text. The other tools are Greenshot recipes the user offers to AI tools. " +
-            "When the user wants Greenshot to do something new (a hotkey that captures and uploads, a tool for you, ...), write a recipe: " +
-            "get_recipe_schema and get_recipe_catalog show what is possible, validate_recipe checks it, propose_recipe or update_recipe " +
-            "show it to the user, who decides whether it is saved and which triggers and permissions are switched on. " +
-            "The user has to allow each AI tool in Greenshot the first time, and can exclude applications.";
+        options.ServerInstructions = "BuckShot Markup captures images for engineering markup. Use the available capture tools; public recipe authoring is not supported.";
     })
     .WithStdioServerTransport()
-    .WithTools<GreenshotTools>(jsonOptions)
-    .WithTools<RecipeAuthoringTools>(jsonOptions)
-    .WithResources<RecipeAuthoringResources>();
+    .WithTools<GreenshotTools>(jsonOptions);
 
-// The user's recipes with an AI tool trigger are the other tools
-builder.Services.AddHostedService<RecipeToolSync>();
+// BuckShot exposes capture tools only; public recipe discovery/authoring is not registered.
 // Greenshot's events: tools changed, Greenshot exits (wait for it, or exit for an update)
 builder.Services.AddHostedService<GreenshotWatch>();
 

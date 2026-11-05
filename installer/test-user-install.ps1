@@ -6,18 +6,34 @@ param(
 $ErrorActionPreference = 'Stop'
 if ($env:GITHUB_ACTIONS -ne 'true') { throw 'Use a disposable GitHub Actions runner for installation tests.' }
 $installer = (Resolve-Path -LiteralPath $InstallerPath).Path
-$installDir = Join-Path $env:LOCALAPPDATA 'Programs/Greenshot'
-$userKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Greenshot_is1'
-$machineKey = 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Greenshot_is1'
+$installDir = Join-Path $env:LOCALAPPDATA 'Programs/BuckShot-Markup'
+$userKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\BuckShot-Markup_is1'
+$machineKey = 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\BuckShot-Markup_is1'
 if ((Test-Path $userKey) -or (Test-Path $machineKey) -or (Test-Path -LiteralPath $installDir)) {
-    throw 'Runner already has Greenshot; refusing to change an existing installation.'
+    throw 'Runner already has BuckShot Markup; refusing to change an existing installation.'
 }
+# Disposable-runner sentinels exercise coexistence with the upstream product.
+$upstreamConfig = Join-Path $env:APPDATA 'Greenshot/greenshot.ini'
+$upstreamConfigExisted = Test-Path -LiteralPath $upstreamConfig
+if (-not $upstreamConfigExisted) {
+    [void][IO.Directory]::CreateDirectory((Split-Path $upstreamConfig -Parent))
+    [IO.File]::WriteAllText($upstreamConfig, '; Greenshot coexistence probe: must remain untouched')
+}
+$upstreamHash = (Get-FileHash -LiteralPath $upstreamConfig -Algorithm SHA256).Hash
+$upstreamRegistration = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Greenshot_is1'
+$upstreamRegistrationExisted = Test-Path $upstreamRegistration
+if (-not $upstreamRegistrationExisted) {
+    [void](New-Item -Path $upstreamRegistration -Force)
+    [void](New-ItemProperty -Path $upstreamRegistration -Name DisplayName -Value 'Greenshot coexistence probe' -PropertyType String)
+}
+$upstreamDisplayName = (Get-ItemProperty $upstreamRegistration).DisplayName
 $process = Start-Process -FilePath $installer -ArgumentList '/CURRENTUSER /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /TASKS="" /TYPE=full' -WindowStyle Hidden -Wait -PassThru
 if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
 try {
     if (-not (Test-Path $userKey)) { throw 'Per-user uninstall registration is missing' }
     if (Test-Path $machineKey) { throw 'Installer unexpectedly registered a machine-wide installation' }
     $registration = Get-ItemProperty $userKey
+    if ($registration.DisplayName -ne 'BuckShot Markup') { throw "Unexpected product name: $($registration.DisplayName)" }
     if ($ExpectedVersion -and $registration.DisplayVersion -ne $ExpectedVersion) {
         throw "Unexpected installed version: $($registration.DisplayVersion); expected $ExpectedVersion"
     }
@@ -26,6 +42,10 @@ try {
     foreach ($file in @('Greenshot.exe', 'Greenshot.Base.dll', 'Greenshot.Editor.dll', 'greenshot-proxy.exe', 'greenshot-cli.exe', 'Plugins/Greenshot.Plugin.Stamps/Greenshot.Plugin.Stamps.dll', 'Languages/greenshot.stamps.en-US.ini')) {
         if (-not (Test-Path -LiteralPath (Join-Path $actualDir $file))) { throw "Missing installed file: $file" }
     }
+    if (Test-Path -LiteralPath (Join-Path $actualDir 'Plugins/Greenshot.Plugin.RecipeEditor')) { throw 'Recipe Editor must not be distributed' }
+    $appInfo = [Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $actualDir 'Greenshot.exe'))
+    if ($appInfo.ProductName -ne 'BuckShot Markup') { throw "Unexpected executable product: $($appInfo.ProductName)" }
+    if ($ExpectedVersion -and ([version]$appInfo.FileVersion).ToString(3) -ne $ExpectedVersion) { throw 'Application and installer versions differ' }
     Push-Location $actualDir
     try { & (Join-Path $PSScriptRoot 'validate-installation.ps1') -WarningAction Stop }
     finally { Pop-Location }
@@ -40,4 +60,9 @@ finally {
 }
 if (Test-Path $userKey) { throw 'Uninstaller left the uninstall registration behind' }
 if (Test-Path -LiteralPath (Join-Path $installDir 'Greenshot.exe')) { throw 'Uninstaller left the application behind' }
+if (-not (Test-Path -LiteralPath $upstreamConfig) -or (Get-FileHash -LiteralPath $upstreamConfig -Algorithm SHA256).Hash -ne $upstreamHash) { throw 'BuckShot modified Greenshot configuration' }
+if (-not (Test-Path $upstreamRegistration) -or (Get-ItemProperty $upstreamRegistration).DisplayName -ne $upstreamDisplayName) { throw 'BuckShot modified Greenshot registration' }
+if (-not $upstreamConfigExisted) { Remove-Item -LiteralPath $upstreamConfig }
+if (-not $upstreamRegistrationExisted) { Remove-Item -LiteralPath $upstreamRegistration }
+Write-Host 'Verified Greenshot coexistence and independent BuckShot identity.'
 Write-Host 'Verified per-user uninstall.'

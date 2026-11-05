@@ -253,13 +253,12 @@ namespace Greenshot.Helpers
 
         private static RootCommand BuildRootCommand()
         {
-            var rootCommand = new RootCommand("Greenshot")
+            var rootCommand = new RootCommand("BuckShot Markup")
             {
                 Description = "Greenshot is a free and open source screenshot tool for Windows.\n\n" +
                               "Usage: Greenshot.exe [startup options] [command]\n\n" +
                               "The command has the same syntax as for greenshot-cli.exe (see greenshot-cli.exe --help), e.g.\n" +
-                              "  Greenshot.exe image.png            open a file with the recipes of its OpenFile triggers\n" +
-                              "  Greenshot.exe --recipe ocr         run a recipe\n" +
+                              "  Greenshot.exe image.png            open an image in the editor\n" +
                               "  Greenshot.exe --reload / --exit    apply a changed greenshot-fixed.ini / exit Greenshot\n" +
                               "The command is sent to the running Greenshot; if none is running, Greenshot starts and runs it.\n" +
                               "Unlike greenshot-cli.exe, Greenshot.exe shows no output of the command."

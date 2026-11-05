@@ -163,7 +163,7 @@ namespace Greenshot.Shell
             // A hidden top level window, never shown: the owner of the windows which belong to no other window
             _ownerWindow = new WpfWindow
             {
-                Title = "Greenshot",
+                Title = ProductIdentity.Name,
                 WindowStyle = WpfWindowStyle.None,
                 ShowInTaskbar = false,
                 ShowActivated = false,

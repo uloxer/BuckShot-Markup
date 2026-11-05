@@ -233,7 +233,7 @@ namespace Greenshot.Plugins
             foreach (string pluginFile in pluginFiles)
             {
                 var pluginName = ConfigurationRestrictions.PluginNameFromFile(pluginFile);
-                if (!ConfigurationRestrictions.IsPluginAllowed(CoreConfig, pluginName))
+                if (string.Equals(pluginName, "RecipeEditor", StringComparison.OrdinalIgnoreCase) || !ConfigurationRestrictions.IsPluginAllowed(CoreConfig, pluginName))
                 {
                     Log.WarnFormat("Skipping the plugin {0} from {1}, the configuration doesn't allow it", pluginName, pluginFile);
                     continue;

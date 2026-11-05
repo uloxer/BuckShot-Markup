@@ -21,7 +21,7 @@
   </ItemGroup>
   <!-- Every edition but Full has its name in the version info, so Explorer's file properties show it -->
   <PropertyGroup Condition="'$(GreenshotEdition)' != 'Full'">
-    <Product>Greenshot $(GreenshotEdition)</Product>
+    <Product>BuckShot Markup</Product>
   </PropertyGroup>
   <!--
     The full version is a 64-bit exe: COM doesn't give the click on a toast to a Greenshot it started for it when Greenshot.exe is
@@ -102,6 +102,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Resource Include="icons\applicationIcon\icon.ico" />
+    <Resource Include="..\..\assets\branding\rendered\blueprint-panel.png" Link="Branding\blueprint-panel.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -167,7 +168,7 @@
   -->
   <Target Name="CollectPlugins" AfterTargets="Build" Condition="'$(GreenshotEdition)' == 'Full' And '$(DesignTimeBuild)' != 'true'">
     <ItemGroup>
-      <_GreenshotPluginProject Include="..\Greenshot.Plugin.*\Greenshot.Plugin.*.csproj" />
+      <_GreenshotPluginProject Include="..\Greenshot.Plugin.*\Greenshot.Plugin.*.csproj" Exclude="..\Greenshot.Plugin.RecipeEditor\Greenshot.Plugin.RecipeEditor.csproj" />
       <_GreenshotPluginProject Remove="@(_GreenshotPluginProject)" Condition="'$([System.String]::Copy(&quot;;$(GreenshotUndeliveredPlugins);&quot;).Contains(&quot;;%(Filename);&quot;))' == 'true'" />
       <_GreenshotPluginFile Include="%(_GreenshotPluginProject.RootDir)%(_GreenshotPluginProject.Directory)bin\$(GreenshotBaseConfiguration)\$(TargetFramework)\%(_GreenshotPluginProject.Filename).*;%(_GreenshotPluginProject.RootDir)%(_GreenshotPluginProject.Directory)bin\$(GreenshotBaseConfiguration)\$(TargetFramework)\*.dll">
         <Plugin>%(_GreenshotPluginProject.Filename)</Plugin>

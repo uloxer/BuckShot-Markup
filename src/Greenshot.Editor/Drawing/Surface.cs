@@ -985,6 +985,7 @@ namespace Greenshot.Editor.Drawing
             set
             {
                 EndExistingHandleGesture();
+                CancelRotationGesture();
                 CancelScalePreview();
                 CancelPolygonInteraction();
                 CancelSelectionBox();
@@ -1045,6 +1046,7 @@ namespace Greenshot.Editor.Drawing
         /// </summary>
         public Surface()
         {
+            DimensionStyle = Configuration.MeasurementDefaults.Create(IniConfigRegistry.GetSection<IEditorConfiguration>());
             CaptureDetails = new CaptureDetails();
             _fieldAggregator = new FieldAggregator(this);
             _elements = new DrawableContainerList(_uniqueId);
@@ -1136,6 +1138,7 @@ namespace Greenshot.Editor.Drawing
             {
                 LOG.Debug("Disposing surface!");
                 EndExistingHandleGesture();
+                CancelRotationGesture();
                 CancelScalePreview();
                 CancelPolygonInteraction();
                 CancelSelectionBox();
@@ -2638,6 +2641,7 @@ namespace Greenshot.Editor.Drawing
         {
             e = InverseZoomMouseCoordinates(e);
             if (e.Button == MouseButtons.Right && CancelSelectionBox()) return;
+            if (RotationMouseDown(e)) return;
             if (PolygonMouseDown(e)) return;
             if (DrawingMode == DrawingModes.Scale) { StartScalePreview(e); return; }
 
@@ -2711,6 +2715,7 @@ namespace Greenshot.Editor.Drawing
         private void SurfaceMouseUp(object sender, MouseEventArgs e)
         {
             e = InverseZoomMouseCoordinates(e);
+            if (RotationMouseUp(e)) return;
             ClearSnapGuide();
             if (FinishSelectionBox(e)) return;
             if (PolygonMouseUp(e)) return;
@@ -2870,6 +2875,7 @@ namespace Greenshot.Editor.Drawing
         private void SurfaceMouseMove(object sender, MouseEventArgs e)
         {
             e = InverseZoomMouseCoordinates(e);
+            if (RotationMouseMove(e)) return;
             if (MoveSelectionBox(e.Location)) return;
             if (PolygonMouseMove(e)) return;
             // Existing handles own the event before any creation preview can attract the real pointer.
@@ -3123,6 +3129,7 @@ namespace Greenshot.Editor.Drawing
             PaintGroupSelection(targetGraphics);
             PaintPolygonInteraction(targetGraphics);
             PaintSelectionBox(targetGraphics);
+            PaintRotationHandle(targetGraphics);
             PaintFocusFrame(targetGraphics);
         }
 
@@ -3226,6 +3233,7 @@ namespace Greenshot.Editor.Drawing
         protected override void OnLostFocus(EventArgs e)
         {
             base.OnLostFocus(e);
+            CancelRotationGesture();
             InvalidateFocusFrame();
         }
 
@@ -3777,6 +3785,7 @@ namespace Greenshot.Editor.Drawing
         /// <param name="generateEvents">false to skip event generation</param>
         private void DeselectSingleElement(IDrawableContainer container, bool generateEvents = true)
         {
+            CancelRotationGesture();
             container.Selected = false;
             if (selectedElements.Remove(container))
             {
@@ -3838,6 +3847,7 @@ namespace Greenshot.Editor.Drawing
         /// <param name="generateEvents">false to skip event generation</param>
         private void SelectSingleElement(IDrawableContainer container, bool invalidate = true, bool generateEvents = true)
         {
+            CancelRotationGesture();
             if (selectedElements.Contains(container)) return;
 
             selectedElements.Add(container);
@@ -3938,6 +3948,7 @@ namespace Greenshot.Editor.Drawing
         /// <returns>false if no keys were processed</returns>
         public bool ProcessCmdKey(Keys k)
         {
+            if (k == Keys.Escape && CancelRotationGesture()) return true;
             if (k == Keys.Escape && _existingGestureAdorner != null) { EndExistingHandleGesture(); Capture = false; return true; }
             if (k == Keys.Escape && CancelSelectionBox()) return true;
             if (k == (Keys.Control | Keys.Alt | Keys.G)) return GroupSelectedElements();
@@ -4158,6 +4169,7 @@ namespace Greenshot.Editor.Drawing
         /// <returns>true when the key was handled</returns>
         public bool ProcessCanvasKey(Keys keys)
         {
+            if (keys == Keys.Escape && CancelRotationGesture()) return true;
             if (keys == Keys.Escape && CancelSelectionBox()) return true;
             if (keys == Keys.Escape && (_polygonPoints.Count > 0 || _vertexOwner != null || DrawingMode == DrawingModes.Polygon))
             { CancelPolygonInteraction(); DrawingMode = DrawingModes.None; return true; }

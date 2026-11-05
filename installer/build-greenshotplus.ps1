@@ -24,7 +24,7 @@ try {
     }
     # Use the SDK's MSBuild for managed code: .NET 10 needs MSBuild 18, while the
     # hosted VS 2022 MSBuild is retained only for the native C projects below.
-    Invoke-Checked dotnet @('build', 'src/Greenshot.Tests/Greenshot.Tests.csproj', '--configuration', 'Release', '--verbosity', 'minimal')
+    Invoke-Checked dotnet @('build', 'src/Greenshot.Tests/Greenshot.Tests.csproj', '--configuration', 'Release', '--verbosity', 'minimal', '-m:1', '/p:UseSharedCompilation=false')
     foreach ($project in @('greenshot-proxy', 'greenshot-cli')) {
         Invoke-Checked msbuild @("src/greenshot-proxy/$project.vcxproj", '/p:Configuration=Release', '/p:Platform=x64', "/p:PlatformToolset=$PlatformToolset", '/v:minimal')
     }
@@ -35,17 +35,17 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Installer file inventory validation failed' }
     & ./src/Greenshot-Installer/scripts/generate-checksums.ps1 -OutputDir $output
 
-    $env:BuildVersionSimple = if ($ReleaseVersion) { $ReleaseVersion } else {
-        [Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $output 'Greenshot.exe')).FileVersion
-    }
-    $env:BuildVersionEnhanced = "$env:BuildVersionSimple-plus-$(git rev-parse --short HEAD)"
+    $sourceVersion = ([version][Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $output 'Greenshot.exe')).FileVersion).ToString(3)
+    if ($ReleaseVersion -and $ReleaseVersion -ne $sourceVersion) { throw 'ReleaseVersion must match src/version.json' }
+    $env:BuildVersionSimple = $sourceVersion
+    $env:BuildVersionEnhanced = $sourceVersion
     $compiler = Join-Path $env:USERPROFILE '.nuget/packages/tools.innosetup/7.1.0/tools/ISCC.exe'
     if (-not (Test-Path -LiteralPath $compiler)) { throw "Inno Setup compiler missing: $compiler" }
-    Invoke-Checked $compiler @('/Qp', '/FGreenShotPlus-Setup', 'src/Greenshot-Installer/setup.iss')
-    $installer = Join-Path $PSScriptRoot 'GreenShotPlus-Setup.exe'
+    Invoke-Checked $compiler @('/Qp', '/FBuckShot-Markup-Setup', 'src/Greenshot-Installer/setup.iss')
+    $installer = Join-Path $PSScriptRoot 'BuckShot-Markup-Setup.exe'
     if (-not (Test-Path -LiteralPath $installer)) { throw 'Installer was not produced' }
     $hash = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
-    "$hash  GreenShotPlus-Setup.exe" | Set-Content -LiteralPath "$installer.sha256" -Encoding ascii
+    "$hash  BuckShot-Markup-Setup.exe" | Set-Content -LiteralPath "$installer.sha256" -Encoding ascii
     Write-Host "Built $installer"
 }
 finally { Pop-Location }

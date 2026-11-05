@@ -41,13 +41,13 @@ namespace Greenshot.Base.Core
         /// <summary>
         /// Normal production INI file name.
         /// </summary>
-        public const string NormalConfigName = "greenshot.ini";
+        public const string NormalConfigName = ProductIdentity.ConfigName;
 
         /// <summary>
         /// Design-time / test fallback INI file name. Distinct from <see cref="NormalConfigName"/>
         /// so design-time initialization never alters production settings or disk files.
         /// </summary>
-        public const string DesignTimeConfigName = "greenshot-designtime.ini";
+        public const string DesignTimeConfigName = "buckshot-markup-designtime.ini";
 
         /// <summary>
         /// Ensures that an <see cref="IniConfig"/> instance is registered in <see cref="IniConfigRegistry"/>.

@@ -389,7 +389,7 @@ namespace Greenshot.Tests.Editor
         {
             var frameInfo = WicImage.GetFrameInfo(stream);
             Assert.True(frameInfo.Metadata.TryGet(WicMetadataPaths.Software(container), out var software), "No Software tag");
-            Assert.StartsWith("Greenshot", Convert.ToString(software));
+            Assert.StartsWith(Greenshot.Base.Core.ProductIdentity.Name, Convert.ToString(software));
         }
 
         private static void AssertLoads(Stream stream, string extension, int width, int height, int[] expected, int tolerance = 0)

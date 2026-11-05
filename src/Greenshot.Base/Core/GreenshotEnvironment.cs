@@ -47,7 +47,7 @@ namespace Greenshot.Base.Core
         /// <summary>
         /// The directory for the files Greenshot keeps on this computer: %LocalAppData%\Greenshot
         /// </summary>
-        public static string LocalDataDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Greenshot");
+        public static string LocalDataDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ProductIdentity.StorageName);
 
         /// <summary>
         /// True for the PortableApp and the .zip (greenshot.ini next to Greenshot.exe), these leave nothing on the system

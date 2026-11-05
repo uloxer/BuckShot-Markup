@@ -1,4 +1,4 @@
-name: GreenShotPlus installer
+name: BuckShot Markup installer
 
 on:
   workflow_dispatch:
@@ -32,11 +32,11 @@ jobs:
         shell: pwsh
         env:
           RELEASE_VERSION: ${{ inputs.release_version }}
-        run: ./installer/test-user-install.ps1 -InstallerPath ./installer/GreenShotPlus-Setup.exe -ExpectedVersion $env:RELEASE_VERSION
+        run: ./installer/test-user-install.ps1 -InstallerPath ./installer/BuckShot-Markup-Setup.exe -ExpectedVersion $env:RELEASE_VERSION
       - uses: actions/upload-artifact@v4
         with:
-          name: GreenShotPlus-Windows-Installer
+          name: BuckShot-Markup-Windows-Installer
           path: |
-            installer/GreenShotPlus-Setup.exe
-            installer/GreenShotPlus-Setup.exe.sha256
+            installer/BuckShot-Markup-Setup.exe
+            installer/BuckShot-Markup-Setup.exe.sha256
           if-no-files-found: error

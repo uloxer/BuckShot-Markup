@@ -1234,6 +1234,44 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
+            <TabItem Header="Measurements" x:Name="MeasurementsTab">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Margin="16">
+                        <TextBlock Text="Defaults for new documents" FontSize="18" Margin="0,0,0,8"/>
+                        <TextBlock Text="These settings apply to new captures and blank documents. Saved projects retain their appearance, per-dimension settings and calibration." TextWrapping="Wrap" Margin="0,0,0,16"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Content="Precision"/>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding MeasurementPrecisionModes}" SelectedItem="{Binding EditorConfiguration.MeasurementPrecisionMode, Mode=TwoWay}"/>
+                            <Label Grid.Row="1" Content="Digits (0–10)"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding EditorConfiguration.MeasurementPrecisionDigits, Mode=TwoWay, ValidatesOnExceptions=True}" ToolTip="Decimal places: 0–10. Significant figures: 1–10 (0 uses 1). Automatic ignores this value."/>
+                            <Label Grid.Row="2" Content="Font"/>
+                            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding MeasurementFontFamilies}" SelectedItem="{Binding EditorConfiguration.MeasurementFontFamily, Mode=TwoWay}"/>
+                            <Label Grid.Row="3" Content="Size (pt)"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding EditorConfiguration.MeasurementFontSize, Mode=TwoWay, ValidatesOnExceptions=True}" ToolTip="1–144 points"/>
+                            <Label Grid.Row="4" Content="Font style"/>
+                            <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding MeasurementFontStyles}" SelectedItem="{Binding EditorConfiguration.MeasurementFontStyle, Mode=TwoWay}"/>
+                            <Label Grid.Row="5" Content="Font colour"/>
+                            <Button x:Name="MeasurementFontColorButton" Grid.Row="5" Grid.Column="1" Content="{Binding EditorConfiguration.MeasurementFontColor}" Click="MeasurementFontColor_Click" HorizontalAlignment="Left" MinWidth="150"/>
+                            <Label Grid.Row="6" Content="Background colour"/>
+                            <Button x:Name="MeasurementBackgroundColorButton" Grid.Row="6" Grid.Column="1" Content="{Binding EditorConfiguration.MeasurementBackgroundColor}" Click="MeasurementBackgroundColor_Click" HorizontalAlignment="Left" MinWidth="150"/>
+                            <CheckBox Grid.Row="7" Grid.Column="1" Margin="6,8" Content="Transparent background (keep chosen colour)" IsChecked="{Binding EditorConfiguration.MeasurementBackgroundTransparent, Mode=TwoWay}"/>
+                        </Grid>
+                        <GroupBox Header="Object snapping" Margin="0,16,0,0">
+                            <StackPanel>
+                                <CheckBox Content="Snap to object points" IsChecked="{Binding EditorConfiguration.SnapToPoints, Mode=TwoWay}"/>
+                                <CheckBox Content="Snap through objects" IsChecked="{Binding EditorConfiguration.SnapThrough, Mode=TwoWay}"/>
+                                <StackPanel Orientation="Horizontal"><Label Content="Radius (1–100 pixels)"/><TextBox Width="90" Text="{Binding EditorConfiguration.SnappingRadius, Mode=TwoWay, ValidatesOnExceptions=True}"/></StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+                        <TextBlock Text="Scale is calibrated separately for each document." Margin="0,16" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
         </TabControl>
         
         <!-- Buttons -->

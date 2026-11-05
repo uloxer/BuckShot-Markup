@@ -8,4 +8,4 @@ Signature="$Windows NT$"
 AddReg=Autostart.AddReg
 
 [Autostart.AddReg]
-HKCU,"Software\Microsoft\Windows\CurrentVersion\Run","Greenshot",0x00000000,"""%01%\Greenshot.exe"" --autostart"
+HKCU,"Software\Microsoft\Windows\CurrentVersion\Run","BuckShot-Markup",0x00000000,"""%01%\Greenshot.exe"" --autostart"

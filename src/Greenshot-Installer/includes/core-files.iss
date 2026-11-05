@@ -57,7 +57,7 @@ Source: {#ReleaseDir}\Twemoji.Mozilla.ttf; DestDir: {app}; Components: greenshot
 Source: {#ReleaseDir}\emojis.xml; DestDir: {app}; Components: greenshot; Flags: {#DefaultInstallFlags}
 Source: additional_files\installer.txt; DestDir: {app}; Components: greenshot; Flags: {#DefaultInstallFlags}
 Source: additional_files\license.txt; DestDir: {app}; Components: greenshot; Flags: {#DefaultInstallFlags}
-Source: additional_files\readme.txt; DestDir: {app}; Components: greenshot; Flags: {#DefaultInstallFlags}
+Source: additional_files\buckshot-readme.txt; DestName: readme.txt; DestDir: {app}; Components: greenshot; Flags: {#DefaultInstallFlags}
 ; Writes the start with Windows for the current user, see tasks-icons-reg.iss
 Source: additional_files\autostart.inf; DestDir: {app}; Components: greenshot; Flags: {#DefaultInstallFlags}
 #ifndef IsLightEdition

@@ -49,9 +49,6 @@ namespace Greenshot.Ai
             "LIST_WINDOWS",
             "LIST_AI_TOOLS",
             "RUN_AI_TOOL",
-            "RECIPE_CATALOG",
-            "VALIDATE_RECIPE",
-            "PROPOSE_RECIPE"
         };
 
         public IEnumerable<string> Commands => AiToolCommands;
@@ -66,9 +63,6 @@ namespace Greenshot.Ai
                 "LIST_WINDOWS",
                 "LIST_AI_TOOLS",
                 "RUN_AI_TOOL",
-                "RECIPE_CATALOG",
-                "VALIDATE_RECIPE",
-                "PROPOSE_RECIPE"
             }
         };
 

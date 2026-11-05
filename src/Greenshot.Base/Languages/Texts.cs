@@ -129,7 +129,7 @@ namespace Greenshot.Base.Languages
         {
             // The language setting only counts once greenshot.ini was read; before that (texts used very early) Windows decides
             ICoreConfiguration coreConfig = null;
-            if (IniConfigRegistry.TryGet("greenshot.ini", out var iniConfig))
+            if (IniConfigRegistry.TryGet(IniConfigHelper.NormalConfigName, out var iniConfig))
             {
                 coreConfig = iniConfig.IsLoaded ? iniConfig.GetSection<ICoreConfiguration>() : null;
             }
@@ -267,7 +267,7 @@ namespace Greenshot.Base.Languages
                 candidates.Add(Path.Combine(applicationFolder, @"App\Greenshot\Languages"));
             }
 
-            candidates.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Greenshot\Languages"));
+            candidates.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"BuckShot-Markup\Languages"));
             if (applicationFolder != null)
             {
                 candidates.Add(Path.Combine(applicationFolder, "Languages"));

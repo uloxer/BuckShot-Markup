@@ -144,6 +144,9 @@ namespace Greenshot.Settings.Views
                 case "editor":
                     SettingsTabControl.SelectedIndex = 4;
                     break;
+                case "measurements":
+                    SettingsTabControl.SelectedItem = MeasurementsTab;
+                    break;
                 case "printer":
                 case "print":
                     SettingsTabControl.SelectedIndex = 5;
@@ -400,6 +403,20 @@ namespace Greenshot.Settings.Views
         /// <summary>
         /// Choose the color of a new image in the editor
         /// </summary>
+        private void MeasurementFontColor_Click(object sender, RoutedEventArgs e) => ChooseMeasurementColor(false);
+        private void MeasurementBackgroundColor_Click(object sender, RoutedEventArgs e) => ChooseMeasurementColor(true);
+        private void ChooseMeasurementColor(bool background)
+        {
+            var config = _viewModel.EditorConfiguration;
+            string key = background ? nameof(config.MeasurementBackgroundColor) : nameof(config.MeasurementFontColor);
+            if (config.IsConstant(key)) return;
+            var picker = new Greenshot.Editor.Views.ColorPickerWindow { Owner = this,
+                SelectedColor = background ? config.MeasurementBackgroundColor : config.MeasurementFontColor };
+            if (picker.ShowDialog() != true) return;
+            var color = System.Drawing.Color.FromArgb(255, picker.SelectedColor);
+            if (background) config.MeasurementBackgroundColor = color; else config.MeasurementFontColor = color;
+        }
+
         private void NewImageColor_Click(object sender, RoutedEventArgs e)
         {
             var colorPicker = new Greenshot.Editor.Views.ColorPickerWindow

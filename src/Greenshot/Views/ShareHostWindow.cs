@@ -239,7 +239,7 @@ namespace Greenshot.Views
 
                 var dataPackage = request.Data;
                 dataPackage.Properties.Title = _title ?? "Share a screenshot";
-                dataPackage.Properties.ApplicationName = "Greenshot";
+                dataPackage.Properties.ApplicationName = "BuckShot Markup";
                 dataPackage.Properties.Thumbnail = imageRandomAccessStreamReference;
                 dataPackage.Properties.LogoBackgroundColor = Color.FromArgb(0xff, 0x3d, 0x3d, 0x3d);
 

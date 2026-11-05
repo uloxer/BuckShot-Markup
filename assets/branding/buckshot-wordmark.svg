@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 180">
+  <title>BuckShot Markup</title>
+  <rect width="180" height="180" rx="36" fill="#10243a"/>
+  <g fill="none" stroke="#25d9ed" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="9" d="M32 61V33h29m58 0h28v28m0 58v28h-28m-58 0H33v-28"/>
+    <path stroke="#f4fbff" stroke-width="5" d="M56 105V75h43v30zm0-30 21-16 22 16 20 14v16H99"/>
+    <path stroke-width="3" d="M51 120h73m-73-5v10m73-10v10M77 89l12-31 13 31M89 58v-5M82 80h15"/>
+  </g>
+  <text x="214" y="92" font-family="Segoe UI, sans-serif" font-size="61" font-weight="600" fill="#10243a">BuckShot Markup</text>
+  <text x="218" y="129" font-family="Segoe UI, sans-serif" font-size="20" letter-spacing="3" fill="#347385">CAPTURE. MEASURE. ANNOTATE.</text>
+</svg>

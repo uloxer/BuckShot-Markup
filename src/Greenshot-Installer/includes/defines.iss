@@ -16,7 +16,7 @@
 #define DefaultInstallFlags "overwritereadonly ignoreversion"
 
 #ifndef AppDisplayName
-  #define AppDisplayName "Greenshot"
+  #define AppDisplayName "BuckShot Markup"
 #endif
 
 #ifndef OutputSuffix

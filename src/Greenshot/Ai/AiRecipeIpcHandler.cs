@@ -743,7 +743,7 @@ namespace Greenshot.Ai
             }
             if (string.IsNullOrEmpty(configDirectory))
             {
-                configDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Greenshot");
+                configDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BuckShot-Markup");
             }
             return Path.Combine(configDirectory, "Recipes", "AI");
         }

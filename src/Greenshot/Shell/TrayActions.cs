@@ -151,7 +151,7 @@ namespace Greenshot.Shell
         /// </summary>
         public static void OpenDonatePage()
         {
-            Process.Start("https://getgreenshot.org/support/?version=" + EnvironmentInfo.GetGreenshotVersion(true));
+            // Donation marketing is not part of BuckShot Markup.
         }
 
         /// <summary>

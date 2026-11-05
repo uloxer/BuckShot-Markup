@@ -46,7 +46,7 @@ namespace Greenshot.Base.Help
         /// </summary>
         public static async Task LoadHelpAsync()
         {
-            string uri = await FindOnlineHelpUrlAsync(Texts.Config.CurrentLanguage, CancellationToken.None).ConfigureAwait(false) ?? FindLocalHelpFile();
+            string uri = Path.Combine(EnvironmentInfo.GetApplicationFolder(), "readme.txt");
             using (Process.Start(uri))
             {
                 // Only started

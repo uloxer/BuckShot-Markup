@@ -1,11 +1,14 @@
 ﻿<Project>
   <PropertyGroup>
+    <Product>BuckShot Markup</Product>
+    <Title>BuckShot Markup</Title>
     <Copyright>Copyright © Greenshot 2007-2026</Copyright>
-    <Authors>Greenshot</Authors>
-    <PackageIconUrl>https://getgreenshot.org/favicon.ico</PackageIconUrl>
-    <RepositoryUrl>https://github.com/greenshot/greenshot</RepositoryUrl>
+    <Authors>BuckShot Markup contributors;Greenshot contributors</Authors>
+    <Company>BuckShot Markup contributors</Company>
+    <PackageIconUrl>https://raw.githubusercontent.com/uloxer/BuckShot-Markup/main/assets/branding/rendered/buckshot-128.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/uloxer/BuckShot-Markup</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageProjectUrl>https://github.com/greenshot/greenshot</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/uloxer/BuckShot-Markup</PackageProjectUrl>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <LangVersion>latest</LangVersion>
     <UseWPF>true</UseWPF>
@@ -150,6 +153,7 @@
   -->
   <PropertyGroup>
     <GreenshotUndeliveredPlugins Condition="'$(GreenshotBaseConfiguration)' != 'Debug'">Greenshot.Plugin.CustomUploader</GreenshotUndeliveredPlugins>
+    <GreenshotUndeliveredPlugins>Greenshot.Plugin.RecipeEditor;$(GreenshotUndeliveredPlugins)</GreenshotUndeliveredPlugins>
   </PropertyGroup>
 
   <Target Name="PostBuild" BeforeTargets="PostBuildEvent" Condition="$(MSBuildProjectName.StartsWith('Greenshot.Plugin.')) And '$([System.String]::Copy(&quot;;$(GreenshotUndeliveredPlugins);&quot;).Contains(&quot;;$(MSBuildProjectName);&quot;))' != 'true'">

@@ -25,8 +25,8 @@ typedef unsigned int UINT32_T;
 #define MIN_JSON_PAYLOAD_SIZE 2u               /* Minimum valid JSON e.g. "{}" */
 #define CHUNK_SIZE 65536u                      /* Relay copy buffer (heap allocated) */
 #define COLD_START_TIMEOUT_MS 8000             /* Max wait for Greenshot to create its pipe after starting it */
-#define PIPE_PREFIX L"\\\\.\\pipe\\Greenshot_"
-#define STARTUP_MUTEX_PREFIX L"Local\\Greenshot_Startup_"
+#define PIPE_PREFIX L"\\\\.\\pipe\\BuckShot-Markup_"
+#define STARTUP_MUTEX_PREFIX L"Local\\BuckShot-Markup_Startup_"
 
 #define PROXY_CLIENT_VERSION "1.4.0"
 

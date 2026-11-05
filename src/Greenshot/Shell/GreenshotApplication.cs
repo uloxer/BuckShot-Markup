@@ -66,7 +66,7 @@ namespace Greenshot.Shell
 
                 // Fix for Bug 2495900, Multi-user Environment
                 // check whether there's an local instance running already
-                _applicationMutex = ResourceMutex.Create("F48E86D3-E34C-4DB7-8F8F-9A0EA55F0D08", "Greenshot", false);
+                _applicationMutex = ResourceMutex.Create(ProductIdentity.MutexId, ProductIdentity.StorageName, false);
 
                 var isAlreadyRunning = !_applicationMutex.IsLocked;
 

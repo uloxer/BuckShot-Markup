@@ -83,7 +83,7 @@ namespace Greenshot.Plugin.Win10
                 {
                     RemoveOldRegistrations();
                 }
-                DesktopToasts.Register(ToastNotificationService.AppId, "Greenshot", WriteIcon(), $"\"{Application.ExecutablePath}\"");
+                DesktopToasts.Register(ToastNotificationService.AppId, "BuckShot Markup", WriteIcon(), $"\"{Application.ExecutablePath}\"");
                 var setting = DesktopToasts.GetSetting(ToastNotificationService.AppId);
                 if (setting == NotificationSetting.DisabledByManifest)
                 {
@@ -160,7 +160,7 @@ namespace Greenshot.Plugin.Win10
         /// <summary>
         /// The app id of Greenshot, the same as the one of the start menu shortcut (see tasks-icons-reg.iss)
         /// </summary>
-        public const string AppId = "Greenshot";
+        public const string AppId = "BuckShot-Markup";
 
         private static readonly ILog Log = LogManager.GetLogger(typeof(ToastNotificationService));
         private static readonly ICoreConfiguration CoreConfiguration = IniConfigRegistry.GetSection<ICoreConfiguration>();
@@ -227,7 +227,7 @@ namespace Greenshot.Plugin.Win10
             }
             if (notification.Lines.Count > 0)
             {
-                content.AddText(notification.Title ?? "Greenshot");
+                content.AddText(notification.Title ?? "BuckShot Markup");
                 if (notification.Lines.Count == 1 && statusIcon == null)
                 {
                     // One destination: its icon is the big image (visible also when the toast is collapsed in the notification

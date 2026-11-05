@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <title>BuckShot Markup drafting artwork</title>
+  <defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0v20" fill="none" stroke="#23465c" stroke-width=".65"/></pattern></defs>
+  <rect width="640" height="400" rx="18" fill="#10243a"/>
+  <rect width="640" height="400" rx="18" fill="url(#grid)"/>
+  <g fill="none" stroke="#25d9ed" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="7" d="M40 85V40h45m470 0h45v45M600 315v45h-45M85 360H40v-45"/>
+    <path stroke="#f4fbff" stroke-width="4" d="M116 254V151l95-66 98 66v103zm193-103 81 48v55h-81M116 151h193M211 85v169M156 254v-66h49v66"/>
+    <path stroke-width="2" d="M106 285h295m-295-24v37m295-37v37M116 285l10-5m-10 5 10 5m264-5-10-5m10 5-10 5M84 85v169m-9-169h26m-26 169h26M84 95l-5 10m5-10 5 10m-5 139-5-10m5 10 5-10"/>
+    <path stroke-width="4" d="M445 267l44-139 51 139M489 128v-20M457 229h69M433 296l32-8 78-67-12-14-78 67zM453 274l12 14"/>
+    <circle cx="489" cy="145" r="8" fill="#10243a" stroke-width="3"/>
+    <path stroke-width="3" d="M145 320q17-28 26-5t27-3 22 8 28-6"/>
+  </g>
+  <g fill="#a7eff6" font-family="Segoe UI, sans-serif" font-size="17"><text x="217" y="309">274 mm</text><text x="63" y="198" transform="rotate(-90 63 198)">169 mm</text></g>
+</svg>

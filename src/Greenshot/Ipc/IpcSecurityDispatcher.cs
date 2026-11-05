@@ -55,6 +55,10 @@ namespace Greenshot.Ipc
     /// </summary>
     public static class IpcSecurityDispatcher
     {
+        internal static bool IsPublicRecipeCommand(string command) => new[] {
+            "LIST_RECIPES", "RUN_RECIPE", "DESCRIBE_RECIPE", "RECIPE_EDITOR", "RECIPE_MANAGER", "INSTALL_RECIPE",
+            "RECIPE_CATALOG", "VALIDATE_RECIPE", "PROPOSE_RECIPE"
+        }.Contains(command, StringComparer.OrdinalIgnoreCase);
         private static readonly ILog Log = LogManager.GetLogger(typeof(IpcSecurityDispatcher));
 
         /// <summary>
@@ -306,7 +310,7 @@ namespace Greenshot.Ipc
         /// </summary>
         internal static bool IsCommandAllowedForSource(string command, string source)
         {
-            if (string.IsNullOrEmpty(command) || !AllowedCommands.Contains(command))
+            if (string.IsNullOrEmpty(command) || IsPublicRecipeCommand(command) || !AllowedCommands.Contains(command))
             {
                 return false;
             }
@@ -331,6 +335,11 @@ namespace Greenshot.Ipc
             }
 
             string command = context.Envelope.Command;
+            if (IsPublicRecipeCommand(command))
+            {
+                await context.ReplyAsync(new { status = "error", exit_code = 2, stderr = "Public recipes are not available in BuckShot Markup." }).ConfigureAwait(false);
+                return;
+            }
             // A greenshot: URL (CliCommandParser creates URL_SCHEME for it) names the command it runs
             if (string.Equals(command, "URL_SCHEME", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(context.Envelope.RawInput))
             {

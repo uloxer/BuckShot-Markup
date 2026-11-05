@@ -266,7 +266,7 @@ namespace Greenshot.Base.Core
         public static void AddTag(this Image imageToSave)
         {
             // Create meta-data
-            PropertyItem softwareUsedPropertyItem = CreatePropertyItem(PROPERTY_TAG_SOFTWARE_USED, "Greenshot");
+            PropertyItem softwareUsedPropertyItem = CreatePropertyItem(PROPERTY_TAG_SOFTWARE_USED, ProductIdentity.Name);
             if (softwareUsedPropertyItem == null) return;
             try
             {
@@ -497,7 +497,7 @@ namespace Greenshot.Base.Core
             return TmpDirectory;
         }
 
-        private static string TmpDirectory => Path.Combine(Path.GetTempPath(), "Greenshot", "Files");
+        private static string TmpDirectory => Path.Combine(Path.GetTempPath(), "BuckShot-Markup", "Files");
 
         /// <summary>
         /// Removes the files in Greenshot's temp directory which are older than the lifetime of a temp file, e.g. left by an earlier run

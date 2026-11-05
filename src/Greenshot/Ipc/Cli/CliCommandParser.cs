@@ -135,6 +135,8 @@ namespace Greenshot.Ipc.Cli
             }
 
             string first = argv[0];
+            if (IsAny(first, "--list-recipes", "-l", "--info", "-i", "--recipe", "-r"))
+                return CliParseResult.Fail("Public recipe commands are not available in BuckShot Markup.", json, false);
 
             if (IsAny(first, "--list-recipes", "-l"))
             {

@@ -116,7 +116,7 @@ namespace Greenshot.Shell
             };
 
             // The tray icon is created after the services, a notification before it isn't shown
-            SimpleServiceProvider.Current.GetInstance<ITrayIcon>(isOptional: true)?.ShowBalloon("Greenshot", message, level, onClickAction, onClosedAction);
+            SimpleServiceProvider.Current.GetInstance<ITrayIcon>(isOptional: true)?.ShowBalloon("BuckShot Markup", message, level, onClickAction, onClosedAction);
         }
     }
 }

@@ -109,7 +109,7 @@ public static class PngOptimizer
         image.Metadata.ResolutionUnits = PixelResolutionUnit.PixelsPerInch;
         image.Metadata.HorizontalResolution = bitmap.HorizontalResolution;
         image.Metadata.VerticalResolution = bitmap.VerticalResolution;
-        image.Metadata.GetPngMetadata().TextData.Add(new PngTextData("Software", metadata?.Software ?? "Greenshot " + EnvironmentInfo.GetGreenshotVersion(true), string.Empty, string.Empty));
+        image.Metadata.GetPngMetadata().TextData.Add(new PngTextData("Software", metadata?.Software ?? ProductIdentity.Name + " " + EnvironmentInfo.GetGreenshotVersion(true), string.Empty, string.Empty));
         // More than the program name goes into eXIf and XMP chunks: Windows shows the XMP, other programs the EXIF, nobody the other text chunks
         if (metadata is { HasDetails: true })
         {

@@ -37,6 +37,25 @@ namespace Greenshot.Editor.Configuration
     [Description("Greenshot editor configuration")]
     public interface IEditorConfiguration : IIniSection, IAfterLoad
     {
+        [DefaultValue("Automatic")]
+        Greenshot.Editor.Measurements.DimensionFormatMode MeasurementPrecisionMode { get; set; }
+        [DefaultValue(2)]
+        [Range(0, 10)]
+        int MeasurementPrecisionDigits { get; set; }
+        [DefaultValue("Arial")]
+        string MeasurementFontFamily { get; set; }
+        [DefaultValue(11f)]
+        [Range(1, 144)]
+        float MeasurementFontSize { get; set; }
+        [DefaultValue("Regular")]
+        FontStyle MeasurementFontStyle { get; set; }
+        [DefaultValue("Black")]
+        Color MeasurementFontColor { get; set; }
+        [DefaultValue("White")]
+        Color MeasurementBackgroundColor { get; set; }
+        [DefaultValue(true)]
+        bool MeasurementBackgroundTransparent { get; set; }
+
         [DefaultValue(false)]
         bool SnapToPoints { get; set; }
 

@@ -51,7 +51,7 @@ namespace Greenshot.Settings.ViewModels
         /// <summary>
         /// The Recipes tab: options to set, or the catalog to get recipes from
         /// </summary>
-        public bool HasRecipesTab => HasRecipeOptions || CanGetMoreRecipes;
+        public bool HasRecipesTab => false;
 
         public bool HasRecipeChanges => RecipeChanges.Count > 0;
 

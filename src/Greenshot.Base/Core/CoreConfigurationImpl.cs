@@ -118,7 +118,7 @@ namespace Greenshot.Base.Core
         {
             if (GreenshotEnvironment.IsPortable)
             {
-                string pafOutputFilePath = Path.Combine(Application.StartupPath, @"..\..\Documents\Pictures\Greenshots");
+                string pafOutputFilePath = Path.Combine(Application.StartupPath, @"..\..\Documents\Pictures\BuckShot-Markup");
                 if (!Directory.Exists(pafOutputFilePath))
                 {
                     try
@@ -256,7 +256,7 @@ namespace Greenshot.Base.Core
             if (outputFilePath == null || (!File.Exists(OutputFileAsFullpath) && !Directory.Exists(outputFilePath)))
             {
                 OutputFileAsFullpath = GreenshotEnvironment.IsPortable
-                    ? Path.Combine(Application.StartupPath, @"..\..\Documents\Pictures\Greenshots\dummy.png")
+                    ? Path.Combine(Application.StartupPath, @"..\..\Documents\Pictures\BuckShot-Markup\dummy.png")
                     : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "dummy.png");
             }
         }
@@ -355,7 +355,7 @@ namespace Greenshot.Base.Core
             if (string.IsNullOrEmpty(OutputFileAsFullpath))
             {
                 OutputFileAsFullpath = GreenshotEnvironment.IsPortable
-                    ? Path.Combine(Application.StartupPath, @"..\..\Documents\Pictures\Greenshots\dummy.png")
+                    ? Path.Combine(Application.StartupPath, @"..\..\Documents\Pictures\BuckShot-Markup\dummy.png")
                     : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "dummy.png");
             }
 

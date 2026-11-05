@@ -322,6 +322,10 @@ namespace Greenshot.Settings.ViewModels
 
         public Brush NewImageBrush => new SolidColorBrush(Color.FromArgb(NewImageColor.A, NewImageColor.R, NewImageColor.G, NewImageColor.B));
 
+        public Array MeasurementPrecisionModes => Enum.GetValues(typeof(Greenshot.Editor.Measurements.DimensionFormatMode));
+        public Array MeasurementFontStyles => new[] { System.Drawing.FontStyle.Regular, System.Drawing.FontStyle.Bold, System.Drawing.FontStyle.Italic, System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic };
+        public IEnumerable<string> MeasurementFontFamilies => System.Drawing.FontFamily.Families.Select(font => font.Name).OrderBy(name => name);
+
         /// <summary>
         /// The chosen color of the viewer border, choosing one means the border doesn't follow the light or dark mode
         /// </summary>

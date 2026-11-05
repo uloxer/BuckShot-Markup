@@ -6,6 +6,6 @@
 #include "externalcommand.iss"
 #include "office.iss"
 #include "pdf.iss"
-#include "recipeeditor.iss"
+; Recipe authoring is not distributed by BuckShot Markup.
 #include "stamps.iss"
 #include "zxing.iss"

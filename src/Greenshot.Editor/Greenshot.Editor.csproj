@@ -22,6 +22,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Greenshot.Base\Greenshot.Base.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\assets\branding\toolbar\*.svg" Link="BuckShotIcons\%(Filename)%(Extension)" LogicalName="Greenshot.Editor.BuckShotIcons.%(Filename)%(Extension)" />
+  </ItemGroup>
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">

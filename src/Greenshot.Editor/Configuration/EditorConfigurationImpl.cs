@@ -71,5 +71,11 @@ namespace Greenshot.Editor.Configuration
         }
 
         partial void OnSnappingRadiusSet(ref int value) => value = Clamp(value, 1, 100);
+        partial void OnMeasurementPrecisionDigitsSet(ref int value) => value = Clamp(value, 0, 10);
+        partial void OnMeasurementFontSizeSet(ref float value) => value = float.IsNaN(value) || float.IsInfinity(value) ? 11 : System.Math.Max(1, System.Math.Min(144, value));
+        partial void OnMeasurementFontFamilySet(ref string value) { if (string.IsNullOrWhiteSpace(value) || value.Length > 128) value = "Arial"; }
+        partial void OnMeasurementFontStyleSet(ref FontStyle value) { if (((int)value & ~15) != 0) value = FontStyle.Regular; }
+        partial void OnMeasurementPrecisionModeSet(ref Greenshot.Editor.Measurements.DimensionFormatMode value)
+        { if (value < Greenshot.Editor.Measurements.DimensionFormatMode.Automatic || value > Greenshot.Editor.Measurements.DimensionFormatMode.SignificantFigures) value = Greenshot.Editor.Measurements.DimensionFormatMode.Automatic; }
     }
 }

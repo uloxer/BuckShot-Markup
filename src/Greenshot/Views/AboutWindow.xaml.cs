@@ -72,7 +72,7 @@ namespace Greenshot.Views
 
         // URLs & Display strings
         public string WebsiteUrl { get; }
-        public string WebsiteDisplayUrl { get; } = "https://getgreenshot.org";
+        public string WebsiteDisplayUrl { get; } = "Source code on GitHub";
         public string BugsUrl { get; }
         public string DonationsUrl { get; }
 
@@ -123,9 +123,9 @@ namespace Greenshot.Views
             AppVersionTitle = $"{GreenshotEdition.ProductName} {version}";
             BitnessText = $"{OsInfo.Bits}-bit";
 
-            WebsiteUrl = $"https://getgreenshot.org/?version={versionWithBuild}";
-            BugsUrl = $"https://getgreenshot.org/tickets/?version={versionWithBuild}";
-            DonationsUrl = $"https://getgreenshot.org/support/?version={versionWithBuild}";
+            WebsiteUrl = ProductIdentity.SourceUrl;
+            BugsUrl = ProductIdentity.SourceUrl + "/issues";
+            DonationsUrl = string.Empty;
 
             // Populate all localized strings from language files
             InitializeLanguage();
@@ -143,7 +143,7 @@ namespace Greenshot.Views
         /// </summary>
         protected virtual void InitializeLanguage()
         {
-            WindowTitleText = Texts.Core.AboutTitle;
+            WindowTitleText = "About " + ProductIdentity.Name;
             WindowTitleSubtitle = $" - {WindowTitleText}";
 
             LicenseCopyrightText = Texts.Core.AboutLicense;

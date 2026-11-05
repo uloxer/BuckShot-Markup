@@ -33,7 +33,7 @@ namespace Greenshot.Base.Recipes
         /// </summary>
         public static bool IsRecipeFeatureEnabled(IRecipeConfiguration recipeConfig)
         {
-            return recipeConfig != null && recipeConfig.Enabled;
+            return false; // Public recipe authoring is not available in BuckShot Markup.
         }
 
         /// <summary>

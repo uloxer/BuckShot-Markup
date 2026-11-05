@@ -82,8 +82,9 @@ namespace Greenshot.Tests.Editor
             s.SetMeasurements(MeasurementState.Calibrate(100,2,MeasurementUnit.Metres));
             Assert.Equal("2 m",Assert.Single(DimensionLayout.Labels(line)).Text);
             s.Undo(); Assert.Equal("100 px",Assert.Single(DimensionLayout.Labels(line)).Text); s.Redo();
+            var originalStyle = s.DimensionStyle;
             var style=new DimensionStyle("Arial",18,FontStyle.Bold,Color.Red); s.SetDimensionStyle(style);
-            Assert.Equal(DimensionStyle.Default,other.DimensionStyle); s.Undo(); Assert.Equal(DimensionStyle.Default,s.DimensionStyle); s.Redo();
+            Assert.Equal(originalStyle,other.DimensionStyle); s.Undo(); Assert.Equal(originalStyle,s.DimensionStyle); s.Redo();
             Assert.Equal(style,s.DimensionStyle); Assert.False(s.SetDimensionStyle(style));
             var center=Assert.Single(DimensionLayout.Labels(line)).Center;
             line.MakeBoundsChangeUndoable(false); line.MoveBy(17,23);

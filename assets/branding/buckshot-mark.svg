@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <title>BuckShot Markup</title>
+  <rect width="256" height="256" rx="54" fill="#10243a"/>
+  <g stroke="#25d9ed" stroke-width="13" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M47 87V48h40M169 48h39v39M208 169v39h-39M87 208H48v-39"/>
+  </g>
+  <g fill="none" stroke="#f4fbff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M72 151v-40h50V94h40v32M72 151h70"/>
+  </g>
+  <g fill="none" stroke="#25d9ed" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M73 77h89m-89-7v14m89-14v14M79 77l8-5m-8 5 8 5m69-5-8-5m8 5-8 5M78 145l22-28m-9 28 22-28m-9 28 15-19M159 162l16-49 18 49M175 113v-9M165 145h20M77 181q12-16 17-5t20-1 18 4 17-5"/>
+  </g>
+</svg>

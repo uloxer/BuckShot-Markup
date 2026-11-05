@@ -127,7 +127,7 @@ namespace Greenshot.Base.Video
         {
             if (string.IsNullOrWhiteSpace(_options.OutputFilePath))
             {
-                var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyVideos), "Greenshot");
+                var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyVideos), "BuckShot-Markup");
                 Directory.CreateDirectory(directory);
                 _options.OutputFilePath = Path.Combine(directory, $"Greenshot_Recording_{DateTime.Now:yyyyMMdd_HHmmss}.mp4");
             }

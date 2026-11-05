@@ -49,7 +49,7 @@ namespace Greenshot.Helpers
         /// <summary>
         /// Directory where editor state is stored for restore after a system restart.
         /// </summary>
-        public static string StateDirectory => Path.Combine(Path.GetTempPath(), "Greenshot", "RestartState");
+        public static string StateDirectory => Path.Combine(Path.GetTempPath(), "BuckShot-Markup", "RestartState");
 
         /// <summary>
         /// How long the end of the session waits for the editors to save their state

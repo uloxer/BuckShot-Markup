@@ -166,7 +166,7 @@
 
             <GroupBox Header="{wpf:Text Settings.AitoolsPermissions}">
                 <StackPanel>
-                    <CheckBox IsChecked="{Binding CoreConfiguration.AiToolsAllowRecipeProposals, Mode=TwoWay}"
+                    <CheckBox Visibility="Collapsed" IsChecked="{Binding CoreConfiguration.AiToolsAllowRecipeProposals, Mode=TwoWay}"
                               IsEnabled="{Binding CoreConfiguration, Converter={StaticResource FixedToEnabledConverter}, ConverterParameter=AiToolsAllowRecipeProposals}">
                         <TextBlock Text="{wpf:Text Settings.AitoolsProposals}" TextWrapping="Wrap" Foreground="{Binding Source={x:Static wpf:ThemeManager.Instance}, Path=ForegroundBrush}"/>
                     </CheckBox>
@@ -221,7 +221,7 @@
             </GroupBox>
 
             <!-- Recipes from files and their approval (also those written by AI tools) -->
-            <GroupBox Header="{wpf:Text Settings.Recipeapprovals}">
+            <GroupBox Visibility="Collapsed" Header="{wpf:Text Settings.Recipeapprovals}">
                 <StackPanel>
                     <TextBlock Text="{wpf:Text Settings.RecipeapprovalsDescription}"
                                TextWrapping="Wrap" Margin="0,0,0,8" FontSize="{wpf:FontSize 11}"

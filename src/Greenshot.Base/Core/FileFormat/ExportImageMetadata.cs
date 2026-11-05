@@ -151,7 +151,7 @@ public sealed class ExportImageMetadata
     {
         var metadata = new ExportImageMetadata
         {
-            Software = "Greenshot " + EnvironmentInfo.GetGreenshotVersion(true)
+            Software = ProductIdentity.Name + " " + EnvironmentInfo.GetGreenshotVersion(true)
         };
         // A recipe ("Set metadata" step) decides for its capture
         var recipeValues = captureDetails?.MetaData;
