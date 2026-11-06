@@ -22,4 +22,4 @@ The [brand review](assets/branding/review/cyan-blueprint-direction.png) and [ori
 
 Based on Greenshot, copyright © 2007–2026 Thomas Braun, Jens Klingen, Robin Krom and contributors. Existing licences, copyrights and credits are retained. Distributed under the [GNU GPL version 3 or later](LICENSE).
 
-Brand assets and final installer validation are being integrated before the first BuckShot release. No installer is published by the migration stage alone.
+This is a private development preview. Installer candidates are supplied for authenticated review after build, installation and uninstall checks pass. Source and release links require GitHub access; application credentials or access tokens are not embedded in the package.

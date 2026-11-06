@@ -73,4 +73,11 @@ Source: {#LanguagesDir}\*de-DE*; Excludes: "*installer*,*website*"; DestDir: {ap
 
 [Components]
 Name: "disablesnippingtool"; Description: {cm:disablewin11snippingtool}; Flags: disablenouninstallwarning; Types: default full custom
-Name: "greenshot"; Description: "Greenshot"; Types: default full compact custom; Flags: fixed
+Name: "greenshot"; Description: "{#AppDisplayName}"; Types: default full compact custom; Flags: fixed
+
+[CustomMessages]
+disablewin11snippingtool=Disable Win11 default PrtScr snipping tool
+en.disablewin11snippingtool=Disable Win11 default PrtScr snipping tool
+de.disablewin11snippingtool=Deaktiviere das Standard Windows 11 Snipping Tool auf "Druck"
+ptBR.disablewin11snippingtool=Desativar ferramenta de captura padrão PrtScr do Win11
+tr.disablewin11snippingtool=Win11 varsayılan ekran alıntısı aracını devre dışı bırakın

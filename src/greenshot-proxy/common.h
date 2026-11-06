@@ -18,6 +18,7 @@
 #include <windows.h>
 #include <sddl.h>
 #include <shellapi.h>
+#include "generated-version.h"
 
 typedef unsigned int UINT32_T;
 
@@ -28,7 +29,7 @@ typedef unsigned int UINT32_T;
 #define PIPE_PREFIX L"\\\\.\\pipe\\BuckShot-Markup_"
 #define STARTUP_MUTEX_PREFIX L"Local\\BuckShot-Markup_Startup_"
 
-#define PROXY_CLIENT_VERSION "1.4.0"
+#define PROXY_CLIENT_VERSION BUCKSHOT_VERSION_SHORT
 
 /* Offline response written to stdout in Native Messaging mode when Greenshot is not running */
 #define OFFLINE_JSON "{\"status\":\"unavailable\",\"greenshot_running\":false,\"retry\":true}"

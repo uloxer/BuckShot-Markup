@@ -5,6 +5,14 @@ function CompactInstall(Param: String): String;
 begin Result := SetupMessage(msgCompactInstallation); end;
 function CustomInstall(Param: String): String;
 begin Result := SetupMessage(msgCustomInstallation); end;
+// Language components use the Windows language-group availability check.
+function hasLanguageGroup(argument: String): Boolean;
+var KeyValue: String;
+begin
+  Result := True;
+  if RegQueryStringValue(HKLM, 'SYSTEM\CurrentControlSet\Control\Nls\Language Groups', argument, KeyValue) then
+    Result := Length(KeyValue) > 0;
+end;
 procedure OpenSourceLink(Sender: TObject; const Link: string; LinkType: TSysLinkType);
 var ErrorCode: Integer;
 begin

@@ -1,8 +1,10 @@
+#include "generated-version.h"
+
 1 ICON "..\\Greenshot\\icons\\applicationIcon\\Greenshot-Proxy.ico"
 
 1 VERSIONINFO
-FILEVERSION 1,4,0,0
-PRODUCTVERSION 1,4,0,0
+FILEVERSION BUCKSHOT_VERSION_NUMERIC
+PRODUCTVERSION BUCKSHOT_VERSION_NUMERIC
 FILEFLAGSMASK 0x3fL
 FILEFLAGS 0x0L
 FILEOS 0x40004L
@@ -13,14 +15,14 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "Greenshot"
-            VALUE "FileDescription", "Greenshot Proxy"
-            VALUE "FileVersion", "1.4.0.0"
+            VALUE "CompanyName", "BuckShot Markup contributors"
+            VALUE "FileDescription", "BuckShot Markup Proxy"
+            VALUE "FileVersion", BUCKSHOT_VERSION_FULL
             VALUE "InternalName", "greenshot-proxy"
             VALUE "LegalCopyright", "Copyright (C) 2007-2026 Thomas Braun, Jens Klingen, Robin Krom"
             VALUE "OriginalFilename", "greenshot-proxy.exe"
-            VALUE "ProductName", "Greenshot"
-            VALUE "ProductVersion", "1.4.0.0"
+            VALUE "ProductName", "BuckShot Markup"
+            VALUE "ProductVersion", BUCKSHOT_VERSION_FULL
         END
     END
     BLOCK "VarFileInfo"

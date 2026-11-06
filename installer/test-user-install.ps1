@@ -43,9 +43,15 @@ try {
         if (-not (Test-Path -LiteralPath (Join-Path $actualDir $file))) { throw "Missing installed file: $file" }
     }
     if (Test-Path -LiteralPath (Join-Path $actualDir 'Plugins/Greenshot.Plugin.RecipeEditor')) { throw 'Recipe Editor must not be distributed' }
-    $appInfo = [Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $actualDir 'Greenshot.exe'))
-    if ($appInfo.ProductName -ne 'BuckShot Markup') { throw "Unexpected executable product: $($appInfo.ProductName)" }
-    if ($ExpectedVersion -and ([version]$appInfo.FileVersion).ToString(3) -ne $ExpectedVersion) { throw 'Application and installer versions differ' }
+    $sourceVersion = (Get-Content -LiteralPath (Join-Path $PSScriptRoot '../src/version.json') -Raw | ConvertFrom-Json).version
+    if ($ExpectedVersion -and $ExpectedVersion -ne $sourceVersion) { throw 'Requested and source versions differ' }
+    foreach ($file in @('Greenshot.exe', 'greenshot-proxy.exe', 'greenshot-cli.exe')) {
+        $info = [Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $actualDir $file))
+        if ($info.ProductName -ne 'BuckShot Markup') { throw "Unexpected product name in ${file}: $($info.ProductName)" }
+        if ([version]$info.FileVersion -ne [version]"$sourceVersion.0") { throw "Unexpected file version in ${file}: $($info.FileVersion)" }
+        if (([version]($info.ProductVersion -split '\+')[0]).ToString(3) -ne $sourceVersion) { throw "Unexpected product version in ${file}: $($info.ProductVersion)" }
+        Write-Host "Verified $file product '$($info.ProductName)' version $($info.FileVersion)."
+    }
     Push-Location $actualDir
     try { & (Join-Path $PSScriptRoot 'validate-installation.ps1') -WarningAction Stop }
     finally { Pop-Location }
