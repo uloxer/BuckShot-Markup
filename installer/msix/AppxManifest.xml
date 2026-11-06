@@ -2,9 +2,11 @@
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+ xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+ xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
- IgnorableNamespaces="uap uap3 desktop rescap">
+ IgnorableNamespaces="uap uap3 uap5 desktop desktop4 rescap">
   <Identity Name="BuckShotMarkup.Preview" Publisher="CN=BuckShot Markup Development" Version="0.0.0.0" ProcessorArchitecture="x64"/>
   <Properties>
     <DisplayName>BuckShot Markup</DisplayName>
@@ -19,6 +21,11 @@
       <uap:VisualElements DisplayName="BuckShot Markup" Description="Screenshot capture and engineering markup"
         Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" BackgroundColor="transparent"/>
       <Extensions>
+        <uap5:Extension Category="windows.appExecutionAlias" Executable="greenshot-cli.exe" EntryPoint="Windows.FullTrustApplication">
+          <uap5:AppExecutionAlias desktop4:Subsystem="console">
+            <uap5:ExecutionAlias Alias="buckshot-markup-cli.exe"/>
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap3:FileTypeAssociation Name="buckshot-markup" Parameters="--file &quot;%1&quot;">
             <uap:SupportedFileTypes><uap:FileType>.greenshot</uap:FileType></uap:SupportedFileTypes>

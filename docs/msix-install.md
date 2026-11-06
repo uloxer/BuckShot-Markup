@@ -27,6 +27,8 @@ Add-AppxPackage -Path .\BuckShot-Markup.msix
 
 Launch BuckShot Markup from Start. Windows offers it under Open with for `.greenshot` projects without replacing an existing default. The packaged startup task is disabled initially; use Windows Settings → Apps → Startup to enable it. The desktop app's legacy registry-based startup option does not control this packaged task.
 
+The packaged command-line entry point is `buckshot-markup-cli.exe` (for example, `buckshot-markup-cli.exe --version`). It uses Windows' app execution alias; do not launch helper EXEs directly from the protected WindowsApps installation folder.
+
 To uninstall for your user:
 
 ```powershell

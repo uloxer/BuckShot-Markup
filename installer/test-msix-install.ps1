@@ -48,7 +48,8 @@ public static class BuckShotMsixActivation {
     Start-Sleep -Seconds 5
     $appProcess = Get-Process -Id $appProcessId -ErrorAction Stop
     if (-not $appProcess.Path.StartsWith($installed.InstallLocation, [StringComparison]::OrdinalIgnoreCase)) { throw 'A different application was activated.' }
-    $cli = Join-Path $installed.InstallLocation 'greenshot-cli.exe'
+    # WindowsApps executables must be launched through a declared package entry point.
+    $cli = Join-Path $env:LOCALAPPDATA 'Microsoft/WindowsApps/buckshot-markup-cli.exe'
     $versionOutput = & $cli --version 2>&1 | Out-String
     if ($LASTEXITCODE -ne 0 -or $versionOutput -notmatch [regex]::Escape($ExpectedVersion)) { throw "Packaged CLI/version smoke failed: $versionOutput" }
     & $cli --exit
