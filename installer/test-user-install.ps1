@@ -48,6 +48,7 @@ try {
     foreach ($file in @('Greenshot.exe', 'greenshot-proxy.exe', 'greenshot-cli.exe')) {
         $info = [Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $actualDir $file))
         if ($info.ProductName -ne 'BuckShot Markup') { throw "Unexpected product name in ${file}: $($info.ProductName)" }
+        if ($file -eq 'Greenshot.exe' -and $info.FileDescription -ne 'BuckShot Markup') { throw "Unexpected Windows display name: $($info.FileDescription)" }
         if (([version]$info.FileVersion).ToString(3) -ne $sourceVersion) { throw "Unexpected file version in ${file}: $($info.FileVersion)" }
         # NBGV keeps a commit-height fourth component for the managed app; native helpers use a fixed zero revision.
         if ($file -ne 'Greenshot.exe' -and [version]$info.FileVersion -ne [version]"$sourceVersion.0") { throw "Unexpected native version revision in ${file}: $($info.FileVersion)" }

@@ -13,10 +13,21 @@ namespace Greenshot.Tests
     public class BuckShotIdentityTests
     {
         [Fact]
+        public void ExecutableFileDescriptionUsesBuckShotWindowsDisplayName()
+        {
+            var assembly = typeof(GreenshotMain).Assembly;
+            var title = (System.Reflection.AssemblyTitleAttribute)Attribute.GetCustomAttribute(assembly, typeof(System.Reflection.AssemblyTitleAttribute));
+            Assert.Equal(ProductIdentity.Name, title.Title);
+            var info = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
+            Assert.Equal(ProductIdentity.Name, info.FileDescription);
+            Assert.Equal(ProductIdentity.Name, info.ProductName);
+        }
+
+        [Fact]
         public void ProductVersionAndRuntimeStorageAreIndependentFromGreenshot()
         {
             Assert.Equal("BuckShot Markup", EditionInfo.ProductName);
-            Assert.Equal("0.9.668", ProductIdentity.Version);
+            Assert.Equal("0.9.669", ProductIdentity.Version);
             Assert.Equal(ProductIdentity.Version, EnvironmentInfo.GetGreenshotVersion());
             Assert.Equal(ProductIdentity.Version, EnvironmentInfo.GetGreenshotVersion(true));
             Assert.Equal("buckshot-markup.ini", IniConfigHelper.NormalConfigName);

@@ -2,6 +2,8 @@
   <PropertyGroup>
     <RootNamespace>Greenshot</RootNamespace>
     <AssemblyName>Greenshot</AssemblyName>
+    <!-- Windows uses the assembly title as the EXE's FileDescription, including tray settings. -->
+    <AssemblyTitle>BuckShot Markup</AssemblyTitle>
     <OutputType>WinExe</OutputType>
     <ApplicationIcon>icons\applicationIcon\icon.ico</ApplicationIcon>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
