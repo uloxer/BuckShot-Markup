@@ -239,8 +239,11 @@ namespace Greenshot.Tests.Editor
                 }
             });
         }
-        [Fact]
-        public void Panel_CheckboxMouseClicksKeepRowsAndSelectedEdgeControlsInSync()
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(3)]
+        public void Panel_CheckboxGlyphAndMouseHitboxSurviveScaledTextPadding(int textScale)
         {
             Sta(() =>
             {
@@ -251,12 +254,31 @@ namespace Greenshot.Tests.Editor
                 var panel = Field<MeasurementPanel>(editor, "_measurementPanel");
                 panel.SetExpanded(true); editor.Show(); Application.DoEvents();
                 var edges = Field<DataGridView>(panel, "_dimensionEdges");
+                // WinForms scales inherited padding while these explicitly sized rows stay short.
+                // Exercise that high-DPI layout on the runner's native checkbox renderer too.
+                edges.DefaultCellStyle.Padding = new Padding(3 * textScale, 4 * textScale, 3 * textScale, 4 * textScale);
                 var row = edges.Rows[1];
                 var checkbox = row.Cells[0];
+                var glyph = checkbox.GetContentBounds(1);
+                Assert.True(glyph.Width > 0 && glyph.Height > 0, "Checkbox glyph must fit in the actual table row.");
+                edges.CurrentCell = edges.Rows[0].Cells[1];
+                using (var rendered = new Bitmap(edges.Width, edges.Height))
+                {
+                    edges.DrawToBitmap(rendered, new Rectangle(Point.Empty, rendered.Size));
+                    var cell = edges.GetCellDisplayRectangle(0, 1, false);
+                    int ink = 0;
+                    for (int y = glyph.Top; y < glyph.Bottom; y++)
+                        for (int x = glyph.Left; x < glyph.Right; x++)
+                            if (rendered.GetPixel(cell.Left + x, cell.Top + y).GetBrightness() < .7f) ink++;
+                    Assert.True(ink > 5, "The unchecked checkbox outline must be visible, not an empty cell.");
+                }
                 void ClickCell(int column, int index)
                 {
                     var rect = edges.GetCellDisplayRectangle(column, index, false);
-                    var position = new IntPtr(((rect.Top + rect.Height / 2) << 16) | (rect.Left + rect.Width / 2));
+                    var content = edges.Rows[index].Cells[column].GetContentBounds(index);
+                    int x = column == 0 ? content.Left + content.Width / 2 : rect.Width / 2;
+                    int y = column == 0 ? content.Top + content.Height / 2 : rect.Height / 2;
+                    var position = new IntPtr(((rect.Top + y) << 16) | (rect.Left + x));
                     SendMessage(edges.Handle, 0x0201, new IntPtr(1), position);
                     SendMessage(edges.Handle, 0x0202, IntPtr.Zero, position);
                     Application.DoEvents();

@@ -2,7 +2,7 @@
 
 Windows screenshot capture and engineering markup, based on Greenshot and GreenShotPlus.
 
-Current product version: **0.9.667**. `src/version.json` is the authoritative version source.
+Current product version: **0.9.668**. `src/version.json` is the authoritative version source.
 
 The EXE installer is the default Windows package. MSIX builds are optional and disabled by default.
 

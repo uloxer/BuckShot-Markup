@@ -1039,6 +1039,7 @@ namespace Greenshot.Editor.Drawing
             // every other control on the form, which is wrong here: the canvas size must always be
             // exactly image-size * zoom-factor, in device pixels, regardless of monitor DPI.
             UpdateSize();
+            Invalidate();
         }
 
         /// <summary>

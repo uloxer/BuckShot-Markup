@@ -1056,6 +1056,8 @@ if (!IsDisposed && !Disposing && IsHandleCreated)
         {
             var tab = SelectedTab;
             _surface = tab.Surface;
+            // Initialize selection chrome before the new canvas gets its first paint.
+            _surface.AdjustToDpi(DeviceDpi);
             panel1.Controls.Add(_surface);
             BindSurface();
 

@@ -301,6 +301,41 @@ namespace Greenshot.Tests.Editor
                 finally { Greenshot.Base.Core.InputState.ModifierKeysSource = previous; }
             });
         }
+        [Theory]
+        [InlineData(96)]
+        [InlineData(144)]
+        [InlineData(192)]
+        public void RotationHandle_FirstPaintUsesAdornerDpiAndRemainsStableAfterHandleCreation(int dpi)
+        {
+            Sta(() =>
+            {
+                using var form = new Form(); using var surface = new Surface(new Bitmap(600, 500));
+                var box = Box(surface, 200, 250);
+                surface.AdjustToDpi(dpi);
+                Assert.True(surface.TryGetRotationHandle(out var initial));
+                int HandleWidth()
+                {
+                    using var bitmap = new Bitmap(600, 500);
+                    using (var graphics = Graphics.FromImage(bitmap))
+                        typeof(Surface).GetMethod("PaintRotationHandle", BindingFlags.Instance | BindingFlags.NonPublic)
+                            .Invoke(surface, new object[] { graphics });
+                    int left = bitmap.Width, right = -1;
+                    for (int x = 0; x < bitmap.Width; x++)
+                        if (bitmap.GetPixel(x, (int)Math.Round(initial.Y)).A > 0) { left = Math.Min(left, x); right = x; }
+                    return right - left + 1;
+                }
+                int firstWidth = HandleWidth();
+                Assert.InRange(firstWidth, 14 * dpi / 96, 18 * dpi / 96);
+                form.Controls.Add(surface); form.Show(); Application.DoEvents();
+                Assert.True(surface.TryGetRotationHandle(out var after));
+                Assert.Equal(initial, after); Assert.Equal(firstWidth, HandleWidth());
+                bool invalidated = false;
+                surface.Invalidated += (s, e) => invalidated = true;
+                surface.AdjustToDpi(dpi);
+                Assert.True(invalidated, "DPI updates must repaint selection handles immediately.");
+            });
+        }
+
         [Fact]
         public void RotationHandle_NearCanvasTopStaysReachableAndCommitsOneUndo()
         {

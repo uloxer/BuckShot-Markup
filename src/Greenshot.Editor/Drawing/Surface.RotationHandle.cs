@@ -14,7 +14,7 @@ namespace Greenshot.Editor.Drawing
         private double[] _rotationOriginal;
         private double _rotationStartPointer, _rotationDelta;
         private PointF _rotationPivot;
-        private float RotationScreenScale => (float)(DeviceDpi / 96d / (double)_zoomFactor);
+        private float RotationScreenScale => (float)(CurrentDpi / 96d / (double)_zoomFactor);
         private DrawableContainer RotationHandleOwner => selectedElements.Count == 1 &&
             selectedElements[0] is DrawableContainer shape && _elements.Contains(shape) && shape.GroupId == Guid.Empty && SupportsObjectRotation(shape) ? shape : null;
 
