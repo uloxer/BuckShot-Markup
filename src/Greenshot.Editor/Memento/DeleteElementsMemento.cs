@@ -49,9 +49,10 @@ namespace Greenshot.Editor.Memento
 
         private void Dispose(bool disposing)
         {
-            if (disposing)
+            if (disposing && _containerList != null)
             {
-                _containerList?.Dispose();
+                foreach (var container in _containerList)
+                    if (!_surface.Elements.Contains(container)) container.Dispose();
             }
 
             _containerList = null;
@@ -74,6 +75,9 @@ namespace Greenshot.Editor.Memento
                 _surface.Elements.Insert(Math.Max(0, Math.Min(entry.Position, _surface.Elements.Count)), entry.Member);
             // After
             _surface.Invalidate();
+            // Restoring transfers ownership back to the surface, including when this record is later disposed.
+            _containerList = null;
+            _surface = null;
             return oldState;
         }
     }

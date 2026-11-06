@@ -46,11 +46,7 @@ namespace Greenshot.Editor.Memento
 
         private void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                _drawableContainer?.Dispose();
-            }
-
+            // The field snapshot does not own the drawable object.
             _drawableContainer = null;
         }
 

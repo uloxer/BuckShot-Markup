@@ -45,6 +45,6 @@ The private `RecipeManager`, built-in flows, trigger manager, capture runner, pi
 
 ## Integration validation
 
-The separately investigated pasted-image undo-history lifetime defect is not changed by this branding fork. Its reproduction and implementation remain a separate task.
+Resolved in 0.8.667: discarded add/geometry/field history records no longer dispose live pasted images. Delete records relinquish ownership when restored and still dispose detached images when their history is discarded. Targeted pixel, undo/redo, persistence and disposal regressions cover the correction.
 
 Stage 1 validates a serial managed build, product/storage/IPC boundary regressions and built-in capture pipeline tests. Installer native/package validation and final visual branding are integration-stage gates; no installer or release is published at this stage. Public UI/source-reference review must be repeated after later stages integrate their new icons and defaults.

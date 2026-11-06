@@ -77,11 +77,7 @@ namespace Greenshot.Editor.Memento
 
         private void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                _listOfDrawableContainer?.Dispose();
-            }
-
+            // Geometry history stores values and references, not ownership of the drawable objects.
             _listOfDrawableContainer = null;
         }
 

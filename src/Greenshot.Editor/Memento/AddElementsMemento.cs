@@ -45,11 +45,7 @@ namespace Greenshot.Editor.Memento
 
         private void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                _containerList?.Dispose();
-            }
-
+            // Add records reference surface-owned containers; only delete records own detached containers.
             _containerList = null;
             _surface = null;
         }

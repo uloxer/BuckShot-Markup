@@ -51,7 +51,7 @@ namespace Greenshot.Editor.Memento
 
             if (_drawableContainer != null)
             {
-                _drawableContainer.Dispose();
+                if (!_surface.Elements.Contains(_drawableContainer)) _drawableContainer.Dispose();
                 _drawableContainer = null;
             }
         }
@@ -76,6 +76,8 @@ namespace Greenshot.Editor.Memento
 
             // After
             _drawableContainer.Invalidate();
+            // Restored containers belong to the surface again.
+            _drawableContainer = null;
             return oldState;
         }
     }
