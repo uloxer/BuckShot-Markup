@@ -259,6 +259,7 @@ namespace Greenshot.Tests.Editor
                 edges.DefaultCellStyle.Padding = new Padding(3 * textScale, 4 * textScale, 3 * textScale, 4 * textScale);
                 var row = edges.Rows[1];
                 var checkbox = row.Cells[0];
+                Assert.Equal(0, checkbox.InheritedStyle.Padding.Vertical);
                 var glyph = checkbox.GetContentBounds(1);
                 Assert.True(glyph.Width > 0 && glyph.Height > 0, "Checkbox glyph must fit in the actual table row.");
                 edges.CurrentCell = edges.Rows[0].Cells[1];

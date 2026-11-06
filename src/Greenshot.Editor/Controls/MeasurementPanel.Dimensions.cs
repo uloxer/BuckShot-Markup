@@ -30,7 +30,8 @@ namespace Greenshot.Editor.Controls
             _dimensionEdges.Columns.Add(new DataGridViewTextBoxColumn { HeaderText="Length", ReadOnly=true, FillWeight=100, SortMode=DataGridViewColumnSortMode.NotSortable });
             ConfigureGrid(_dimensionEdges);
             // Text-cell padding can consume the checkbox glyph's entire height after DPI scaling.
-            _dimensionEdges.Columns[0].DefaultCellStyle.Padding = Padding.Empty;
+            // Empty means inherit in DataGridViewCellStyle, so keep a nonempty horizontal inset.
+            _dimensionEdges.Columns[0].DefaultCellStyle.Padding = new Padding(1, 0, 0, 0);
             _dimensionEdges.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             _dimensionEdges.Columns[0].MinimumWidth = 50;
             _dimensionEdges.Columns[1].MinimumWidth = 60;
