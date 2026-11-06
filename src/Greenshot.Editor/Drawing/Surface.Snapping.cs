@@ -26,22 +26,20 @@ namespace Greenshot.Editor.Drawing
         }
         internal void ClearSnapGuide()
         {
-            if (_snapTarget == null) return;
-            _snapTarget = null; _snapAnchor = null; _snapEnd = null; Invalidate();
-        }
-        private IEnumerable<PointF> SnapTargets(IEnumerable<IDrawableContainer> excluded)
-        {
-            var skip = new HashSet<IDrawableContainer>(excluded);
-            return _elements.Where(element => !skip.Contains(element)).SelectMany(ObjectSnapHelper.Targets).ToArray();
+            SetSnapGuide(null, null, null);
+            ReleaseSnapTargets();
         }
         internal Point SnapGesture(Point pointer, Point? anchor, IDrawableContainer owner, bool through, Func<Point, bool> compatible = null)
         {
-            ClearSnapGuide();
-            if (!_snapPoints && !_snapThrough) return pointer;
-            var end = ObjectSnapHelper.Snap(pointer, anchor, SnapTargets(new[] { owner }), _snapPoints, through && _snapThrough && (InputState.ModifierKeys & Keys.Control) == 0,
-                _zoomFactor, compatible, out _snapTarget, out bool ray, _snappingRadius);
-            if (ray) { _snapAnchor = anchor; _snapEnd = end; }
-            if (_snapTarget != null) Invalidate();
+            if (!_snapPoints && !_snapThrough) { SetSnapGuide(null, null, null); return pointer; }
+            var targets = SnapTargets(new[] { owner });
+            PrepareSnapLock("endpoint");
+            bool useThrough = through && _snapThrough && (InputState.ModifierKeys & Keys.Control) == 0;
+            if (!TryRetainedSnap(pointer, anchor, owner, 0, _snapPoints, useThrough, compatible, out var end, out var target, out bool ray))
+                end = ObjectSnapHelper.Snap(pointer, anchor, targets, _snapPoints, useThrough, _zoomFactor, compatible,
+                    out target, out ray, _snappingRadius);
+            LockSnap(target, owner, 0, ray);
+            SetSnapGuide(target, ray ? anchor : null, ray ? end : (Point?)null);
             return end;
         }
         internal Point SnapDrawingStart(Point pointer, IDrawableContainer owner)
@@ -69,8 +67,10 @@ namespace Greenshot.Editor.Drawing
         private NativeRectFloat SnapShapeDrawing(IDrawableContainer owner, NativeRect original, Point pointer,
             NativeRectFloat baseline, IDoubleProcessor angle, ScaleOptions? options)
         {
-            ClearSnapGuide();
             var targets = SnapTargets(new[] { owner });
+            PrepareSnapLock("shape");
+            PointF? nextTarget = null;
+            int nextSource = -1;
             var opts = options ?? ScaleHelper.GetScaleOptions();
             NativeRectFloat Scale(Point p, ScaleOptions o) => ScaleHelper.Scale(
                 new NativeRect(original.X, original.Y, p.X-original.X, p.Y-original.Y), p.X, p.Y, angle, o);
@@ -91,16 +91,26 @@ namespace Greenshot.Editor.Drawing
                 foreach (var target in targets)
                 {
                     double distance = ObjectSnapHelper.DistanceSquared(source,target);
-                    if (distance > best || (_snapTarget != null && distance >= best)) continue;
+                    bool retained = _snapLockedTarget >= 0 && ReferenceEquals(_snapLockedOwner, owner) &&
+                        _snapLockedSource == (int)(x * 2) * 3 + (int)(y * 2) && targets[_snapLockedTarget] == target;
+                    double limit = retained ? Math.Pow(_snappingRadius * 1.25 / Math.Max(.001, (double)_zoomFactor), 2) : best;
+                    if (distance > limit || (!retained && nextTarget != null && distance >= best)) continue;
                     if ((ax == 0 && Math.Abs(target.X-source.X) > .5) || (ay == 0 && Math.Abs(target.Y-source.Y) > .5)) continue;
                     var end = new Point(pointer.X+(ax == 0 ? 0 : (int)Math.Round((target.X-source.X)/ax)),
                         pointer.Y+(ay == 0 ? 0 : (int)Math.Round((target.Y-source.Y)/ay)));
                     var candidate = Scale(end,opts);
                     if (ObjectSnapHelper.DistanceSquared(Feature(candidate,x,y),target) > 2) continue;
-                    best=distance; result=candidate; _snapTarget=target;
+                    best=distance; result=candidate; nextTarget=target; nextSource=(int)(x * 2) * 3 + (int)(y * 2);
+                    if (retained)
+                    {
+                        LockSnap(nextTarget, owner, nextSource, false);
+                        SetSnapGuide(nextTarget, null, null);
+                        return result;
+                    }
                 }
             }
-            if (_snapTarget != null) Invalidate();
+            LockSnap(nextTarget, owner, nextSource, false);
+            SetSnapGuide(nextTarget, null, null);
             return result;
         }
 
@@ -157,22 +167,37 @@ namespace Greenshot.Editor.Drawing
 
         private Point SnapTranslation(Point pointer)
         {
-            ClearSnapGuide();
-            if (!_snapPoints) return pointer;
+            if (!_snapPoints) { SetSnapGuide(null, null, null); return pointer; }
             var moving = _mouseDownElement.Selected ? selectedElements.ToArray() : new[] { _mouseDownElement };
             var targets = SnapTargets(moving);
+            PrepareSnapLock("translation");
+            PointF? nextTarget = null;
+            IDrawableContainer nextOwner = null;
+            int nextSource = -1;
             int dx = pointer.X - _mouseStart.X, dy = pointer.Y - _mouseStart.Y;
             double best = double.MaxValue;
             Point correction = Point.Empty;
-            foreach (var source in moving.SelectMany(ObjectSnapHelper.Targets))
+            foreach (var member in moving)
             {
-                var translated = Point.Round(new PointF(source.X + dx, source.Y + dy));
-                var end = ObjectSnapHelper.Snap(translated, null, targets, true, false, _zoomFactor, null, out var target, out _, _snappingRadius);
-                double distance = ObjectSnapHelper.DistanceSquared(translated, end);
-                if (target != null && distance < best)
-                { best = distance; correction = new Point(end.X - translated.X, end.Y - translated.Y); _snapTarget = target; }
+                int sourceIndex = -1;
+                foreach (var source in ObjectSnapHelper.Targets(member))
+                {
+                    sourceIndex++;
+                    var translated = Point.Round(new PointF(source.X + dx, source.Y + dy));
+                    if (TryRetainedSnap(translated, null, member, sourceIndex, true, false, null, out var retained, out var retainedTarget, out _))
+                    {
+                        LockSnap(retainedTarget, member, sourceIndex, false);
+                        SetSnapGuide(retainedTarget, null, null);
+                        return new Point(pointer.X + retained.X - translated.X, pointer.Y + retained.Y - translated.Y);
+                    }
+                    var end = ObjectSnapHelper.Snap(translated, null, targets, true, false, _zoomFactor, null, out var target, out _, _snappingRadius);
+                    double distance = ObjectSnapHelper.DistanceSquared(translated, end);
+                    if (target != null && distance < best)
+                    { best = distance; correction = new Point(end.X - translated.X, end.Y - translated.Y); nextTarget = target; nextOwner = member; nextSource = sourceIndex; }
+                }
             }
-            if (_snapTarget != null) Invalidate();
+            LockSnap(nextTarget, nextOwner, nextSource, false);
+            SetSnapGuide(nextTarget, null, null);
             return new Point(pointer.X + correction.X, pointer.Y + correction.Y);
         }
 
@@ -184,7 +209,7 @@ namespace Greenshot.Editor.Drawing
             using var pen = new Pen(Color.DeepSkyBlue, 1) { DashStyle = DashStyle.Dot };
             if (_snapAnchor != null && _snapEnd != null)
                 graphics.DrawLine(pen, _snapAnchor.Value.X * zoom, _snapAnchor.Value.Y * zoom, _snapEnd.Value.X * zoom, _snapEnd.Value.Y * zoom);
-            if (_existingGestureAdorner != null || _vertexOwner != null || _mouseDownElement != null)
+            if (_snapGuideEditing)
             {
                 // Existing geometry moves to this target; a small cross cannot be mistaken for the pointer.
                 using var editingPen = new Pen(Color.SlateGray, 1);

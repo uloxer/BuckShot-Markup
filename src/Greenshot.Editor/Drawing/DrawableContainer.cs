@@ -383,7 +383,7 @@ namespace Greenshot.Editor.Drawing
             if (Status != EditStatus.UNDRAWN)
             {
                 // Group selection borders span the space between member bounds.
-                if ((_groupId != Guid.Empty || HasObjectTransform) && _parent is Surface surface) { surface.Invalidate(); return; }
+                if ((_groupId != Guid.Empty || HasObjectTransform) && _parent is Surface surface) { surface.InvalidateElementVisual(this); return; }
                 _parent?.InvalidateElements(DrawingBounds);
             }
         }

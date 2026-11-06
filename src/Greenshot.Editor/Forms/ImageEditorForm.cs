@@ -1105,6 +1105,7 @@ if (!IsDisposed && !Disposing && IsHandleCreated)
             UnbindSurface();
             // Removing the surface can move the focus (e.g. a text being edited loses it), the handlers mustn't change the hidden surface
             var surface = _surface;
+            surface.ClearSnapGuide();
             _surface = null;
             panel1.Controls.Remove(surface);
             tabStrip.SelectedTab = null;

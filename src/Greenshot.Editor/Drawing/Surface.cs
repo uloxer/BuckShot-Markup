@@ -3124,10 +3124,14 @@ namespace Greenshot.Editor.Drawing
             targetGraphics.ResetClip();
             PaintScalePreview(targetGraphics);
             PaintSnapGuide(targetGraphics);
+            // Resolve multi-member groups once for this paint, rather than scanning per selected member.
+            var groupedSelection = new HashSet<Guid>(_elements.OfType<DrawableContainer>()
+                .Where(element => element.GroupId != Guid.Empty).GroupBy(element => element.GroupId)
+                .Where(group => group.Skip(1).Any()).Select(group => group.Key));
             // Draw adorners last
             foreach (var drawableContainer in selectedElements)
             {
-                if (IsGroupedMember(drawableContainer)) continue;
+                if (drawableContainer is DrawableContainer grouped && groupedSelection.Contains(grouped.GroupId)) continue;
                 foreach (var adorner in drawableContainer.Adorners)
                 {
                     adorner.Paint(paintEventArgs);
@@ -3139,6 +3143,7 @@ namespace Greenshot.Editor.Drawing
             PaintSelectionBox(targetGraphics);
             PaintRotationHandle(targetGraphics);
             PaintFocusFrame(targetGraphics);
+            RememberSelectionVisuals();
         }
 
         /// <summary>
@@ -3325,6 +3330,7 @@ namespace Greenshot.Editor.Drawing
         /// <param name="invalidate">true if invalidate needs to be called</param>
         public void AddElement(IDrawableContainer element, bool makeUndoable = true, bool invalidate = true)
         {
+            InvalidateSnapTargets();
             _elements.Add(element);
             if (element is DrawableContainer container)
             {
@@ -3405,6 +3411,7 @@ namespace Greenshot.Editor.Drawing
         /// <param name="generateEvents">false to skip event generation</param>
         public void RemoveElement(IDrawableContainer elementToRemove, bool makeUndoable = true, bool invalidate = true, bool generateEvents = true)
         {
+            InvalidateSnapTargets();
             DeselectElement(elementToRemove, generateEvents);
             if (_elements.Remove(elementToRemove))
             {
@@ -3420,6 +3427,7 @@ namespace Greenshot.Editor.Drawing
             if (elementToRemove is DrawableContainer element)
             {
                 element.FieldChanged -= Element_FieldChanged;
+                ForgetElementVisual(element);
             }
 
             if (elementToRemove != null)
@@ -3860,6 +3868,7 @@ namespace Greenshot.Editor.Drawing
 
             selectedElements.Add(container);
             container.Selected = true;
+            if (container is DrawableContainer shape) RememberElementVisual(shape);
             FieldAggregator.BindElement(container);
             if (Focused)
             {

@@ -73,5 +73,6 @@ jobs:
           name: BuckShot-Editor-QA
           path: |
             TestResults/stage1-colourbar/*.png
+            TestResults/stage2-render/*.png
             src/Greenshot.Tests/TestResults/*.trx
           if-no-files-found: warn

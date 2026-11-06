@@ -23,6 +23,11 @@ namespace Greenshot.Editor.Drawing
 
         internal void CancelPolygonInteraction()
         {
+            if (_polygonPoints.Count == 0 && _vertexOwner == null)
+            {
+                ClearSnapGuide();
+                return;
+            }
             _polygonPoints.Clear();
             if (_vertexOwner != null && _vertexDragging) _vertexOwner.SetVertices(_vertexBefore);
             _vertexOwner = null; _vertexBefore = null; _vertexDragging = false;

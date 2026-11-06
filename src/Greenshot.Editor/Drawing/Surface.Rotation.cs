@@ -57,7 +57,8 @@ namespace Greenshot.Editor.Drawing
                 member.RotateObject(degrees, x, y);
                 if (member.GroupId != Guid.Empty) member.GroupReferenceAngle += degrees;
             }
-            Modified = true; Invalidate();
+            Modified = true;
+            foreach (var member in members) InvalidateElementVisual(member);
             _movingElementChanged?.Invoke(this, new Greenshot.Base.Interfaces.SurfaceElementEventArgs { Elements = selectedElements });
             return true;
         }

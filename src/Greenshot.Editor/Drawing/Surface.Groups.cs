@@ -20,8 +20,10 @@ namespace Greenshot.Editor.Drawing
 
         private DrawableContainerList CompleteGroups(IEnumerable<IDrawableContainer> elements)
         {
-            var requested = new HashSet<IDrawableContainer>(elements.SelectMany(GroupMembers));
-            return new DrawableContainerList(_elements.Where(requested.Contains));
+            var requested = new HashSet<IDrawableContainer>(elements);
+            var groups = new HashSet<Guid>(requested.OfType<DrawableContainer>().Select(element => element.GroupId).Where(id => id != Guid.Empty));
+            return new DrawableContainerList(_elements.Where(element => requested.Contains(element) ||
+                element is DrawableContainer member && groups.Contains(member.GroupId)));
         }
 
         internal bool CanGroup => selectedElements.Count > 1 && selectedElements.All(e => e is DrawableContainer && !e.IsConfirmable && e.IsUndoable)

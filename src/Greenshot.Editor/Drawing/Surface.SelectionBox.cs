@@ -32,9 +32,9 @@ namespace Greenshot.Editor.Drawing
         private Rectangle SelectionBoxBounds => Rectangle.FromLTRB(Math.Min(_selectionBoxStart.Value.X, _selectionBoxEnd.X),
             Math.Min(_selectionBoxStart.Value.Y, _selectionBoxEnd.Y), Math.Max(_selectionBoxStart.Value.X, _selectionBoxEnd.X), Math.Max(_selectionBoxStart.Value.Y, _selectionBoxEnd.Y));
 
-        private void SetBoxSelection(IEnumerable<IDrawableContainer> selection)
+        private void SetBoxSelection(IEnumerable<IDrawableContainer> selection, bool groupsComplete = false)
         {
-            var next = new HashSet<IDrawableContainer>(CompleteGroups(selection.Where(_elements.Contains)));
+            var next = new HashSet<IDrawableContainer>(groupsComplete ? selection : CompleteGroups(selection.Where(_elements.Contains)));
             if (next.SetEquals(selectedElements)) return;
             var removed = selectedElements.Where(element => !next.Contains(element)).ToArray();
             var added = _elements.Where(element => next.Contains(element) && !selectedElements.Contains(element)).ToArray();
@@ -63,10 +63,11 @@ namespace Greenshot.Editor.Drawing
             var bounds = SelectionBoxBounds;
             var next = _selectionBoxToggle ? new HashSet<IDrawableContainer>(_selectionBoxInitial) : new HashSet<IDrawableContainer>();
             var seen = new HashSet<Guid>();
+            var groups = _elements.OfType<DrawableContainer>().Where(element => element.GroupId != Guid.Empty).ToLookup(element => element.GroupId);
             foreach (var member in _elements.OfType<DrawableContainer>().Where(e => e != _cropContainer && e.IsUndoable && !e.IsConfirmable))
             {
                 if (member.GroupId != Guid.Empty && !seen.Add(member.GroupId)) continue;
-                var unit = GroupMembers(member).ToArray();
+                var unit = member.GroupId == Guid.Empty ? new[] { member } : groups[member.GroupId].ToArray();
                 var visual = unit.Select(e => (Rectangle)e.Bounds).Aggregate(Rectangle.Union);
                 if (visual.Left < bounds.Left || visual.Right > bounds.Right || visual.Top < bounds.Top || visual.Bottom > bounds.Bottom) continue;
                 if (_selectionBoxToggle && _selectionBoxInitial.Contains(member))
@@ -78,7 +79,7 @@ namespace Greenshot.Editor.Drawing
                     foreach (var element in unit) next.Add(element);
                 }
             }
-            SetBoxSelection(next);
+            SetBoxSelection(next, groupsComplete: true);
             if (previousBounds.HasValue) InvalidateSelectionBox(previousBounds.Value);
             InvalidateSelectionBox(bounds);
             return true;

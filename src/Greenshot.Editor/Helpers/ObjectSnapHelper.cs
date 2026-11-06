@@ -51,7 +51,7 @@ namespace Greenshot.Editor.Helpers
             double zoom, Func<Point, bool> compatible, out PointF? target, out bool ray, double radius = 8)
         {
             target = null; ray = false;
-            double best = Math.Pow(Math.Max(1, Math.Min(100, radius)) / Math.Max(0.001, zoom), 2);
+            double best = Math.Pow(Math.Max(1, Math.Min(125, radius)) / Math.Max(0.001, zoom), 2);
             Point result = pointer;
             if (points)
                 foreach (var candidate in targets)

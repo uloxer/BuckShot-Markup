@@ -51,7 +51,7 @@ namespace Greenshot.Editor.Drawing
                 // Its broad image-space hit test otherwise swallows the rotation handle at high zoom.
                 var bounds = resize.Bounds;
                 var center = RotationHandleOwner.ModelToImage(new PointF(bounds.Left + bounds.Width / 2f, bounds.Top + bounds.Height / 2f));
-                double zoom = _zoomFactor;
+                double zoom = (double)_zoomFactor;
                 if (Math.Abs(pointer.X - center.X) * zoom <= bounds.Width / 2f + 3 &&
                     Math.Abs(pointer.Y - center.Y) * zoom <= bounds.Height / 2f + 3) return false;
             }
@@ -76,7 +76,7 @@ namespace Greenshot.Editor.Drawing
             if (dx * dx + dy * dy < 1) return true;
             _rotationDelta = (Math.Atan2(dy, dx) - _rotationStartPointer) * 180 / Math.PI;
             if ((InputState.ModifierKeys & Keys.Shift) != 0) _rotationDelta = Math.Round(_rotationDelta / 15) * 15;
-            if (_rotationOwner.PreviewRotation(_rotationOriginal, _rotationDelta, _rotationPivot.X, _rotationPivot.Y)) Invalidate();
+            if (_rotationOwner.PreviewRotation(_rotationOriginal, _rotationDelta, _rotationPivot.X, _rotationPivot.Y)) InvalidateElementVisual(_rotationOwner);
             return true;
         }
 
@@ -93,7 +93,7 @@ namespace Greenshot.Editor.Drawing
                 MakeUndoable(new DrawableContainerBoundsChangeMemento(owner, original), false);
                 Modified = true;
             }
-            Capture = false; Cursor = Cursors.Default; Invalidate();
+            Capture = false; Cursor = Cursors.Default; InvalidateElementVisual(owner);
             return true;
         }
 
@@ -102,7 +102,7 @@ namespace Greenshot.Editor.Drawing
             if (_rotationOwner == null) return false;
             var owner = _rotationOwner; _rotationOwner = null;
             owner.RestoreObjectTransform(_rotationOriginal); _rotationOriginal = null;
-            Capture = false; Cursor = Cursors.Default; Invalidate();
+            Capture = false; Cursor = Cursors.Default; InvalidateElementVisual(owner);
             return true;
         }
 
