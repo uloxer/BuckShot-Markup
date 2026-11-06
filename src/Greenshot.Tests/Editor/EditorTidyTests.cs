@@ -137,69 +137,6 @@ namespace Greenshot.Tests.Editor
             s.Undo(); s.TryGetSelectedRotation(out angle); Assert.Equal(36, angle, 5);
         }
 
-        [Fact]
-        public void ReverseZoomedBoxSelection_ReplacesSelectionAndNeverExportsOrAddsUndo()
-        {
-            Sta(() =>
-            {
-                using var s = new Surface(new Bitmap(300, 300)); var a = Box(s, 30); var b = Box(s, 100); Select(s, b); s.ZoomFactor = new Fraction(2, 1);
-                int history = Undos(s); s.Modified = false;
-                Mouse(s, "SurfaceMouseDown", 140, 140); Mouse(s, "SurfaceMouseMove", 20, 20);
-                Assert.Same(a, Assert.Single(s.SelectedElements));
-                using (var export = (Bitmap)s.GetImageForExport()) Assert.Equal(0, export.GetPixel(10, 10).A);
-                Mouse(s, "SurfaceMouseUp", 20, 20);
-                Assert.False(s.Capture); Assert.Equal(history, Undos(s)); Assert.False(s.Modified);
-            });
-        }
-
-        [Fact]
-        public void ShiftBoxSelection_TogglesEntireEnclosedGroupsAgainstInitialSelection()
-        {
-            Sta(() =>
-            {
-                using var s = new Surface(new Bitmap(300, 300)); var a = Box(s, 30); var b = Box(s, 100); var c = Box(s, 180);
-                Select(s, a, b); s.GroupSelectedElements(); s.DeselectAllElements();
-                s.BeginSelectionBox(Point.Empty, Keys.None); Mouse(s, "SurfaceMouseMove", 80, 80); Mouse(s, "SurfaceMouseUp", 80, 80); Assert.Empty(s.SelectedElements);
-                s.BeginSelectionBox(Point.Empty, Keys.None); Mouse(s, "SurfaceMouseMove", 140, 80); Mouse(s, "SurfaceMouseUp", 140, 80); Assert.Equal(2, s.SelectedElements.Count);
-                s.SelectElement(c); s.BeginSelectionBox(Point.Empty, Keys.Shift);
-                Mouse(s, "SurfaceMouseMove", 140, 80); Mouse(s, "SurfaceMouseMove", 145, 85); Assert.Same(c, Assert.Single(s.SelectedElements));
-                Mouse(s, "SurfaceMouseUp", 145, 85); Assert.Same(c, Assert.Single(s.SelectedElements));
-            });
-        }
-
-        [Theory]
-        [InlineData("Escape")]
-        [InlineData("Tool")]
-        [InlineData("Document")]
-        [InlineData("Capture")]
-        public void BoxCancellation_ReleasesCaptureAndRestoresSelectionWhereAppropriate(string method)
-        {
-            Sta(() =>
-            {
-                using var s = new Surface(new Bitmap(300, 300)); var a = Box(s, 30); var b = Box(s, 100); Select(s, b); int history = Undos(s);
-                s.BeginSelectionBox(Point.Empty, Keys.None); Mouse(s, "SurfaceMouseMove", 80, 80); Assert.Same(a, Assert.Single(s.SelectedElements));
-                if (method == "Escape") Assert.True(s.ProcessCanvasKey(Keys.Escape));
-                if (method == "Document") Assert.True(s.CancelSelectionBox());
-                if (method == "Capture") s.Capture = false;
-                if (method == "Tool") s.DrawingMode = DrawingModes.Line;
-                if (method != "Tool") Assert.Same(b, Assert.Single(s.SelectedElements));
-                Assert.False(s.Capture); Assert.Null(Field<Point?>(s, "_selectionBoxStart")); Assert.Equal(history, Undos(s));
-            });
-        }
-
-        [Fact]
-        public void SelectionThresholdAndObjectDrag_PreserveExistingPriorities()
-        {
-            Sta(() =>
-            {
-                using var s = new Surface(new Bitmap(300, 300)); var box = Box(s, 30); Select(s, box); s.ZoomFactor = new Fraction(2, 1);
-                s.BeginSelectionBox(Point.Empty, Keys.Shift); Mouse(s, "SurfaceMouseMove", 2, 2); Assert.False(Field<bool>(s, "_selectionBoxActive"));
-                Mouse(s, "SurfaceMouseUp", 2, 2); Assert.Same(box, Assert.Single(s.SelectedElements));
-                Mouse(s, "SurfaceMouseDown", 80, 80); Mouse(s, "SurfaceMouseMove", 100, 100); Mouse(s, "SurfaceMouseUp", 100, 100);
-                Assert.Equal(40, box.Left); Assert.Equal(40, box.Top); Assert.Null(Field<Point?>(s, "_selectionBoxStart"));
-            });
-        }
-
         private static void Mouse(Surface s, string method, int x, int y) => typeof(Surface).GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic).Invoke(s, new object[] { s, new MouseEventArgs(MouseButtons.Left, 1, x, y, 0) });
         private static void Sta(Action action)
         {

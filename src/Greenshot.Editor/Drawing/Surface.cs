@@ -2680,7 +2680,11 @@ namespace Greenshot.Editor.Drawing
             _mouseStart = e.Location;
 
             if (DrawingMode == DrawingModes.None && e.Button == MouseButtons.Left && _elements.ClickableElementAt(e.X, e.Y) == null)
-            { BeginSelectionBox(e.Location, InputState.ModifierKeys); return; }
+            {
+                RemoveDrawnCropContainer();
+                BeginSelectionBox(e.Location, InputState.ModifierKeys);
+                return;
+            }
             _mouseDown = true;
             _isSurfaceMoveMadeUndoable = false;
             // The mouse is used, the focus frame is for the keyboard

@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using Greenshot.Base.Interfaces.Drawing;
+using Greenshot.Base.Interfaces;
 
 namespace Greenshot.Editor.Drawing
 {
@@ -17,10 +18,15 @@ namespace Greenshot.Editor.Drawing
 
         internal void BeginSelectionBox(Point start, Keys modifiers)
         {
-            _selectionBoxStart = start; _selectionBoxEnd = start;
+            _selectionBoxStart = start;
+            _selectionBoxEnd = start;
             _selectionBoxInitial = selectedElements.ToArray();
-            _selectionBoxToggle = (modifiers & Keys.Shift) != 0; _selectionBoxActive = false;
-            ClearSnapGuide(); HideFocusFrame(); Focus(); Capture = true;
+            _selectionBoxToggle = (modifiers & Keys.Shift) != 0;
+            _selectionBoxActive = false;
+            ClearSnapGuide();
+            HideFocusFrame();
+            Focus();
+            Capture = true;
         }
 
         private Rectangle SelectionBoxBounds => Rectangle.FromLTRB(Math.Min(_selectionBoxStart.Value.X, _selectionBoxEnd.X),
@@ -28,16 +34,30 @@ namespace Greenshot.Editor.Drawing
 
         private void SetBoxSelection(IEnumerable<IDrawableContainer> selection)
         {
-            var next = new HashSet<IDrawableContainer>(selection.Where(_elements.Contains));
+            var next = new HashSet<IDrawableContainer>(CompleteGroups(selection.Where(_elements.Contains)));
             if (next.SetEquals(selectedElements)) return;
-            DeselectAllElements(); SelectElements(new DrawableContainerList(_elements.Where(next.Contains)));
+            var removed = selectedElements.Where(element => !next.Contains(element)).ToArray();
+            var added = _elements.Where(element => next.Contains(element) && !selectedElements.Contains(element)).ToArray();
+            InvalidateRotationSelectionHandle();
+            InvalidateSelectionMembers(removed);
+            foreach (var element in removed) DeselectSingleElement(element, false);
+            foreach (var element in added) SelectSingleElement(element, false, false);
+
+            // Keep document order without rebinding retained members or changing their Selected property.
+            selectedElements.Clear();
+            foreach (var element in _elements.Where(next.Contains)) selectedElements.Add(element);
+            InvalidateSelectionMembers(added);
+            InvalidateRotationSelectionHandle();
+            _movingElementChanged?.Invoke(this, new SurfaceElementEventArgs { Elements = selectedElements });
         }
 
         private bool MoveSelectionBox(Point pointer)
         {
             if (!_selectionBoxStart.HasValue) return false;
+            var previousBounds = _selectionBoxActive ? (Rectangle?)SelectionBoxBounds : null;
             _selectionBoxEnd = pointer;
-            double dx = pointer.X - _selectionBoxStart.Value.X, dy = pointer.Y - _selectionBoxStart.Value.Y;
+            double dx = pointer.X - _selectionBoxStart.Value.X;
+            double dy = pointer.Y - _selectionBoxStart.Value.Y;
             if (!_selectionBoxActive && (dx * dx + dy * dy) * Math.Pow((double)_zoomFactor, 2) < 16) return true;
             _selectionBoxActive = true;
             var bounds = SelectionBoxBounds;
@@ -49,10 +69,19 @@ namespace Greenshot.Editor.Drawing
                 var unit = GroupMembers(member).ToArray();
                 var visual = unit.Select(e => (Rectangle)e.Bounds).Aggregate(Rectangle.Union);
                 if (visual.Left < bounds.Left || visual.Right > bounds.Right || visual.Top < bounds.Top || visual.Bottom > bounds.Bottom) continue;
-                if (_selectionBoxToggle && _selectionBoxInitial.Contains(member)) foreach (var element in unit) next.Remove(element);
-                else foreach (var element in unit) next.Add(element);
+                if (_selectionBoxToggle && _selectionBoxInitial.Contains(member))
+                {
+                    foreach (var element in unit) next.Remove(element);
+                }
+                else
+                {
+                    foreach (var element in unit) next.Add(element);
+                }
             }
-            SetBoxSelection(next); Invalidate(); return true;
+            SetBoxSelection(next);
+            if (previousBounds.HasValue) InvalidateSelectionBox(previousBounds.Value);
+            InvalidateSelectionBox(bounds);
+            return true;
         }
 
         private bool FinishSelectionBox(MouseEventArgs e)
@@ -60,41 +89,86 @@ namespace Greenshot.Editor.Drawing
             if (!_selectionBoxStart.HasValue || e.Button != MouseButtons.Left) return false;
             MoveSelectionBox(e.Location);
             if (!_selectionBoxActive && !_selectionBoxToggle) SetBoxSelection(Array.Empty<IDrawableContainer>());
-            _selectionBoxStart = null; _selectionBoxInitial = null; _selectionBoxActive = false;
-            Capture = false; Invalidate(); return true;
+            if (_selectionBoxActive) InvalidateSelectionBox(SelectionBoxBounds);
+            _selectionBoxStart = null;
+            _selectionBoxInitial = null;
+            _selectionBoxActive = false;
+            Capture = false;
+            return true;
         }
 
         internal bool CancelSelectionBox()
         {
             if (!_selectionBoxStart.HasValue) return false;
             var original = _selectionBoxInitial;
-            _selectionBoxStart = null; _selectionBoxInitial = null; _selectionBoxActive = false;
-            SetBoxSelection(original); Capture = false; Invalidate(); return true;
+            if (_selectionBoxActive) InvalidateSelectionBox(SelectionBoxBounds);
+            _selectionBoxStart = null;
+            _selectionBoxInitial = null;
+            _selectionBoxActive = false;
+            SetBoxSelection(original);
+            Capture = false;
+            return true;
         }
 
         protected override void OnMouseCaptureChanged(EventArgs e)
         {
             base.OnMouseCaptureChanged(e);
-            if (!Capture)
+            if (Capture) return;
+
+            bool ownsCapture = _rotationOwner != null || _existingGestureAdorner != null ||
+                _selectionBoxStart.HasValue || _vertexOwner != null;
+            if (!ownsCapture) return;
+
+            CancelRotationGesture();
+            EndExistingHandleGesture();
+            CancelSelectionBox();
+            // Polygon creation spans several clicks; only an owned vertex drag is cancelled here.
+            if (_vertexOwner != null) CancelPolygonInteraction();
+            ClearSnapGuide();
+            _mouseDown = false;
+            if (_mouseDownElement != null) _mouseDownElement.Status = EditStatus.IDLE;
+            _mouseDownElement = null;
+        }
+
+        private void InvalidateSelectionBox(Rectangle bounds)
+        {
+            // The dashed stroke is one device pixel wide; include rounding at fractional zoom.
+            Invalidate(ZoomClipRectangle(bounds, _zoomFactor, 2));
+        }
+
+        private void InvalidateRotationSelectionHandle()
+        {
+            if (!TryGetRotationHandle(out var handle)) return;
+            float radius = 12 * RotationScreenScale;
+            var owner = RotationHandleOwner;
+            var bounds = owner.ModelBounds;
+            var top = owner.ModelToImage(new PointF(bounds.Left + bounds.Width / 2f, bounds.Top));
+            var dirty = RectangleF.Union(new RectangleF(handle.X - radius, handle.Y - radius, radius * 2, radius * 2),
+                new RectangleF(top.X - radius, top.Y - radius, radius * 2, radius * 2));
+            InvalidateSelectionBox(Rectangle.Ceiling(dirty));
+        }
+
+        private void InvalidateSelectionMembers(IEnumerable<IDrawableContainer> members)
+        {
+            var changed = members.ToArray();
+            foreach (var element in changed) InvalidateElements(element.DrawingBounds);
+            foreach (var group in changed.OfType<DrawableContainer>().Where(element => element.GroupId != Guid.Empty).GroupBy(element => element.GroupId))
             {
-                CancelRotationGesture(); EndExistingHandleGesture(); CancelSelectionBox();
-                // WinForms releases capture after every click. Polygon creation spans
-                // several clicks, whereas a vertex drag must roll back if capture is lost.
-                if (_vertexOwner != null) CancelPolygonInteraction();
-                ClearSnapGuide();
-                _mouseDown = false;
-                if (_mouseDownElement != null) _mouseDownElement.Status = Greenshot.Base.Interfaces.Drawing.EditStatus.IDLE;
-                _mouseDownElement = null;
+                var bounds = group.Select(element => (Rectangle)element.Bounds).Aggregate(Rectangle.Union);
+                InvalidateSelectionBox(bounds);
             }
         }
 
         private void PaintSelectionBox(Graphics graphics)
         {
             if (!_selectionBoxStart.HasValue || !_selectionBoxActive) return;
-            var saved = graphics.Save(); graphics.ScaleTransform(_zoomFactor, _zoomFactor);
+            var saved = graphics.Save();
+            graphics.ScaleTransform(_zoomFactor, _zoomFactor);
             using var fill = new SolidBrush(Color.FromArgb(30, SystemColors.Highlight));
             using var pen = new Pen(SystemColors.Highlight, (float)(1 / (double)_zoomFactor)) { DashStyle = DashStyle.Dash };
-            graphics.FillRectangle(fill, SelectionBoxBounds); graphics.DrawRectangle(pen, SelectionBoxBounds); graphics.Restore(saved);
+            graphics.FillRectangle(fill, SelectionBoxBounds);
+            graphics.DrawRectangle(pen, SelectionBoxBounds);
+            graphics.Restore(saved);
         }
     }
 }
