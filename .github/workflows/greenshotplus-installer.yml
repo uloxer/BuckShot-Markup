@@ -66,3 +66,12 @@ jobs:
             installer/BuckShot-Markup-Development.cer.sha256
             installer/MSIX-INSTALL.md
           if-no-files-found: error
+      - name: Upload editor QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BuckShot-Editor-QA
+          path: |
+            TestResults/stage1-colourbar/*.png
+            src/Greenshot.Tests/TestResults/*.trx
+          if-no-files-found: warn

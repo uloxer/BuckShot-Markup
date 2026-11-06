@@ -180,7 +180,11 @@ namespace Greenshot.Editor.Drawing
         [field: NonSerialized]
         public event EventHandler GeometryChanged;
 
-        protected void NotifyGeometryChanged() => GeometryChanged?.Invoke(this, EventArgs.Empty);
+        protected void NotifyGeometryChanged()
+        {
+            InvalidateDimensionLayout();
+            GeometryChanged?.Invoke(this, EventArgs.Empty);
+        }
 
         // Optional for projects written before flat grouping was introduced.
         [OptionalField] private Guid _groupId;
@@ -201,7 +205,7 @@ namespace Greenshot.Editor.Drawing
                 }
 
                 left = value;
-                GeometryChanged?.Invoke(this, EventArgs.Empty);
+                NotifyGeometryChanged();
             }
         }
 
@@ -218,7 +222,7 @@ namespace Greenshot.Editor.Drawing
                 }
 
                 top = value;
-                GeometryChanged?.Invoke(this, EventArgs.Empty);
+                NotifyGeometryChanged();
             }
         }
 
@@ -235,7 +239,7 @@ namespace Greenshot.Editor.Drawing
                 }
 
                 width = value;
-                GeometryChanged?.Invoke(this, EventArgs.Empty);
+                NotifyGeometryChanged();
             }
         }
 
@@ -252,7 +256,7 @@ namespace Greenshot.Editor.Drawing
                 }
 
                 height = value;
-                GeometryChanged?.Invoke(this, EventArgs.Empty);
+                NotifyGeometryChanged();
             }
         }
 
@@ -263,7 +267,7 @@ namespace Greenshot.Editor.Drawing
             {
                 left = value.X;
                 top = value.Y;
-                GeometryChanged?.Invoke(this, EventArgs.Empty);
+                NotifyGeometryChanged();
             }
         }
 
@@ -274,7 +278,7 @@ namespace Greenshot.Editor.Drawing
             {
                 width = value.Width;
                 height = value.Height;
-                GeometryChanged?.Invoke(this, EventArgs.Empty);
+                NotifyGeometryChanged();
             }
         }
 
@@ -638,6 +642,7 @@ namespace Greenshot.Editor.Drawing
 
             _parent?.FieldAggregator?.UnbindElement(this);
 
+            InvalidateDimensionLayout();
             _parent = newParent;
             foreach (IFilter filter in Filters)
             {
@@ -675,6 +680,7 @@ namespace Greenshot.Editor.Drawing
         /// <param name="e"></param>
         public void HandleFieldChanged(object sender, FieldChangedEventArgs e)
         {
+            if (Equals(e.Field.FieldType, FieldType.LINE_THICKNESS) || Equals(e.Field.FieldType, FieldType.ARROWHEADS)) NotifyGeometryChanged();
             LOG.DebugFormat("Field {0} changed", e.Field.FieldType);
             if (Equals(e.Field.FieldType, FieldType.SHADOW))
             {

@@ -75,6 +75,12 @@ namespace Greenshot.Editor.Memento
             Dispose(true);
         }
 
+        internal DrawableContainerBoundsChangeMemento(DrawableContainer container, double[] originalTransform)
+            : this(container, false)
+        {
+            _transforms[0] = originalTransform == null ? null : (double[])originalTransform.Clone();
+        }
+
         private void Dispose(bool disposing)
         {
             // Geometry history stores values and references, not ownership of the drawable objects.

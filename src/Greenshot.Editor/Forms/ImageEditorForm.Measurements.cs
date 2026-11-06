@@ -167,9 +167,12 @@ namespace Greenshot.Editor.Forms
 
         private void SelectedGeometryChanged(object sender, EventArgs e) => UpdateMeasurements();
 
+        internal int MeasurementRefreshCount { get; private set; }
+
         private void UpdateMeasurements()
         {
             if (_measurementPanel == null) return;
+            MeasurementRefreshCount++;
             _rotateObjectButton.Enabled = _surface?.CanSetSelectedRotation == true;
             _rotateObjectButton.ToolTipText = _rotateObjectButton.Enabled ? "Set absolute rotation angle" : _surface?.CanRotateObjects == true ? Surface.MixedRotationLimit : Surface.RotationLimit;
             _groupButton.Enabled = _surface?.CanGroup == true;

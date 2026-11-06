@@ -12,6 +12,9 @@ namespace Greenshot.Editor.Controls
     internal sealed class QuickColorPalette : IDisposable
     {
         private readonly IEditorConfiguration _configuration;
+        private readonly ToolStrip _toolbar;
+        private bool _hasLine = true, _hasFill = true, _refreshing, _disposed;
+        private Size _swatchSize;
         private readonly ToolStripDropDownButton _target = new ToolStripDropDownButton("Line");
         private readonly ToolStripMenuItem _line = new ToolStripMenuItem("Line"), _fill = new ToolStripMenuItem("Fill");
         private readonly List<ToolStripItem> _items = new List<ToolStripItem>();
@@ -22,6 +25,8 @@ namespace Greenshot.Editor.Controls
         public QuickColorPalette(ToolStrip toolbar, IEditorConfiguration configuration)
         {
             _configuration = configuration;
+            _toolbar = toolbar;
+            _swatchSize = toolbar.ImageScalingSize;
             _target.ToolTipText = "Quick colour target";
             _target.DropDownItems.AddRange(new ToolStripItem[] { _line, _fill });
             _line.Click += (s, e) => SelectTarget(FieldType.LINE_COLOR);
@@ -38,11 +43,19 @@ namespace Greenshot.Editor.Controls
             for (int i = 0; i < 6; i++)
             {
                 var swatch = CreateSwatch();
+                swatch.Available = false;
                 _recent.Add(swatch);
                 _items.Add(swatch);
             }
-            toolbar.Items.AddRange(_items.ToArray());
-            RefreshRecents();
+            toolbar.SuspendLayout();
+            try
+            {
+                toolbar.Items.AddRange(_items.ToArray());
+                SelectTarget(FieldType.LINE_COLOR);
+                toolbar.Layout += ToolbarLayout;
+                Refresh(true, true);
+            }
+            finally { toolbar.ResumeLayout(); }
         }
 
         private void SelectTarget(IFieldType field)
@@ -63,16 +76,18 @@ namespace Greenshot.Editor.Controls
             return button;
         }
 
-        private static void SetColor(ToolStripButton button, Color color)
+        private void SetColor(ToolStripButton button, Color color)
         {
-            var image = new Bitmap(14, 14);
+            var size = _toolbar.ImageScalingSize;
+            if (button.Tag is Color current && current.ToArgb() == color.ToArgb() && button.Image?.Size == size) return;
+            var image = new Bitmap(Math.Max(1, size.Width), Math.Max(1, size.Height));
             using (var graphics = Graphics.FromImage(image))
             {
                 graphics.Clear(Color.White);
                 using var brush = new SolidBrush(color);
-                graphics.FillRectangle(brush, 1, 1, 12, 12);
-                graphics.DrawRectangle(Pens.Gray, 0, 0, 13, 13);
-                if (color.A == 0) graphics.DrawLine(Pens.Red, 1, 12, 12, 1);
+                graphics.FillRectangle(brush, 1, 1, image.Width - 2, image.Height - 2);
+                graphics.DrawRectangle(Pens.Gray, 0, 0, image.Width - 1, image.Height - 1);
+                if (color.A == 0) graphics.DrawLine(Pens.Red, 1, image.Height - 2, image.Width - 2, 1);
             }
             var old = button.Image;
             button.Image = image;
@@ -84,35 +99,72 @@ namespace Greenshot.Editor.Controls
         public void Remember(Color color)
         {
             var colors = _configuration.RecentColors ?? new List<Color>();
+            if (colors.Count > 0 && colors[0].ToArgb() == color.ToArgb()) return;
             colors.RemoveAll(c => c.ToArgb() == color.ToArgb());
             colors.Insert(0, color);
             _configuration.RecentColors = colors.Take(12).ToList();
-            RefreshRecents();
+            Refresh(_hasLine, _hasFill);
+        }
+
+        private void ToolbarLayout(object sender, LayoutEventArgs e)
+        {
+            if (!_disposed && !_refreshing && _swatchSize != _toolbar.ImageScalingSize)
+                Refresh(_hasLine, _hasFill);
         }
 
         public void Refresh(bool hasLine, bool hasFill)
         {
-            _line.Enabled = hasLine;
-            _fill.Enabled = hasFill;
-            if (Target == FieldType.FILL_COLOR && !hasFill) SelectTarget(FieldType.LINE_COLOR);
-            if (Target == FieldType.LINE_COLOR && !hasLine && hasFill) SelectTarget(FieldType.FILL_COLOR);
-            foreach (var item in _items) item.Visible = hasLine || hasFill;
-            RefreshRecents();
-        }
-
-        private void RefreshRecents()
-        {
-            var colors = (_configuration.RecentColors ?? new List<Color>()).GroupBy(c => c.ToArgb()).Select(g => g.First()).Take(6).ToList();
-            for (int i = 0; i < _recent.Count; i++)
+            if (_disposed || _refreshing) return;
+            _refreshing = true;
+            _toolbar.SuspendLayout();
+            try
             {
-                _recent[i].Available = _target.Available && i < colors.Count;
-                if (i < colors.Count) SetColor(_recent[i], colors[i]);
+                _hasLine = hasLine;
+                _hasFill = hasFill;
+                _swatchSize = _toolbar.ImageScalingSize;
+                _line.Enabled = hasLine;
+                _fill.Enabled = hasFill;
+                if (Target == FieldType.FILL_COLOR && !hasFill) SelectTarget(FieldType.LINE_COLOR);
+                if (Target == FieldType.LINE_COLOR && !hasLine && hasFill) SelectTarget(FieldType.FILL_COLOR);
+                bool available = hasLine || hasFill;
+                var colors = (_configuration.RecentColors ?? new List<Color>()).GroupBy(c => c.ToArgb()).Select(g => g.First()).Take(6).ToList();
+                foreach (var item in _items)
+                {
+                    int recentIndex = item is ToolStripButton recent ? _recent.IndexOf(recent) : -1;
+                    bool show = available && (recentIndex < 0 || recentIndex < colors.Count);
+                    if (item.Available != show) item.Available = show;
+                    if (item is ToolStripButton swatch)
+                    {
+                        if (recentIndex >= 0 && recentIndex < colors.Count) SetColor(swatch, colors[recentIndex]);
+                        else if (recentIndex < 0 && swatch.Tag is Color color) SetColor(swatch, color);
+                    }
+                }
+            }
+            finally
+            {
+                _toolbar.ResumeLayout();
+                _refreshing = false;
             }
         }
 
         public void Dispose()
         {
-            foreach (var item in _items) { item.Image?.Dispose(); item.Dispose(); }
+            if (_disposed) return;
+            _disposed = true;
+            _toolbar.Layout -= ToolbarLayout;
+            _toolbar.SuspendLayout();
+            try
+            {
+                foreach (var item in _items)
+                {
+                    var image = item.Image;
+                    item.Image = null;
+                    image?.Dispose();
+                    if (!_toolbar.IsDisposed) _toolbar.Items.Remove(item);
+                    item.Dispose();
+                }
+            }
+            finally { _toolbar.ResumeLayout(); }
         }
     }
 }

@@ -50,7 +50,7 @@ namespace Greenshot.Tests.Editor
             Assert.Equal(120,DimensionLayout.Edges(box)[0].Length,3);
             using var stretch=new Matrix(2,0,0,-1,0,600); box.Transform(stretch);
             var edges=DimensionLayout.Edges(box); var labels=DimensionLayout.Labels(box);
-            Assert.Equal(4,labels.Length); Assert.All(labels,l=>Assert.InRange(l.Angle,-90,90));
+            Assert.Equal(4,labels.Count); Assert.All(labels,l=>Assert.InRange(l.Angle,-90,90));
             foreach(var edge in edges)
                 Assert.Equal(Math.Sqrt(Math.Pow(edge.B.X-edge.A.X,2)+Math.Pow(edge.B.Y-edge.A.Y,2)),edge.Length,5);
             Assert.All(labels,l=>Assert.False(box.ClickableAt((int)l.Center.X,(int)l.Center.Y)));
@@ -63,7 +63,7 @@ namespace Greenshot.Tests.Editor
             using var s=new Surface(new Bitmap(700,600));
             var polygon=Add(s,new PolygonContainer(s));
             polygon.SetVertices(new[]{new Point(100,100),new Point(400,100),new Point(400,350),new Point(250,200),new Point(100,350)}); Show(polygon);
-            Assert.Equal(5,DimensionLayout.Labels(polygon).Length);
+            Assert.Equal(5,DimensionLayout.Labels(polygon).Count);
             Assert.All(DimensionLayout.Labels(polygon),l=>Assert.False(polygon.ClickableAt((int)l.Center.X,(int)l.Center.Y)));
             polygon.SetVertices(polygon.Vertices.AsEnumerable().Reverse().ToArray());
             using var reflection=new Matrix(-1,0,0,1,600,0); polygon.Transform(reflection);

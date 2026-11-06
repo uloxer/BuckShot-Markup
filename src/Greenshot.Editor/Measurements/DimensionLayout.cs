@@ -12,19 +12,28 @@ namespace Greenshot.Editor.Measurements
 {
     internal sealed class DimensionEdge
     {
-        internal int Index;
-        internal PointF A, B;
+        internal int Index { get; }
+        internal PointF A { get; }
+        internal PointF B { get; }
+        internal DimensionEdge(int index, PointF a, PointF b) { Index = index; A = a; B = b; }
         internal double Length => MeasurementCalculator.LineLength(B.X - A.X, B.Y - A.Y);
         internal string Name => "Edge " + (Index + 1);
     }
     internal sealed class DimensionLabel
     {
-        internal DimensionEdge Edge;
-        internal string Text;
-        internal PointF Center;
-        internal int Width, Height;
-        internal float Angle;
-        internal bool ShaftGap, Crowded;
+        internal DimensionEdge Edge { get; }
+        internal string Text { get; }
+        internal PointF Center { get; }
+        internal int Width { get; }
+        internal int Height { get; }
+        internal float Angle { get; }
+        internal bool ShaftGap { get; }
+        internal bool Crowded { get; }
+        internal DimensionLabel(DimensionEdge edge, string text, int width, int height, float angle,
+            PointF center = default, bool shaftGap = false, bool crowded = false)
+        { Edge = edge; Text = text; Width = width; Height = height; Angle = angle; Center = center; ShaftGap = shaftGap; Crowded = crowded; }
+        internal DimensionLabel At(PointF center, bool shaftGap = false, bool crowded = false) =>
+            new DimensionLabel(Edge, Text, Width, Height, Angle, center, shaftGap, crowded);
         internal PointF[] Corners(float extraWidth = 0, float extraHeight = 0)
         {
             double a = Angle * Math.PI / 180, c = Math.Cos(a), s = Math.Sin(a);
@@ -57,7 +66,7 @@ namespace Greenshot.Editor.Measurements
             { points = new[] { owner.ModelToImage(new PointF(owner.Left,owner.Top)), owner.ModelToImage(new PointF(owner.Left+owner.Width,owner.Top+owner.Height)) }; closed = false; }
             else return Array.Empty<DimensionEdge>();
             if (points.Length < 2) return Array.Empty<DimensionEdge>();
-            return Enumerable.Range(0, closed ? points.Length : 1).Select(i => new DimensionEdge { Index=i,A=points[i],B=points[(i+1)%points.Length] }).ToArray();
+            return Enumerable.Range(0, closed ? points.Length : 1).Select(i => new DimensionEdge(i, points[i], points[(i+1)%points.Length])).ToArray();
         }
         internal static string FormatLength(double pixels, MeasurementState state, DimensionFormat format = null)
         {
@@ -67,7 +76,18 @@ namespace Greenshot.Editor.Measurements
         private static StringFormat TextFormat() => new StringFormat(StringFormat.GenericTypographic)
         { Alignment=StringAlignment.Center, LineAlignment=StringAlignment.Center, FormatFlags=StringFormatFlags.NoWrap | StringFormatFlags.MeasureTrailingSpaces };
 
-        internal static DimensionLabel[] Labels(DrawableContainer owner)
+        internal static IReadOnlyList<DimensionLabel> Labels(DrawableContainer owner)
+        {
+            if (!owner.HasVisibleDimensions) return Array.Empty<DimensionLabel>();
+            var cache = owner.DimensionLayoutCache;
+            if (cache != null && cache.Matches(owner)) return cache.Labels;
+            cache = new DimensionLayoutCache(owner, ComputeLabels(owner));
+            owner.DimensionLayoutCache = cache;
+            owner.DimensionLayoutBuildCount++;
+            return cache.Labels;
+        }
+
+        private static DimensionLabel[] ComputeLabels(DrawableContainer owner)
         {
             if (!owner.HasVisibleDimensions) return Array.Empty<DimensionLabel>();
             var surface = owner.Parent as Surface; var style = surface?.DimensionStyle ?? DimensionStyle.Default;
@@ -81,9 +101,9 @@ namespace Greenshot.Editor.Measurements
             foreach (var edge in edges.Where(e => owner.IsDimensionVisible(e.Index) && e.Length > 0))
             {
                 string text = FormatLength(edge.Length,units,owner.GetDimensionFormat(edge.Index) ?? style.Format); var size = graphics.MeasureString(text,font,int.MaxValue,format);
-                var label = new DimensionLabel { Edge=edge,Text=text,Width=(int)Math.Ceiling(size.Width)+4,Height=(int)Math.Ceiling(size.Height)+2 };
                 double ux=(edge.B.X-edge.A.X)/edge.Length, uy=(edge.B.Y-edge.A.Y)/edge.Length;
-                float angle=(float)(Math.Atan2(uy,ux)*180/Math.PI); if(angle>90)angle-=180; if(angle < -90)angle+=180; label.Angle=angle;
+                float angle=(float)(Math.Atan2(uy,ux)*180/Math.PI); if(angle>90)angle-=180; if(angle < -90)angle+=180;
+                var label = new DimensionLabel(edge, text, (int)Math.Ceiling(size.Width)+4, (int)Math.Ceiling(size.Height)+2, angle);
                 var midpoint=new PointF((edge.A.X+edge.B.X)/2,(edge.A.Y+edge.B.Y)/2);
                 double nx=uy, ny=-ux;
                 if (closed && signed < 0 || (!closed || signed == 0) && (ny>0 || ny==0 && nx>0)) { nx=-nx; ny=-ny; }
@@ -93,14 +113,14 @@ namespace Greenshot.Editor.Measurements
                     var heads=(ArrowContainer.ArrowHeadCombination)owner.GetFieldValue(FieldType.ARROWHEADS);
                     double protection=(heads==ArrowContainer.ArrowHeadCombination.NONE ? 0 : 7*stroke)+4;
                     if ((label.Width+8)/2d+protection < edge.Length/2)
-                    { label.Center=midpoint; label.ShaftGap=true; result.Add(label); continue; }
+                    { label=label.At(midpoint, shaftGap: true); result.Add(label); continue; }
                 }
                 double best=double.MaxValue; PointF bestPoint=midpoint; bool fitted=false;
                 for(int lane=0;lane<8 && !fitted;lane++)
                 foreach(double shift in new[]{0d,.25,-.25,.5,-.5})
                 {
                     double offset=label.Height/2d+stroke/2+5+lane*(label.Height+4);
-                    label.Center=new PointF(midpoint.X+(float)(nx*offset+ux*label.Width*shift),midpoint.Y+(float)(ny*offset+uy*label.Width*shift));
+                    label=label.At(new PointF(midpoint.X+(float)(nx*offset+ux*label.Width*shift),midpoint.Y+(float)(ny*offset+uy*label.Width*shift)));
                     using var path=new GraphicsPath(); path.AddPolygon(label.Corners(4,4));
                     bool inside=false;
                     if(closed && outline.PointCount>0) { using var intersection=new Region(path); intersection.Intersect(outline); inside=!intersection.IsEmpty(graphics); }
@@ -109,7 +129,7 @@ namespace Greenshot.Editor.Measurements
                     if(score<best) { best=score; bestPoint=label.Center; }
                     if(!inside && collisions==0) { fitted=true; break; }
                 }
-                label.Center=bestPoint; label.Crowded=!fitted; result.Add(label);
+                label=label.At(bestPoint, crowded: !fitted); result.Add(label);
             }
             return result.ToArray();
         }
@@ -127,7 +147,7 @@ namespace Greenshot.Editor.Measurements
         }
         internal static void Draw(Graphics graphics, DrawableContainer owner)
         {
-            var labels=Labels(owner); if(labels.Length==0)return;
+            var labels=Labels(owner); if(labels.Count==0)return;
             var style=(owner.Parent as Surface)?.DimensionStyle ?? DimensionStyle.Default;
             using var font=style.CreateFont(); using var format=TextFormat();
             foreach(var label in labels)

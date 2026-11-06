@@ -16,7 +16,20 @@ namespace Greenshot.Editor.Drawing
         public bool HasObjectTransform => _objectTransform != null;
         public double ObjectAngle => _objectTransform == null ? 0 : Math.Atan2(_objectTransform[1], _objectTransform[0]) * 180 / Math.PI;
         internal double[] ObjectTransformState => _objectTransform == null ? null : (double[])_objectTransform.Clone();
-        internal void RestoreObjectTransform(double[] state) { _objectTransform = state == null ? null : (double[])state.Clone(); NotifyGeometryChanged(); }
+        internal bool RestoreObjectTransform(double[] state)
+        {
+            if ((_objectTransform == null && state == null) || (_objectTransform != null && state != null && _objectTransform.SequenceEqual(state))) return false;
+            _objectTransform = state == null ? null : (double[])state.Clone();
+            NotifyGeometryChanged();
+            return true;
+        }
+        internal bool PreviewRotation(double[] baseline, double degrees, double pivotX, double pivotY)
+        {
+            if (Math.Abs(degrees % 360) < .000000001) { return RestoreObjectTransform(baseline); }
+            double radians = degrees % 360 * Math.PI / 180, c = Math.Cos(radians), s = Math.Sin(radians);
+            var rotation = new[] { c, s, -s, c, pivotX - c * pivotX + s * pivotY, pivotY - s * pivotX - c * pivotY };
+            return RestoreObjectTransform(ComposeTransforms(baseline, rotation));
+        }
         internal NativeRect ModelBounds => new NativeRect(Left, Top, Width, Height).Normalize();
         public NativeRect VisualBounds => TransformBounds(ModelBounds);
         internal (double X, double Y) ImageCentre => Map(Left + Width / 2d, Top + Height / 2d);
@@ -63,9 +76,12 @@ namespace Greenshot.Editor.Drawing
         }
         private void ComposeObjectTransform(double[] b)
         {
-            var a = _objectTransform ?? new double[] { 1, 0, 0, 1, 0, 0 };
-            _objectTransform = new[] { b[0]*a[0]+b[2]*a[1], b[1]*a[0]+b[3]*a[1], b[0]*a[2]+b[2]*a[3], b[1]*a[2]+b[3]*a[3], b[0]*a[4]+b[2]*a[5]+b[4], b[1]*a[4]+b[3]*a[5]+b[5] };
-            NotifyGeometryChanged();
+            RestoreObjectTransform(ComposeTransforms(_objectTransform, b));
+        }
+        private static double[] ComposeTransforms(double[] baseline, double[] b)
+        {
+            var a = baseline ?? new double[] { 1, 0, 0, 1, 0, 0 };
+            return new[] { b[0]*a[0]+b[2]*a[1], b[1]*a[0]+b[3]*a[1], b[0]*a[2]+b[2]*a[3], b[1]*a[2]+b[3]*a[3], b[0]*a[4]+b[2]*a[5]+b[4], b[1]*a[4]+b[3]*a[5]+b[5] };
         }
         internal void DrawObjectContent(Graphics graphics, Bitmap bitmap, Greenshot.Base.Interfaces.Drawing.RenderMode mode, NativeRect clip, bool skipInvertedFilters)
         {

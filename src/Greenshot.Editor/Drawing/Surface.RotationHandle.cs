@@ -38,12 +38,12 @@ namespace Greenshot.Editor.Drawing
             return true;
         }
 
-        private bool RotationHandleHit(Point point) => TryGetRotationHandle(out var handle) &&
+        private bool RotationHandleHit(PointF point) => TryGetRotationHandle(out var handle) &&
             Math.Pow(point.X - handle.X, 2) + Math.Pow(point.Y - handle.Y, 2) <= Math.Pow(11 * RotationScreenScale, 2);
 
-        private bool RotationMouseDown(MouseEventArgs e)
+        private bool RotationMouseDown(MouseEventArgs e, PointF pointer)
         {
-            if (e.Button != MouseButtons.Left || !RotationHandleHit(e.Location)) return false;
+            if (e.Button != MouseButtons.Left || !RotationHandleHit(pointer)) return false;
             // A near-edge fallback must never steal an existing resize handle's hit area.
             if (FindActiveAdorner(e) is Adorners.ResizeAdorner) return false;
             var owner = RotationHandleOwner;
@@ -51,43 +51,40 @@ namespace Greenshot.Editor.Drawing
             _rotationOwner = owner;
             _rotationOriginal = owner.ObjectTransformState;
             var pivot = owner.ImageCentre; _rotationPivot = new PointF((float)pivot.X, (float)pivot.Y);
-            _rotationStartPointer = Math.Atan2(e.Y - pivot.Y, e.X - pivot.X);
+            _rotationStartPointer = Math.Atan2(pointer.Y - pivot.Y, pointer.X - pivot.X);
             _rotationDelta = 0; ClearSnapGuide(); Capture = true; Cursor = Cursors.Hand;
             return true;
         }
 
-        private bool RotationMouseMove(MouseEventArgs e)
+        private bool RotationMouseMove(MouseEventArgs e, PointF pointer)
         {
             if (_rotationOwner == null)
             {
-                if (!RotationHandleHit(e.Location)) return false;
+                if (!RotationHandleHit(pointer)) return false;
                 Cursor = Cursors.Hand; return true;
             }
-            double dx = e.X - _rotationPivot.X, dy = e.Y - _rotationPivot.Y;
+            double dx = pointer.X - _rotationPivot.X, dy = pointer.Y - _rotationPivot.Y;
             if (dx * dx + dy * dy < 1) return true;
             _rotationDelta = (Math.Atan2(dy, dx) - _rotationStartPointer) * 180 / Math.PI;
             if ((InputState.ModifierKeys & Keys.Shift) != 0) _rotationDelta = Math.Round(_rotationDelta / 15) * 15;
-            _rotationOwner.RestoreObjectTransform(_rotationOriginal);
-            _rotationOwner.RotateObject(_rotationDelta, _rotationPivot.X, _rotationPivot.Y);
-            Invalidate(); _movingElementChanged?.Invoke(this, new SurfaceElementEventArgs { Elements = selectedElements });
+            if (_rotationOwner.PreviewRotation(_rotationOriginal, _rotationDelta, _rotationPivot.X, _rotationPivot.Y)) Invalidate();
             return true;
         }
 
-        private bool RotationMouseUp(MouseEventArgs e)
+        private bool RotationMouseUp(MouseEventArgs e, PointF pointer)
         {
             if (_rotationOwner == null) return false;
             if (e.Button != MouseButtons.Left) { CancelRotationGesture(); return true; }
-            RotationMouseMove(e);
+            RotationMouseMove(e, pointer);
             var owner = _rotationOwner; var delta = _rotationDelta;
-            owner.RestoreObjectTransform(_rotationOriginal);
+            var original = _rotationOriginal;
             _rotationOwner = null; _rotationOriginal = null;
             if (Math.Abs(delta % 360) > .000001)
             {
-                MakeUndoable(new DrawableContainerBoundsChangeMemento(owner, false), false);
-                owner.RotateObject(delta, _rotationPivot.X, _rotationPivot.Y); Modified = true;
+                MakeUndoable(new DrawableContainerBoundsChangeMemento(owner, original), false);
+                Modified = true;
             }
             Capture = false; Cursor = Cursors.Default; Invalidate();
-            _movingElementChanged?.Invoke(this, new SurfaceElementEventArgs { Elements = selectedElements });
             return true;
         }
 
@@ -97,7 +94,6 @@ namespace Greenshot.Editor.Drawing
             var owner = _rotationOwner; _rotationOwner = null;
             owner.RestoreObjectTransform(_rotationOriginal); _rotationOriginal = null;
             Capture = false; Cursor = Cursors.Default; Invalidate();
-            _movingElementChanged?.Invoke(this, new SurfaceElementEventArgs { Elements = selectedElements });
             return true;
         }
 

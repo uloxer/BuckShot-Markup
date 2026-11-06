@@ -2640,9 +2640,10 @@ namespace Greenshot.Editor.Drawing
         /// <param name="e"></param>
         private void SurfaceMouseDown(object sender, MouseEventArgs e)
         {
+            var rotationPointer = new PointF((float)(e.X / (double)_zoomFactor), (float)(e.Y / (double)_zoomFactor));
             e = InverseZoomMouseCoordinates(e);
             if (e.Button == MouseButtons.Right && CancelSelectionBox()) return;
-            if (RotationMouseDown(e)) return;
+            if (RotationMouseDown(e, rotationPointer)) return;
             if (PolygonMouseDown(e)) return;
             if (DrawingMode == DrawingModes.Scale) { StartScalePreview(e); return; }
 
@@ -2719,8 +2720,9 @@ namespace Greenshot.Editor.Drawing
         /// <param name="e"></param>
         private void SurfaceMouseUp(object sender, MouseEventArgs e)
         {
+            var rotationPointer = new PointF((float)(e.X / (double)_zoomFactor), (float)(e.Y / (double)_zoomFactor));
             e = InverseZoomMouseCoordinates(e);
-            if (RotationMouseUp(e)) return;
+            if (RotationMouseUp(e, rotationPointer)) return;
             ClearSnapGuide();
             if (FinishSelectionBox(e)) return;
             if (PolygonMouseUp(e)) return;
@@ -2879,8 +2881,9 @@ namespace Greenshot.Editor.Drawing
         /// <param name="e"></param>
         private void SurfaceMouseMove(object sender, MouseEventArgs e)
         {
+            var rotationPointer = new PointF((float)(e.X / (double)_zoomFactor), (float)(e.Y / (double)_zoomFactor));
             e = InverseZoomMouseCoordinates(e);
-            if (RotationMouseMove(e)) return;
+            if (RotationMouseMove(e, rotationPointer)) return;
             if (MoveSelectionBox(e.Location)) return;
             if (PolygonMouseMove(e)) return;
             // Existing handles own the event before any creation preview can attract the real pointer.
