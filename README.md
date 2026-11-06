@@ -2,7 +2,9 @@
 
 Windows screenshot capture and engineering markup, based on Greenshot and GreenShotPlus.
 
-Current product version: **0.8.667**. `src/version.json` is the authoritative version source.
+Current product version: **0.9.666**. `src/version.json` is the authoritative version source.
+
+0.9.666 adds a per-user MSIX preview alongside the EXE installer. See [MSIX installation and signing](docs/msix-install.md) for development certificate trust and the distinction from Microsoft Store publication.
 
 0.8.667 fixes pasted images disappearing after undoing a deletion, movement or style edit and then making another change. Discarded history preserves live objects while still releasing detached deleted images.
 

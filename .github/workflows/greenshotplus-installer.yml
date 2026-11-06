@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       release_version:
-        description: 'Installer display version (for example 0.8.666); blank uses the application version'
+        description: 'Product version (for example 0.9.666); blank uses the application version'
         required: false
         type: string
         default: ''
@@ -33,10 +33,23 @@ jobs:
         env:
           RELEASE_VERSION: ${{ inputs.release_version }}
         run: ./installer/test-user-install.ps1 -InstallerPath ./installer/BuckShot-Markup-Setup.exe -ExpectedVersion $env:RELEASE_VERSION
+      - name: Build signed development MSIX
+        shell: powershell
+        run: ./installer/build-msix.ps1 -CreateDevelopmentCertificate
+      - name: Check current-user MSIX activation and uninstall
+        shell: powershell
+        env:
+          RELEASE_VERSION: ${{ inputs.release_version }}
+        run: ./installer/test-msix-install.ps1 -ExpectedVersion $env:RELEASE_VERSION
       - uses: actions/upload-artifact@v4
         with:
           name: BuckShot-Markup-Windows-Installer
           path: |
             installer/BuckShot-Markup-Setup.exe
             installer/BuckShot-Markup-Setup.exe.sha256
+            installer/BuckShot-Markup.msix
+            installer/BuckShot-Markup.msix.sha256
+            installer/BuckShot-Markup-Development.cer
+            installer/BuckShot-Markup-Development.cer.sha256
+            installer/MSIX-INSTALL.md
           if-no-files-found: error

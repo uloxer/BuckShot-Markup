@@ -233,3 +233,8 @@ src/**/Greenshot-proxy.exe
 # Local build/test runner requests and results (tools/build-runner)
 .build-runner/
 /src/greenshot-proxy/generated-version.h
+/installer/BuckShot-Markup*.msix
+/installer/BuckShot-Markup*.msix.sha256
+/installer/BuckShot-Markup*.cer
+/installer/BuckShot-Markup*.cer.sha256
+/installer/MSIX-INSTALL.md
