@@ -28,7 +28,7 @@ namespace Greenshot.Tests.Editor
                 {
                     about.Show(); about.UpdateLayout();
                     Assert.Equal(ProductIdentity.Name + " " + ProductIdentity.Version, about.AppVersionTitle);
-                    Assert.Equal(ProductIdentity.SourceUrl, about.WebsiteUrl);
+                    AssertNoRepositoryLink(about);
                     var image = FindImage(about);
                     Assert.NotNull(image);
                     Assert.True(((System.Windows.Media.Imaging.BitmapSource)image.Source).PixelWidth > 100);
@@ -71,6 +71,14 @@ namespace Greenshot.Tests.Editor
                 screenshot.Save(Path.Combine(folder, "editor-toolbar-rotation.png"));
                 Assert.Contains(ProductIdentity.Name, editor.Text);
             });
+        }
+
+        private static void AssertNoRepositoryLink(System.Windows.DependencyObject parent)
+        {
+            if (parent is System.Windows.Documents.Hyperlink link)
+                Assert.DoesNotContain("github.com", link.NavigateUri?.ToString() ?? string.Empty);
+            foreach (object child in System.Windows.LogicalTreeHelper.GetChildren(parent))
+                if (child is System.Windows.DependencyObject dependency) AssertNoRepositoryLink(dependency);
         }
 
         private static System.Windows.Controls.Image FindImage(System.Windows.DependencyObject parent)

@@ -59,7 +59,7 @@ namespace Greenshot.Editor.Controls
             _documentDigits.ValueChanged += (s,e) => ChangeDocumentFormat();
             _edgeFormat.SelectedIndexChanged += (s,e) => ChangeEdgeFormat();
             _edgeDigits.ValueChanged += (s,e) => ChangeEdgeFormat();
-            _dimensionEdges.SelectionChanged += (s,e) => { if (!_dimensionsUpdating) RefreshDimensionFormatControls(); };
+            _dimensionEdges.CurrentCellChanged += (s,e) => { if (!_dimensionsUpdating) RefreshDimensionFormatControls(); };
             _applyDimensionFormat.Click += (s,e) =>
             {
                 if (_dimensionDocument == null) return;

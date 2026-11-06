@@ -9,9 +9,6 @@ RestartApplications=yes
 AppId=BuckShot-Markup
 AppName={#AppDisplayName}
 AppPublisher=BuckShot Markup contributors
-AppPublisherURL=https://github.com/uloxer/BuckShot-Markup
-AppSupportURL=https://github.com/uloxer/BuckShot-Markup
-AppUpdatesURL=https://github.com/uloxer/BuckShot-Markup
 AppVerName={#AppDisplayName} {#Version}
 AppVersion={#Version}
 ArchitecturesInstallIn64BitMode=x64compatible
@@ -45,11 +42,11 @@ NotRecognizedMessagesWarning=no
 
 SetupIconFile=..\Greenshot\icons\applicationIcon\icon.ico
 #if CertumThumbprint != ""
-  OutputBaseFilename={#ExeName}{#OutputSuffix}-INSTALLER-{#VersionEnhanced}-UNSTABLE
+  OutputBaseFilename={#ExeName}{#OutputSuffix}-INSTALLER-{#VersionEnhanced}
   SignTool=SignTool sign /sha1 "{#CertumThumbprint}" /tr http://time.certum.pl /td sha256 /fd sha256 /v $f
   SignedUninstaller=yes
 #else
-  OutputBaseFilename={#ExeName}{#OutputSuffix}-INSTALLER-{#VersionEnhanced}-UNSTABLE-UNSIGNED
+  OutputBaseFilename={#ExeName}{#OutputSuffix}-INSTALLER-{#VersionEnhanced}-UNSIGNED
 #endif
 UninstallDisplayIcon={app}\{#ExeName}.exe
 Uninstallable=yes

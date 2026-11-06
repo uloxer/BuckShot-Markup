@@ -239,6 +239,49 @@ namespace Greenshot.Tests.Editor
                 }
             });
         }
+        [Fact]
+        public void Panel_CheckboxMouseClicksKeepRowsAndSelectedEdgeControlsInSync()
+        {
+            Sta(() =>
+            {
+                using var surface = new Surface(new Bitmap(650, 500));
+                using var editor = new Greenshot.Editor.Forms.ImageEditorForm(surface, true, false) { Size = new Size(1100, 950) };
+                var box = new RectangleContainer(surface) { Left = 180, Top = 150, Width = 160, Height = 90 };
+                surface.AddElement(box, false); surface.SelectElement(box);
+                var panel = Field<MeasurementPanel>(editor, "_measurementPanel");
+                panel.SetExpanded(true); editor.Show(); Application.DoEvents();
+                var edges = Field<DataGridView>(panel, "_dimensionEdges");
+                var row = edges.Rows[1];
+                var checkbox = row.Cells[0];
+                void ClickCell(int column, int index)
+                {
+                    var rect = edges.GetCellDisplayRectangle(column, index, false);
+                    var position = new IntPtr(((rect.Top + rect.Height / 2) << 16) | (rect.Left + rect.Width / 2));
+                    SendMessage(edges.Handle, 0x0201, new IntPtr(1), position);
+                    SendMessage(edges.Handle, 0x0202, IntPtr.Zero, position);
+                    Application.DoEvents();
+                }
+                ClickCell(0, 1);
+                Assert.True(box.IsDimensionVisible(1));
+                Assert.Same(row, edges.Rows[1]); Assert.Same(checkbox, edges.CurrentCell);
+                ClickCell(0, 1);
+                Assert.False(box.IsDimensionVisible(1));
+                surface.Undo(); Assert.True(box.IsDimensionVisible(1));
+                surface.Redo(); Assert.False(box.IsDimensionVisible(1));
+                ClickCell(1, 2);
+                Field<ComboBox>(panel, "_edgeFormat").SelectedIndex = 2;
+                Field<NumericUpDown>(panel, "_edgeDigits").Value = 4;
+                Assert.Equal(4, box.GetDimensionFormat(2).Digits);
+                Assert.Null(box.GetDimensionFormat(1));
+                ClickCell(1, 1);
+                Assert.Equal(0, Field<ComboBox>(panel, "_edgeFormat").SelectedIndex);
+                Assert.Same(row, edges.CurrentRow);
+            });
+        }
+
+        [System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "SendMessageW")]
+        private static extern IntPtr SendMessage(IntPtr window, uint message, IntPtr wParam, IntPtr lParam);
+
         private static T Field<T>(object owner, string name) => (T)owner.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).GetValue(owner);
         internal static void Sta(Action action)
         {

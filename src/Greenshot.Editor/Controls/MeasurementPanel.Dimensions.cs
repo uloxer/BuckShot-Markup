@@ -74,21 +74,31 @@ namespace Greenshot.Editor.Controls
             _dimensionDocument=document; _dimensionsUpdating=true;
             try
             {
-                int selectedEdge = SelectedDimensionEdge;
-                var rowHeights = _dimensionEdges.Rows.Cast<DataGridViewRow>().Where(row => row.Tag is int)
-                    .ToDictionary(row => (int)row.Tag, row => row.Height);
-                _dimensionEdges.Rows.Clear();
                 var edges=DimensionLayout.Edges(_selected);
-                foreach(var edge in edges)
+                bool rebuild = _dimensionEdges.Rows.Count != edges.Length;
+                if (!rebuild)
+                    for (int i = 0; i < edges.Length; i++)
+                        if (!Equals(_dimensionEdges.Rows[i].Tag, edges[i].Index)) { rebuild = true; break; }
+                // Keep the current checkbox cell alive while CommitEdit is dispatching CellValueChanged.
+                if (rebuild)
                 {
+                    _dimensionEdges.Rows.Clear();
+                    foreach (var edge in edges)
+                    {
+                        int row = _dimensionEdges.Rows.Add(false, (edge.Index + 1).ToString(), null);
+                        _dimensionEdges.Rows[row].Tag = edge.Index;
+                    }
+                }
+                for (int i = 0; i < edges.Length; i++)
+                {
+                    var edge = edges[i];
                     string length=DimensionLayout.FormatLength(edge.Length,document?.Measurements ?? MeasurementState.Pixels,_selected.GetDimensionFormat(edge.Index) ?? document?.DimensionStyle.Format);
                     if(edge.Length==0)length+=" (zero; hidden)";
-                    int row=_dimensionEdges.Rows.Add(_selected.IsDimensionVisible(edge.Index),(edge.Index + 1).ToString(),length);
-                    _dimensionEdges.Rows[row].Tag=edge.Index;
-                    if (rowHeights.TryGetValue(edge.Index, out int height)) _dimensionEdges.Rows[row].Height = height;
-                    _dimensionEdges.Rows[row].Cells[2].ToolTipText=length;
+                    var row = _dimensionEdges.Rows[i];
+                    row.Cells[0].Value = _selected.IsDimensionVisible(edge.Index);
+                    row.Cells[2].Value = length;
+                    row.Cells[2].ToolTipText = length;
                 }
-                if (selectedEdge >= 0 && selectedEdge < _dimensionEdges.Rows.Count) _dimensionEdges.CurrentCell = _dimensionEdges.Rows[selectedEdge].Cells[1];
                 RefreshDimensionFormatControls();
                 _dimensionEdges.Visible=edges.Length>0;
                 _edgesCategory.Visible=edges.Length>0;

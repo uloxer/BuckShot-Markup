@@ -13,22 +13,14 @@ begin
   if RegQueryStringValue(HKLM, 'SYSTEM\CurrentControlSet\Control\Nls\Language Groups', argument, KeyValue) then
     Result := Length(KeyValue) > 0;
 end;
-procedure OpenSourceLink(Sender: TObject; const Link: string; LinkType: TSysLinkType);
-var ErrorCode: Integer;
-begin
-  ShellExecAsOriginalUser('open', 'https://github.com/uloxer/BuckShot-Markup', '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode);
-end;
 procedure InitializeWizard();
-var SourceLink: TNewLinkLabel;
 begin
-  WizardForm.LicenseMemo.Height := WizardForm.LicenseMemo.Height - ScaleY(28);
-  SourceLink := TNewLinkLabel.Create(WizardForm);
-  SourceLink.Parent := WizardForm.LicensePage;
-  SourceLink.Left := WizardForm.LicenseMemo.Left;
-  SourceLink.Top := WizardForm.LicenseMemo.Top + WizardForm.LicenseMemo.Height + ScaleY(4);
-  SourceLink.Width := WizardForm.LicenseMemo.Width;
-  SourceLink.Caption := '<a href="https://github.com/uloxer/BuckShot-Markup">BuckShot Markup source code on GitHub</a>';
-  SourceLink.UseVisualStyle := True;
-  SourceLink.OnLinkClick := @OpenSourceLink;
-  SourceLink.AdjustHeight();
+  // Accompany the unmodified GPL with source availability inside the scrollable licence page.
+  WizardForm.LicenseMemo.Lines.Add('');
+  WizardForm.LicenseMemo.Lines.Add('BuckShot Markup corresponding source, including build and installation scripts: https://github.com/uloxer/BuckShot-Markup');
+  WizardForm.LicenseMemo.Lines.Add('');
+  WizardForm.LicenseMemo.Lines.Add('Copyright and attribution notices');
+  WizardForm.LicenseMemo.Lines.Add('Based on Greenshot. Copyright (C) 2007-2026 Thomas Braun, Jens Klingen, Robin Krom and contributors. BuckShot Markup changes by its contributors.');
+  WizardForm.LicenseMemo.Lines.Add('Upstream icon credits: Yusuke Kamiyamane and the Greenshot contributors.');
+  WizardForm.LicenseMemo.Lines.Add('BuckShot Markup is distributed under the GNU General Public License, version 3 or later, without warranty. The complete licence above and retained component notices apply.');
 end;

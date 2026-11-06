@@ -79,10 +79,7 @@
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
-                        <Run Text="{wpf:Text Settings.AitoolsMcpDownload}"/>
-                        <Hyperlink NavigateUri="https://github.com/greenshot/greenshot/releases" RequestNavigate="McpDownload_RequestNavigate">
-                            <Run Text="github.com/greenshot/greenshot/releases"/>
-                        </Hyperlink>
+                        <Run Text="Install the optional MCP server component to enable this integration."/>
                     </TextBlock>
                 </StackPanel>
             </GroupBox>

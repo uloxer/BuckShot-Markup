@@ -325,18 +325,8 @@ namespace Greenshot.Helpers
                 var notificationService = SimpleServiceProvider.Current?.GetInstance<INotificationService>(isOptional: true);
                 if (notificationService == null) return;
 
-                var message = string.Format(Texts.Core.UpdateFound, newVersion.ToString());
-                notificationService.ShowInfoMessage(message, TimeSpan.FromHours(1), () =>
-                {
-                    try
-                    {
-                        Process.Start(new ProcessStartInfo(DownloadsUrl.AbsoluteUri) { UseShellExecute = true });
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error($"Failed to launch download URL: {DownloadsUrl.AbsoluteUri}", ex);
-                    }
-                });
+                var message = $"BuckShot Markup {newVersion} is available.";
+                notificationService.ShowInfoMessage(message, TimeSpan.FromHours(1));
             }
             catch (Exception ex)
             {

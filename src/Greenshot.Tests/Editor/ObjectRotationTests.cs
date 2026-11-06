@@ -229,6 +229,15 @@ namespace Greenshot.Tests.Editor
                 Dispatch(surface, "OnMouseDown", Point.Round(handle));
                 Dispatch(surface, "OnMouseMove", new Point(140, 100));
                 Assert.InRange(box.ObjectAngle, 89, 91);
+                // Render EDIT mode before mouse-up: geometry assertions alone miss stale drag previews.
+                Application.DoEvents(); surface.Update();
+                using (var preview = new Bitmap(surface.Width, surface.Height))
+                {
+                    surface.DrawToBitmap(preview, new Rectangle(Point.Empty, preview.Size));
+                    Assert.Equal(Color.Blue.ToArgb(), preview.GetPixel(100, 125).ToArgb());
+                    Assert.NotEqual(Color.Blue.ToArgb(), preview.GetPixel(65, 100).ToArgb());
+                }
+                Assert.False(surface.CanUndo);
                 Dispatch(surface, "OnMouseMove", new Point(100, 140));
                 Assert.InRange(Math.Abs(box.ObjectAngle), 179, 180);
                 Dispatch(surface, "OnMouseUp", new Point(100, 140));
