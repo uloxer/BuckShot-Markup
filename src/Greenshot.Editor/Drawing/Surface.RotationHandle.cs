@@ -45,7 +45,16 @@ namespace Greenshot.Editor.Drawing
         {
             if (e.Button != MouseButtons.Left || !RotationHandleHit(pointer)) return false;
             // A near-edge fallback must never steal an existing resize handle's hit area.
-            if (FindActiveAdorner(e) is Adorners.ResizeAdorner) return false;
+            if (FindActiveAdorner(e) is Adorners.ResizeAdorner resize)
+            {
+                // Resize bounds store a device-sized glyph around a model-space centre.
+                // Its broad image-space hit test otherwise swallows the rotation handle at high zoom.
+                var bounds = resize.Bounds;
+                var center = RotationHandleOwner.ModelToImage(new PointF(bounds.Left + bounds.Width / 2f, bounds.Top + bounds.Height / 2f));
+                double zoom = _zoomFactor;
+                if (Math.Abs(pointer.X - center.X) * zoom <= bounds.Width / 2f + 3 &&
+                    Math.Abs(pointer.Y - center.Y) * zoom <= bounds.Height / 2f + 3) return false;
+            }
             var owner = RotationHandleOwner;
             if (owner is TextContainer text) text.EndTextEditingForRotation();
             _rotationOwner = owner;
