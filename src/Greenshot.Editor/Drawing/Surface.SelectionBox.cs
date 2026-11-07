@@ -15,6 +15,7 @@ namespace Greenshot.Editor.Drawing
         private Point _selectionBoxEnd;
         private IDrawableContainer[] _selectionBoxInitial;
         private bool _selectionBoxActive, _selectionBoxToggle;
+        private float SelectionBoxLineWidth => Math.Max(1f, CurrentDpi / 96f);
 
         internal void BeginSelectionBox(Point start, Keys modifiers)
         {
@@ -133,8 +134,9 @@ namespace Greenshot.Editor.Drawing
 
         private void InvalidateSelectionBox(Rectangle bounds)
         {
-            // The dashed stroke is one device pixel wide; include rounding at fractional zoom.
-            Invalidate(ZoomClipRectangle(bounds, _zoomFactor, 2));
+            // Cover the DPI-scaled dashed stroke and fractional-zoom rounding.
+            int margin = (int)Math.Ceiling(SelectionBoxLineWidth / 2) + 1;
+            Invalidate(ZoomClipRectangle(bounds, _zoomFactor, margin));
         }
 
         private void InvalidateRotationSelectionHandle()
@@ -165,7 +167,7 @@ namespace Greenshot.Editor.Drawing
             var saved = graphics.Save();
             graphics.ScaleTransform(_zoomFactor, _zoomFactor);
             using var fill = new SolidBrush(Color.FromArgb(30, SystemColors.Highlight));
-            using var pen = new Pen(SystemColors.Highlight, (float)(1 / (double)_zoomFactor)) { DashStyle = DashStyle.Dash };
+            using var pen = new Pen(SystemColors.Highlight, SelectionBoxLineWidth / (float)_zoomFactor) { DashStyle = DashStyle.Dash };
             graphics.FillRectangle(fill, SelectionBoxBounds);
             graphics.DrawRectangle(pen, SelectionBoxBounds);
             graphics.Restore(saved);
