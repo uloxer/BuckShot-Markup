@@ -178,8 +178,16 @@ namespace Greenshot.Tests.Editor
                 palette.Refresh(true, true); palette.Remember(Color.Blue);
                 Assert.Same(recents, config.RecentColors);
                 Assert.Equal(images, toolbar.Items.OfType<ToolStripButton>().Where(b => b.Image != null).Select(b => b.Image).ToArray());
+                var recentSlots = toolbar.Items.OfType<ToolStripButton>().Skip(8).ToArray();
+                Assert.Equal(6, recentSlots.Length);
+                Assert.Equal(2, recentSlots.Count(button => button.Available));
+                foreach (var color in new[] { Color.Green, Color.Gold, Color.Purple, Color.Pink, Color.Brown }) palette.Remember(color);
+                Assert.All(recentSlots, button => Assert.True(button.Available));
+                Assert.Equal(Color.Brown.ToArgb(), ((Color)recentSlots[0].Tag).ToArgb());
                 palette.Refresh(false, false); Assert.False(target.Available);
+                Assert.All(recentSlots, button => Assert.False(button.Available));
                 palette.Refresh(false, true); Assert.Equal(FieldType.FILL_COLOR, palette.Target);
+                Assert.All(recentSlots, button => Assert.True(button.Available));
                 palette.Refresh(true, false); Assert.Equal(FieldType.LINE_COLOR, palette.Target);
                 toolbar.ImageScalingSize = new Size(32, 32); toolbar.PerformLayout();
                 Assert.All(toolbar.Items.OfType<ToolStripButton>().Where(b => b.Image != null), button => Assert.Equal(new Size(32, 32), button.Image.Size));
