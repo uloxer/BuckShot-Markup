@@ -31,8 +31,8 @@ namespace Greenshot.Tests.Helpers
     /// </summary>
     public sealed class StartupHelperTests : IDisposable
     {
-        private const string Installed = @"C:\Program Files\Greenshot\Greenshot.exe";
-        private const string Portable = @"D:\Portable\Greenshot\Greenshot.exe";
+        private const string Installed = @"C:\Program Files\Greenshot\BuckShot.exe";
+        private const string Portable = @"D:\Portable\Greenshot\BuckShot.exe";
         private static readonly byte[] SwitchedOn = [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         private static readonly byte[] SwitchedOff = [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
@@ -59,10 +59,10 @@ namespace Greenshot.Tests.Helpers
         }
 
         [Theory]
-        [InlineData("\"C:\\Program Files\\Greenshot\\Greenshot.exe\"", @"C:\Program Files\Greenshot\Greenshot.exe")]
-        [InlineData("\"C:\\Program Files\\Greenshot\\Greenshot.exe\" --language de-DE", @"C:\Program Files\Greenshot\Greenshot.exe")]
-        [InlineData(@"C:\Program Files\Greenshot\Greenshot.exe /background", @"C:\Program Files\Greenshot\Greenshot.exe")]
-        [InlineData(@"D:\Greenshot\Greenshot.exe", @"D:\Greenshot\Greenshot.exe")]
+        [InlineData("\"C:\\Program Files\\Greenshot\\BuckShot.exe\"", @"C:\Program Files\Greenshot\BuckShot.exe")]
+        [InlineData("\"C:\\Program Files\\Greenshot\\BuckShot.exe\" --language de-DE", @"C:\Program Files\Greenshot\BuckShot.exe")]
+        [InlineData(@"C:\Program Files\Greenshot\BuckShot.exe /background", @"C:\Program Files\Greenshot\BuckShot.exe")]
+        [InlineData(@"D:\Greenshot\BuckShot.exe", @"D:\Greenshot\BuckShot.exe")]
         [InlineData("", null)]
         [InlineData(null, null)]
         public void GetExecutable_ReadsTheRunValue(string runValue, string expected)

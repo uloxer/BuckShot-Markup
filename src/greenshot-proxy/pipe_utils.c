@@ -93,7 +93,7 @@ HANDLE ConnectToGreenshotPipe(LPCWSTR pwszPipeName, DWORD dwTimeoutMs, DWORD dwF
     }
 }
 
-/* Starts Greenshot.exe located next to this executable */
+/* Starts BuckShot.exe located next to this executable */
 static BOOL StartGreenshot(void)
 {
     const DWORD cchPath = 32768;
@@ -116,7 +116,7 @@ static BOOL StartGreenshot(void)
         if (i > 0)
         {
             pwszPath[i - 1] = L'\0';
-            LPWSTR pwszExe = RtConcatW(pwszPath, L"\\Greenshot.exe");
+            LPWSTR pwszExe = RtConcatW(pwszPath, L"\\BuckShot.exe");
             if (pwszExe && GetFileAttributesW(pwszExe) != INVALID_FILE_ATTRIBUTES)
             {
                 STARTUPINFOW startupInfo;

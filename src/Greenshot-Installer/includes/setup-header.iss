@@ -13,7 +13,7 @@ AppVerName={#AppDisplayName} {#Version}
 AppVersion={#Version}
 ArchitecturesInstallIn64BitMode=x64compatible
 #ifndef IsLightEdition
-; Greenshot.exe of the full version is a 64-bit exe (see Greenshot.csproj), Greenshot Light (AnyCPU) also runs on 32-bit Windows
+; BuckShot.exe of the full version is a 64-bit exe (see Greenshot.csproj), Greenshot Light (AnyCPU) also runs on 32-bit Windows
 ArchitecturesAllowed=x64compatible
 #endif
 Compression=lzma2/ultra64

@@ -1,4 +1,21 @@
 [InstallDelete]
+; Obsolete payload only in this BuckShot app directory; user settings and upstream installs are preserved.
+Type: files; Name: "{app}\Greenshot.exe"
+Type: files; Name: "{app}\Greenshot.exe.config"
+Type: files; Name: "{app}\Greenshot.Base.dll"
+Type: files; Name: "{app}\Greenshot.Editor.dll"
+Type: files; Name: "{app}\greenshot-cli.exe"
+Type: files; Name: "{app}\greenshot-proxy.exe"
+Type: files; Name: "{app}\Languages\greenshot.*.ini"
+Type: filesandordirs; Name: "{app}\Plugins\Greenshot.Plugin.Atlassian"
+Type: filesandordirs; Name: "{app}\Plugins\Greenshot.Plugin.Box"
+Type: filesandordirs; Name: "{app}\Plugins\Greenshot.Plugin.Dropbox"
+Type: filesandordirs; Name: "{app}\Plugins\Greenshot.Plugin.ExternalCommand"
+Type: filesandordirs; Name: "{app}\Plugins\Greenshot.Plugin.Office"
+Type: filesandordirs; Name: "{app}\Plugins\Greenshot.Plugin.Pdf"
+Type: filesandordirs; Name: "{app}\Plugins\Greenshot.Plugin.Stamps"
+Type: filesandordirs; Name: "{app}\Plugins\Greenshot.Plugin.Zxing"
+Type: filesandordirs; Name: "{app}\Plugins\Greenshot.Plugin.CustomUploader"
 Type: filesandordirs; Name: "{app}\Plugins\Greenshot.Plugin.RecipeEditor"
 [UninstallDelete]
 Type: files; Name: "{app}\BuckShot-Markup.log*"

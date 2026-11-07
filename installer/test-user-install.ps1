@@ -1,7 +1,8 @@
 <# Run only on a disposable Windows build runner: exercises the real per-user installer and uninstaller. #>
 param(
     [Parameter(Mandatory = $true)][string]$InstallerPath,
-    [string]$ExpectedVersion = ''
+    [string]$ExpectedVersion = '',
+    [string]$PreviousInstallerPath = ''
 )
 $ErrorActionPreference = 'Stop'
 if ($env:GITHUB_ACTIONS -ne 'true') { throw 'Use a disposable GitHub Actions runner for installation tests.' }
@@ -36,6 +37,14 @@ foreach ($extension in @('buckshot', 'greenshot')) {
     Set-Item -Path $key -Value 'Greenshot.CoexistenceProbe'
     $associationDefaults[$extension] = 'Greenshot.CoexistenceProbe'
 }
+if ($PreviousInstallerPath) {
+    $previous = (Resolve-Path -LiteralPath $PreviousInstallerPath).Path
+    $upgrade = Start-Process -FilePath $previous -ArgumentList '/CURRENTUSER /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /TASKS="" /TYPE=full' -WindowStyle Hidden -Wait -PassThru
+    if ($upgrade.ExitCode -ne 0) { throw 'Previous release installation failed' }
+    if (-not (Test-Path (Join-Path $installDir 'Greenshot.exe'))) { throw 'Previous release branding fixture missing' }
+    [IO.File]::WriteAllText((Join-Path $installDir 'upgrade-user-data.txt'), 'preserve user files')
+    Write-Host 'Installed 0.9.672 to exercise a real in-place upgrade.'
+}
 $process = Start-Process -FilePath $installer -ArgumentList '/CURRENTUSER /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /TASKS="" /TYPE=full' -WindowStyle Hidden -Wait -PassThru
 if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
 try {
@@ -47,7 +56,7 @@ try {
         if (-not (Get-Item "$key\OpenWithProgids").GetValueNames().Contains('BuckShotMarkup.Project')) { throw "Missing OpenWith for .$extension" }
     }
     $command = (Get-Item 'HKCU:\Software\Classes\BuckShotMarkup.Project\shell\open\command').GetValue('')
-    if ($command -notlike '*greenshot-proxy.exe*--file*%1*') { throw "Unexpected project open command: $command" }
+    if ($command -notlike '*buckshot-proxy.exe*--file*%1*') { throw "Unexpected project open command: $command" }
     $registration = Get-ItemProperty $userKey
     if ($registration.DisplayName -ne 'BuckShot Markup') { throw "Unexpected product name: $($registration.DisplayName)" }
     if ($ExpectedVersion -and $registration.DisplayVersion -ne $ExpectedVersion) {
@@ -55,19 +64,26 @@ try {
     }
     $actualDir = $registration.InstallLocation.TrimEnd('\')
     if ($actualDir -ine $installDir) { throw "Unexpected user installation directory: $actualDir" }
-    foreach ($file in @('Greenshot.exe', 'Greenshot.Base.dll', 'Greenshot.Editor.dll', 'greenshot-proxy.exe', 'greenshot-cli.exe', 'Plugins/Greenshot.Plugin.Stamps/Greenshot.Plugin.Stamps.dll', 'Languages/greenshot.stamps.en-US.ini')) {
+    foreach ($file in @('BuckShot.exe', 'BuckShot.Base.dll', 'BuckShot.Editor.dll', 'buckshot-proxy.exe', 'buckshot-cli.exe', 'Plugins/BuckShot.Plugin.Stamps/BuckShot.Plugin.Stamps.dll', 'Languages/buckshot.stamps.en-US.ini')) {
         if (-not (Test-Path -LiteralPath (Join-Path $actualDir $file))) { throw "Missing installed file: $file" }
     }
-    if (Test-Path -LiteralPath (Join-Path $actualDir 'Plugins/Greenshot.Plugin.RecipeEditor')) { throw 'Recipe Editor must not be distributed' }
+    if (Test-Path -LiteralPath (Join-Path $actualDir 'Plugins/BuckShot.Plugin.RecipeEditor')) { throw 'Recipe Editor must not be distributed' }
+    $oldPaths = @(Get-ChildItem -LiteralPath $actualDir -Recurse | Where-Object { $_.Name -imatch 'greenshot' })
+    if ($oldPaths.Count) { throw "Unbranded installed paths: $($oldPaths.FullName -join ', ')" }
+    $shell = New-Object -ComObject WScript.Shell
+    $shortcut = Join-Path ([Environment]::GetFolderPath('Programs')) 'BuckShot Markup/BuckShot Markup.lnk'
+    if ($shell.CreateShortcut($shortcut).TargetPath -ine (Join-Path $actualDir 'BuckShot.exe')) { throw 'Shortcut does not target BuckShot.exe' }
+    if ($PreviousInstallerPath -and (Get-Content (Join-Path $actualDir 'upgrade-user-data.txt') -Raw) -ne 'preserve user files') { throw 'Upgrade removed user data' }
+    & (Join-Path $PSScriptRoot 'test-installed-runtime.ps1') -InstallDirectory $actualDir
     $sourceVersion = (Get-Content -LiteralPath (Join-Path $PSScriptRoot '../src/version.json') -Raw | ConvertFrom-Json).version
     if ($ExpectedVersion -and $ExpectedVersion -ne $sourceVersion) { throw 'Requested and source versions differ' }
-    foreach ($file in @('Greenshot.exe', 'greenshot-proxy.exe', 'greenshot-cli.exe')) {
+    foreach ($file in @('BuckShot.exe', 'buckshot-proxy.exe', 'buckshot-cli.exe')) {
         $info = [Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $actualDir $file))
         if ($info.ProductName -ne 'BuckShot Markup') { throw "Unexpected product name in ${file}: $($info.ProductName)" }
-        if ($file -eq 'Greenshot.exe' -and $info.FileDescription -ne 'BuckShot Markup') { throw "Unexpected Windows display name: $($info.FileDescription)" }
+        if ($file -eq 'BuckShot.exe' -and $info.FileDescription -ne 'BuckShot Markup') { throw "Unexpected Windows display name: $($info.FileDescription)" }
         if (([version]$info.FileVersion).ToString(3) -ne $sourceVersion) { throw "Unexpected file version in ${file}: $($info.FileVersion)" }
         # NBGV keeps a commit-height fourth component for the managed app; native helpers use a fixed zero revision.
-        if ($file -ne 'Greenshot.exe' -and [version]$info.FileVersion -ne [version]"$sourceVersion.0") { throw "Unexpected native version revision in ${file}: $($info.FileVersion)" }
+        if ($file -ne 'BuckShot.exe' -and [version]$info.FileVersion -ne [version]"$sourceVersion.0") { throw "Unexpected native version revision in ${file}: $($info.FileVersion)" }
         if (([version]($info.ProductVersion -split '\+')[0]).ToString(3) -ne $sourceVersion) { throw "Unexpected product version in ${file}: $($info.ProductVersion)" }
         Write-Host "Verified $file product '$($info.ProductName)' version $($info.FileVersion)."
     }
@@ -87,7 +103,7 @@ finally {
     }
 }
 if (Test-Path $userKey) { throw 'Uninstaller left the uninstall registration behind' }
-if (Test-Path -LiteralPath (Join-Path $installDir 'Greenshot.exe')) { throw 'Uninstaller left the application behind' }
+if (Test-Path -LiteralPath (Join-Path $installDir 'BuckShot.exe')) { throw 'Uninstaller left the application behind' }
 if (-not (Test-Path -LiteralPath $upstreamConfig) -or (Get-FileHash -LiteralPath $upstreamConfig -Algorithm SHA256).Hash -ne $upstreamHash) { throw 'BuckShot modified Greenshot configuration' }
 if (-not (Test-Path $upstreamRegistration) -or (Get-ItemProperty $upstreamRegistration).DisplayName -ne $upstreamDisplayName) { throw 'BuckShot modified Greenshot registration' }
 if (-not $upstreamConfigExisted) { Remove-Item -LiteralPath $upstreamConfig }

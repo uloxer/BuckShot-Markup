@@ -16,8 +16,8 @@ try {
     $installed = Get-AppxPackage -Name $name
     if (-not $installed -or $installed.Version -ne "$ExpectedVersion.0") { throw 'Per-user package registration/version is wrong.' }
     if ($installed.Publisher -ne 'CN=BuckShot Markup Development') { throw 'Unexpected MSIX publisher.' }
-    if (Test-Path (Join-Path $installed.InstallLocation 'Plugins/Greenshot.Plugin.RecipeEditor')) { throw 'Recipe Editor must not be packaged.' }
-    foreach ($file in @('Greenshot.exe', 'greenshot-cli.exe', 'greenshot-proxy.exe')) {
+    if (Test-Path (Join-Path $installed.InstallLocation 'Plugins/BuckShot.Plugin.RecipeEditor')) { throw 'Recipe Editor must not be packaged.' }
+    foreach ($file in @('BuckShot.exe', 'buckshot-cli.exe', 'buckshot-proxy.exe')) {
         $info = [Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $installed.InstallLocation $file))
         if ($info.ProductName -ne 'BuckShot Markup' -or ([version]$info.FileVersion).ToString(3) -ne $ExpectedVersion) { throw "Wrong packaged product/version: $file" }
     }

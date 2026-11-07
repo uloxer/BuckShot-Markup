@@ -27,7 +27,7 @@ namespace Greenshot.Tests
         public void ProductVersionAndRuntimeStorageAreIndependentFromGreenshot()
         {
             Assert.Equal("BuckShot Markup", EditionInfo.ProductName);
-            Assert.Equal("0.9.672", ProductIdentity.Version);
+            Assert.Equal("0.9.673", ProductIdentity.Version);
             Assert.Equal(ProductIdentity.Version, EnvironmentInfo.GetGreenshotVersion());
             Assert.Equal(ProductIdentity.Version, EnvironmentInfo.GetGreenshotVersion(true));
             Assert.Equal("buckshot-markup.ini", IniConfigHelper.NormalConfigName);

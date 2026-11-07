@@ -27,7 +27,7 @@ using System.IO;
 namespace Greenshot.Ai
 {
     /// <summary>
-    /// A place where greenshot-mcp.exe may be, for the settings: next to Greenshot.exe, and in Debug builds the
+    /// A place where greenshot-mcp.exe may be, for the settings: next to BuckShot.exe, and in Debug builds the
     /// AiToolsMcpServerPaths locations (the same places <see cref="AiToolCaller.IsTrustedMcpServer"/> accepts).
     /// </summary>
     public sealed class McpServerStatus
@@ -59,7 +59,7 @@ namespace Greenshot.Ai
         {
             get
             {
-                string where = IsAdditional ? "in an AiToolsMcpServerPaths location (Debug build)" : "next to Greenshot.exe";
+                string where = IsAdditional ? "in an AiToolsMcpServerPaths location (Debug build)" : "next to BuckShot.exe";
                 if (!Exists)
                 {
                     return $"{AiToolCaller.McpServerFileName} was not found {where}";
@@ -76,7 +76,7 @@ namespace Greenshot.Ai
         public static IReadOnlyList<McpServerStatus> Find()
         {
             string greenshotDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string greenshotVersion = GetVersion(System.IO.Path.Combine(greenshotDirectory, "Greenshot.exe"));
+            string greenshotVersion = GetVersion(System.IO.Path.Combine(greenshotDirectory, "BuckShot.exe"));
             var result = new List<McpServerStatus> { Create(System.IO.Path.Combine(greenshotDirectory, AiToolCaller.McpServerFileName), false, greenshotVersion) };
             foreach (string additional in AiToolCaller.GetAdditionalMcpServerPaths() ?? Array.Empty<string>())
             {

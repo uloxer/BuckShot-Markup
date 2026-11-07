@@ -264,16 +264,16 @@ namespace Greenshot.Base.Core
         [Description("When set only these destinations are available, every other one (also unknown ones) is blocked. For greenshot-fixed.ini.")]
         List<string> AllowedDestinations { get; set; }
 
-        [Description("SHA-256 of plugins which aren't signed like Greenshot.exe, allowed to load. The user adds them by answering the question, an administrator can list them in greenshot-fixed.ini.")]
+        [Description("SHA-256 of plugins which aren't signed like BuckShot.exe, allowed to load. The user adds them by answering the question, an administrator can list them in greenshot-fixed.ini.")]
         List<string> PluginApprovedHashes { get; set; }
 
-        [Description("SHA-256 of plugins which aren't signed like Greenshot.exe, the user chose not to load them.")]
+        [Description("SHA-256 of plugins which aren't signed like BuckShot.exe, the user chose not to load them.")]
         List<string> PluginRejectedHashes { get; set; }
 
-        [Description("SHA-256 of plugins whose signature was checked: valid and of the same signer as Greenshot.exe. Greenshot keeps this list itself.")]
+        [Description("SHA-256 of plugins whose signature was checked: valid and of the same signer as BuckShot.exe. Greenshot keeps this list itself.")]
         List<string> PluginVerifiedHashes { get; set; }
 
-        [Description("Ask whether to load a plugin which isn't signed like Greenshot.exe. False in greenshot-fixed.ini: such a plugin only loads when PluginApprovedHashes lists it.")]
+        [Description("Ask whether to load a plugin which isn't signed like BuckShot.exe. False in greenshot-fixed.ini: such a plugin only loads when PluginApprovedHashes lists it.")]
         [DefaultValue(true)]
         bool AskForUnsignedPlugins { get; set; }
 

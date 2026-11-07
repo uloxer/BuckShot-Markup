@@ -1,20 +1,20 @@
 /*
  * Greenshot - a free and open source screenshot tool
  * Copyright (C) 2007-2026 Thomas Braun, Jens Klingen, Robin Krom
- * 
+ *
  * For more information see: https://getgreenshot.org/
  * The Greenshot project is hosted on GitHub https://github.com/greenshot/greenshot
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -778,7 +778,7 @@ namespace Greenshot.Tests.Forms
             {
                 File.WriteAllText(Path.Combine(baseDir, "match.dll"), "match");
                 File.WriteAllText(Path.Combine(baseDir, "Plugins", "mismatch.dll"), "changed content");
-                File.WriteAllText(Path.Combine(baseDir, "Greenshot.exe"), "not in the manifest");
+                File.WriteAllText(Path.Combine(baseDir, "BuckShot.exe"), "not in the manifest");
 
                 string manifestPath = Path.Combine(baseDir, "checksum.SHA256");
                 File.WriteAllLines(manifestPath, new[]
@@ -801,7 +801,7 @@ namespace Greenshot.Tests.Forms
                 Assert.Contains(vm.AllItems, i => i.RelativePath == "match.dll" && i.Status == ChecksumStatus.Match);
                 Assert.Contains(vm.AllItems, i => i.RelativePath == @"Plugins\mismatch.dll" && i.Status == ChecksumStatus.Mismatch);
                 Assert.Contains(vm.AllItems, i => i.RelativePath == "missing.dll" && i.Status == ChecksumStatus.Missing);
-                Assert.Contains(vm.AllItems, i => i.RelativePath == "Greenshot.exe" && i.Status == ChecksumStatus.Unlisted);
+                Assert.Contains(vm.AllItems, i => i.RelativePath == "BuckShot.exe" && i.Status == ChecksumStatus.Unlisted);
                 Assert.Equal(1, vm.MatchedCount);
                 Assert.Equal(1, vm.MismatchedCount);
                 Assert.Equal(1, vm.MissingCount);
@@ -878,10 +878,10 @@ namespace Greenshot.Tests.Forms
             Assert.True(ChecksumSectionViewModel.CanSkipFile(@"Plugins\Office\Languages\language_office-de-DE.xml"));
             Assert.True(ChecksumSectionViewModel.CanSkipFile(@"Languages\custom.xml"));
 
-            Assert.False(ChecksumSectionViewModel.CanSkipFile("Greenshot.exe"));
+            Assert.False(ChecksumSectionViewModel.CanSkipFile("BuckShot.exe"));
             Assert.False(ChecksumSectionViewModel.CanSkipFile("log4net-release.xml"));
             Assert.False(ChecksumSectionViewModel.CanSkipFile("checksum.SHA256"));
-            Assert.False(ChecksumSectionViewModel.CanSkipFile("Greenshot.exe.config"));
+            Assert.False(ChecksumSectionViewModel.CanSkipFile("BuckShot.exe.config"));
             Assert.False(ChecksumSectionViewModel.CanSkipFile(""));
             Assert.False(ChecksumSectionViewModel.CanSkipFile(null));
         }

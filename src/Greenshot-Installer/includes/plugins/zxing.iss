@@ -3,8 +3,8 @@ Name: "plugins\zxing"; Description: {cm:zxing}; Types: default full custom; Flag
 
 [Files]
 ; The plugin and the libraries only it uses; the build removed its copies of the files Greenshot itself installs
-Source: {#PluginDir}\Greenshot.Plugin.Zxing\*.dll; DestDir: {app}\Plugins\Greenshot.Plugin.Zxing; Components: plugins\zxing; Flags: {#DefaultInstallFlags};
-Source: {#SolutionDir}\Greenshot.Plugin.Zxing\Languages\greenshot.zxing.*.ini; DestDir: {app}\Languages; Components: plugins\zxing; Flags: {#DefaultInstallFlags};
+Source: {#PluginDir}\BuckShot.Plugin.Zxing\*.dll; DestDir: {app}\Plugins\BuckShot.Plugin.Zxing; Components: plugins\zxing; Flags: {#DefaultInstallFlags};
+Source: {#LanguagesDir}\buckshot.zxing.*.ini; DestDir: {app}\Languages; Components: plugins\zxing; Flags: {#DefaultInstallFlags};
 
 [CustomMessages]
 zxing=ZXing QR/Barcode plug-in

@@ -3,8 +3,8 @@ Name: "plugins\box"; Description: {cm:box}; Types: full custom; Flags: disableno
 
 [Files]
 ; The plugin and the libraries only it uses; the build removed its copies of the files Greenshot itself installs
-Source: {#PluginDir}\Greenshot.Plugin.Box\*.dll; DestDir: {app}\Plugins\Greenshot.Plugin.Box; Components: plugins\box; Flags: {#DefaultInstallFlags};
-Source: {#SolutionDir}\Greenshot.Plugin.Box\Languages\greenshot.box.*.ini; DestDir: {app}\Languages; Components: plugins\box; Flags: {#DefaultInstallFlags};
+Source: {#PluginDir}\BuckShot.Plugin.Box\*.dll; DestDir: {app}\Plugins\BuckShot.Plugin.Box; Components: plugins\box; Flags: {#DefaultInstallFlags};
+Source: {#LanguagesDir}\buckshot.box.*.ini; DestDir: {app}\Languages; Components: plugins\box; Flags: {#DefaultInstallFlags};
 
 [CustomMessages]
 box=Box plug-in

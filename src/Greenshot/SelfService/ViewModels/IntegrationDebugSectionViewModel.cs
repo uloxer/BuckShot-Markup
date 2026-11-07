@@ -1,20 +1,20 @@
 /*
  * Greenshot - a free and open source screenshot tool
  * Copyright (C) 2007-2026 Thomas Braun, Jens Klingen, Robin Krom
- * 
+ *
  * For more information see: https://getgreenshot.org/
  * The Greenshot project is hosted on GitHub https://github.com/greenshot/greenshot
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -70,21 +70,21 @@ namespace Greenshot.SelfService.ViewModels
         public string FirefoxStatus { get => _firefoxStatus; set { _firefoxStatus = value; OnPropertyChanged(); } }
         public string UrlSchemeStatus { get => _urlSchemeStatus; set { _urlSchemeStatus = value; OnPropertyChanged(); } }
         public string ProxyStatus { get => _proxyStatus; set { _proxyStatus = value; OnPropertyChanged(); } }
-        public string ActionFeedback 
-        { 
-            get => _actionFeedback; 
-            set 
-            { 
-                _actionFeedback = value; 
-                OnPropertyChanged(); 
-                OnPropertyChanged(nameof(HasActionFeedback)); 
-            } 
+        public string ActionFeedback
+        {
+            get => _actionFeedback;
+            set
+            {
+                _actionFeedback = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(HasActionFeedback));
+            }
         }
         public bool HasActionFeedback => !string.IsNullOrEmpty(_actionFeedback);
         public Brush ActionFeedbackBrush { get => _actionFeedbackBrush; set { _actionFeedbackBrush = value; OnPropertyChanged(); } }
 
         public string BaseDirectory => AppDomain.CurrentDomain.BaseDirectory;
-        public string ProxyPath => Path.Combine(BaseDirectory, "greenshot-proxy.exe");
+        public string ProxyPath => Path.Combine(BaseDirectory, "buckshot-proxy.exe");
         public string ChromeManifestPath => Path.Combine(BaseDirectory, "org.greenshot.proxy.json");
         public string FirefoxManifestPath => Path.Combine(BaseDirectory, "org.greenshot.proxy-firefox.json");
         public string ExtensionDirectory => Path.GetFullPath(Path.Combine(BaseDirectory, @"..\..\..\..\Greenshot.BrowserExtension"));
@@ -190,7 +190,7 @@ namespace Greenshot.SelfService.ViewModels
                 }
 
                 // Custom URL Scheme: greenshot://
-                string exePath = Path.Combine(BaseDirectory, "Greenshot.exe");
+                string exePath = Path.Combine(BaseDirectory, "BuckShot.exe");
                 using (var key = Registry.CurrentUser.CreateSubKey(@"Software\Classes\greenshot"))
                 {
                     key?.SetValue(null, "URL:Greenshot Protocol");

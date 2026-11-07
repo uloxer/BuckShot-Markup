@@ -43,7 +43,7 @@ namespace Greenshot.Base.Languages
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Texts));
         private static readonly object InitializeLock = new object();
-        private const string BaseName = "greenshot";
+        private static string BaseName = "greenshot";
         private const string BaseLanguage = "en-US";
         private static LanguageConfig _config;
         private static bool _initializing;
@@ -145,6 +145,8 @@ namespace Greenshot.Base.Languages
             }
 
             _searchPaths = FindSearchPaths(additionalSearchPaths);
+            BaseName = _searchPaths.Any(path => Directory.EnumerateFiles(path, "buckshot.*.ini").Any())
+                ? "buckshot" : "greenshot";
             var builder = LanguageConfigRegistry.ForFile(BaseName)
                 .WithBaseLanguage(BaseLanguage)
                 .WithCurrentLanguage(string.IsNullOrEmpty(requested) ? BaseLanguage : requested)

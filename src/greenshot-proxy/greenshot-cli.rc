@@ -18,9 +18,9 @@ BEGIN
             VALUE "CompanyName", "BuckShot Markup contributors"
             VALUE "FileDescription", "BuckShot Markup command line"
             VALUE "FileVersion", BUCKSHOT_VERSION_FULL
-            VALUE "InternalName", "greenshot-cli"
+            VALUE "InternalName", "buckshot-cli"
             VALUE "LegalCopyright", "Copyright (C) 2007-2026 Thomas Braun, Jens Klingen, Robin Krom"
-            VALUE "OriginalFilename", "greenshot-cli.exe"
+            VALUE "OriginalFilename", "buckshot-cli.exe"
             VALUE "ProductName", "BuckShot Markup"
             VALUE "ProductVersion", BUCKSHOT_VERSION_FULL
         END

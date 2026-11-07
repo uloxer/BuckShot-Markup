@@ -1,6 +1,6 @@
 <# Wraps the already-built desktop payload. Does not install the package or trust certificates. #>
 param(
-    [string]$PayloadPath = (Join-Path $PSScriptRoot '../src/Greenshot/bin/Release/net480'),
+    [string]$PayloadPath = (Join-Path $PSScriptRoot 'payload'),
     [string]$OutputDirectory = $PSScriptRoot,
     [string]$CertificateThumbprint,
     [switch]$CreateDevelopmentCertificate
@@ -31,7 +31,7 @@ $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 [void][IO.Directory]::CreateDirectory($OutputDirectory)
 $repository = Split-Path $PSScriptRoot -Parent
 $version = (Get-Content (Join-Path $repository 'src/version.json') -Raw | ConvertFrom-Json).version
-if (([version][Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $PayloadPath 'Greenshot.exe')).FileVersion).ToString(3) -ne $version) {
+if (([version][Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $PayloadPath 'BuckShot.exe')).FileVersion).ToString(3) -ne $version) {
     throw 'Build the current desktop application before building MSIX.'
 }
 $stage = Join-Path ([IO.Path]::GetTempPath()) ('BuckShot-MSIX-' + [guid]::NewGuid().ToString('N'))
@@ -48,11 +48,10 @@ try {
     }
     Copy-Item (Join-Path $PayloadPath 'log4net.xml'), (Join-Path $PayloadPath 'checksum.SHA256') $stage
     $languages = Join-Path $stage 'Languages'; [void][IO.Directory]::CreateDirectory($languages)
-    Copy-Item (Join-Path $repository 'src/Greenshot/Languages/*.ini') $languages
     if (Test-Path (Join-Path $PayloadPath 'Languages')) { Copy-Item (Join-Path $PayloadPath 'Languages/*.ini') $languages -Force }
     Copy-Item (Join-Path $repository 'src/Greenshot-Installer/additional_files/license.txt') $stage
     Copy-Item (Join-Path $repository 'src/Greenshot-Installer/additional_files/buckshot-readme.txt') (Join-Path $stage 'readme.txt')
-    if (Test-Path (Join-Path $stage 'Plugins/Greenshot.Plugin.RecipeEditor')) { throw 'Recipe Editor must not be packaged.' }
+    if (Test-Path (Join-Path $stage 'Plugins/BuckShot.Plugin.RecipeEditor')) { throw 'Recipe Editor must not be packaged.' }
     [xml]$manifest = Get-Content (Join-Path $PSScriptRoot 'msix/AppxManifest.xml') -Raw
     $manifest.Package.Identity.Version = "$version.0"
     $manifest.Save((Join-Path $stage 'AppxManifest.xml'))

@@ -1,5 +1,5 @@
 /*
- * greenshot-cli.exe - console command line interface for Greenshot (/SUBSYSTEM:CONSOLE).
+ * buckshot-cli.exe - console command line interface for Greenshot (/SUBSYSTEM:CONSOLE).
  *
  * Forwards the command line unchanged to Greenshot (connection source "cli", text replies) and prints what comes
  * back. Argument parsing, validation, output formatting and --json are all done by Greenshot; only --help and
@@ -13,8 +13,8 @@
 static const char Usage[] =
     "Greenshot Proxy CLI\n\n"
     "Usage:\n"
-    "  greenshot-cli [options]\n"
-    "  greenshot-cli <file...>\n\n"
+    "  buckshot-cli [options]\n"
+    "  buckshot-cli <file...>\n\n"
     "Options:\n"
     "  --list-recipes, -l [--json]             List all recipes configured with a CommandlineTrigger\n"
     "  --info, -i <id> [--json]                Describe the contract & variables of a recipe\n"
@@ -32,8 +32,8 @@ static const char Usage[] =
     "  --json                                  Print the result (status, exit code, output, variables) as JSON\n"
     "  --async                                 Start the recipe and return immediately\n"
     "  --                                      Stop option parsing; remaining arguments must be key=value\n\n"
-    "  Example: greenshot-cli --recipe ocr destination=clipboard\n"
-    "  Example: greenshot-cli -r qr --file=invoice.png --query \"${Barcode.Text}\"\n\n"
+    "  Example: buckshot-cli --recipe ocr destination=clipboard\n"
+    "  Example: buckshot-cli -r qr --file=invoice.png --query \"${Barcode.Text}\"\n\n"
     "Exit codes:\n"
     "  0 success, 1 failure, 2 invalid command line, 3 Greenshot not available,\n"
     "  or the exit code set by the recipe (Stderr step).\n";
@@ -105,7 +105,7 @@ static int RunCli(int argc, LPWSTR* argv)
     return exitCode;
 }
 
-/* Entry point (no C runtime): see the EntryPointSymbol in greenshot-cli.vcxproj */
+/* Entry point (no C runtime): see the EntryPointSymbol in buckshot-cli.vcxproj */
 void WINAPI ProxyEntry(void)
 {
     int argc = 0;

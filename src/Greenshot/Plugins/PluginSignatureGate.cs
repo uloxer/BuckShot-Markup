@@ -1,20 +1,20 @@
 /*
  * Greenshot - a free and open source screenshot tool
  * Copyright (C) 2007-2026 Thomas Braun, Jens Klingen, Robin Krom
- * 
+ *
  * For more information see: https://getgreenshot.org/
  * The Greenshot project is hosted on GitHub https://github.com/greenshot/greenshot
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -43,7 +43,7 @@ namespace Greenshot.Plugins
     }
 
     /// <summary>
-    /// A plugin which isn't signed like Greenshot.exe, held back until the user answers the question
+    /// A plugin which isn't signed like BuckShot.exe, held back until the user answers the question
     /// </summary>
     public sealed class HeldBackPlugin
     {
@@ -58,7 +58,7 @@ namespace Greenshot.Plugins
     }
 
     /// <summary>
-    /// Loads a plugin only when it is signed like Greenshot.exe, or when its SHA-256 is approved. A release build is signed,
+    /// Loads a plugin only when it is signed like BuckShot.exe, or when its SHA-256 is approved. A release build is signed,
     /// a build from Visual Studio isn't: then the check is off. Hashes which passed the check are kept, so a plugin is only
     /// verified again when it changed (about 6 ms for the signature check, 0.1-0.3 ms for the hash).
     /// Only plugins in a folder the user can change are checked: in an installation under Program Files only an administrator can
@@ -85,7 +85,7 @@ namespace Greenshot.Plugins
             _isActive = IsVerified(greenshotExe);
             if (!_isActive)
             {
-                Log.Info("Greenshot.exe isn't signed, plugins are loaded without checking their signature");
+                Log.Info("BuckShot.exe isn't signed, plugins are loaded without checking their signature");
             }
         }
 
@@ -137,11 +137,11 @@ namespace Greenshot.Plugins
 
             if (!_configuration.AskForUnsignedPlugins)
             {
-                Log.WarnFormat("Not loading the plugin {0}, it isn't signed like Greenshot.exe (SHA-256 {1})", pluginFile, sha256);
+                Log.WarnFormat("Not loading the plugin {0}, it isn't signed like BuckShot.exe (SHA-256 {1})", pluginFile, sha256);
                 return PluginGateResult.Skip;
             }
 
-            Log.WarnFormat("Holding back the plugin {0}, it isn't signed like Greenshot.exe (SHA-256 {1})", pluginFile, sha256);
+            Log.WarnFormat("Holding back the plugin {0}, it isn't signed like BuckShot.exe (SHA-256 {1})", pluginFile, sha256);
             HeldBack.Add(new HeldBackPlugin
             {
                 FilePath = pluginFile,
@@ -166,7 +166,7 @@ namespace Greenshot.Plugins
         }
 
         /// <summary>
-        /// Greenshot.exe has a valid signature: a hash in the verified list, or checked now
+        /// BuckShot.exe has a valid signature: a hash in the verified list, or checked now
         /// </summary>
         private bool IsVerified(string file)
         {

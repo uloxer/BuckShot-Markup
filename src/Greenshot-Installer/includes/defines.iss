@@ -1,17 +1,17 @@
-#define ExeName "Greenshot"
+#define ExeName "BuckShot"
 ; Basic build version determined by nerdbank gitversioning, e.g. 1.2.345
 #define Version GetEnv('BuildVersionSimple')
 ; Build version with optional suffix depending on branch, e.g. 1.2.345-g1tc033174ef
 #define VersionEnhanced GetEnv('BuildVersionEnhanced')
 #define SolutionDir ".."
 #define GreenshotProjectDir "..\Greenshot"
-#define LanguagesDir "..\Greenshot\Languages"
+#define LanguagesDir "..\..\installer\payload\Languages"
 #define BinDir "bin\Release\net480"
-; Greenshot Light (setup-light.iss) installs its own build of Greenshot.exe, see Greenshot.csproj
+; Greenshot Light (setup-light.iss) installs its own build of BuckShot.exe, see Greenshot.csproj
 #ifndef ReleaseDir
-  #define ReleaseDir "..\Greenshot\bin\Release\net480"
+  #define ReleaseDir "..\..\installer\payload"
 #endif
-#define PluginDir "..\Greenshot\bin\Release\net480\Plugins"
+#define PluginDir "..\..\installer\payload\Plugins"
 #define CertumThumbprint GetEnv('CertumThumbprint')
 #define DefaultInstallFlags "overwritereadonly ignoreversion"
 

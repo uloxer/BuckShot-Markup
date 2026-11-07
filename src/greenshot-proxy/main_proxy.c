@@ -1,5 +1,5 @@
 /*
- * greenshot-proxy.exe - browser and Windows shell integration for Greenshot (/SUBSYSTEM:WINDOWS, no console).
+ * buckshot-proxy.exe - browser and Windows shell integration for Greenshot (/SUBSYSTEM:WINDOWS, no console).
  *
  * Started by:
  *   - the browser (Native Messaging): relays frames between the extension and Greenshot,
@@ -16,8 +16,8 @@
 
 /*
  * Detects a Native Messaging launch by the browser. Only the exact arguments browsers pass are recognized:
- *   Chrome / Edge: greenshot-proxy.exe chrome-extension://<id>/ [--parent-window=<hwnd>]
- *   Firefox:       greenshot-proxy.exe <path-to-host-manifest.json> <extension-id>
+ *   Chrome / Edge: buckshot-proxy.exe chrome-extension://<id>/ [--parent-window=<hwnd>]
+ *   Firefox:       buckshot-proxy.exe <path-to-host-manifest.json> <extension-id>
  * The origin found here is passed on in HELLO, and Greenshot only accepts the extensions it allows.
  */
 static LPCWSTR GetExtensionOrigin(int argc, LPWSTR* argv)
@@ -74,7 +74,7 @@ static int RunProxy(int argc, LPWSTR* argv)
     return exitCode;
 }
 
-/* Entry point (no C runtime): see the EntryPointSymbol in greenshot-proxy.vcxproj */
+/* Entry point (no C runtime): see the EntryPointSymbol in buckshot-proxy.vcxproj */
 void WINAPI ProxyEntry(void)
 {
     int argc = 0;

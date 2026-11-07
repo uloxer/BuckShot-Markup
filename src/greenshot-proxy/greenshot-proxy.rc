@@ -18,9 +18,9 @@ BEGIN
             VALUE "CompanyName", "BuckShot Markup contributors"
             VALUE "FileDescription", "BuckShot Markup Proxy"
             VALUE "FileVersion", BUCKSHOT_VERSION_FULL
-            VALUE "InternalName", "greenshot-proxy"
+            VALUE "InternalName", "buckshot-proxy"
             VALUE "LegalCopyright", "Copyright (C) 2007-2026 Thomas Braun, Jens Klingen, Robin Krom"
-            VALUE "OriginalFilename", "greenshot-proxy.exe"
+            VALUE "OriginalFilename", "buckshot-proxy.exe"
             VALUE "ProductName", "BuckShot Markup"
             VALUE "ProductVersion", BUCKSHOT_VERSION_FULL
         END

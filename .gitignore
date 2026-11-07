@@ -238,3 +238,5 @@ src/**/Greenshot-proxy.exe
 /installer/BuckShot-Markup*.cer
 /installer/BuckShot-Markup*.cer.sha256
 /installer/MSIX-INSTALL.md
+
+/installer/payload/

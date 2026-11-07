@@ -1,20 +1,20 @@
 /*
  * Greenshot - a free and open source screenshot tool
  * Copyright (C) 2007-2026 Thomas Braun, Jens Klingen, Robin Krom
- * 
+ *
  * For more information see: https://getgreenshot.org/
  * The Greenshot project is hosted on GitHub https://github.com/greenshot/greenshot
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -64,7 +64,7 @@ namespace Greenshot.Plugins
         public IReadOnlyList<string> FoundPluginNames { get; private set; } = Array.Empty<string>();
 
         /// <summary>
-        /// The plugins which aren't signed like Greenshot.exe and weren't approved yet, the user is asked about them after the start
+        /// The plugins which aren't signed like BuckShot.exe and weren't approved yet, the user is asked about them after the start
         /// </summary>
         public IReadOnlyList<HeldBackPlugin> HeldBackPlugins { get; private set; } = Array.Empty<HeldBackPlugin>();
 
@@ -111,7 +111,7 @@ namespace Greenshot.Plugins
         }
 
         /// <summary>
-        /// Ask about each plugin which isn't signed like Greenshot.exe, on the UI thread: Load approves its SHA-256 for the next start,
+        /// Ask about each plugin which isn't signed like BuckShot.exe, on the UI thread: Load approves its SHA-256 for the next start,
         /// Don't load rejects it, closing the question asks again at the next start
         /// </summary>
         public void AskAboutHeldBackPlugins()
@@ -193,7 +193,9 @@ namespace Greenshot.Plugins
             if (!Directory.Exists(pluginsPath)) return pluginFiles;
             try
             {
-                pluginFiles = Directory.GetFiles(pluginsPath, "Greenshot.Plugin.*.dll", SearchOption.AllDirectories);
+                pluginFiles = Directory.GetFiles(pluginsPath, "*.dll", SearchOption.AllDirectories)
+                    .Where(file => Path.GetFileName(file).StartsWith("BuckShot.Plugin.", StringComparison.OrdinalIgnoreCase) ||
+                                   Path.GetFileName(file).StartsWith("Greenshot.Plugin.", StringComparison.OrdinalIgnoreCase)).ToArray();
             }
             catch (Exception ex)
             {

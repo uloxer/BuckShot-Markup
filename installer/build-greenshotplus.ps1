@@ -25,18 +25,20 @@ try {
     # Use the SDK's MSBuild for managed code: .NET 10 needs MSBuild 18, while the
     # hosted VS 2022 MSBuild is retained only for the native C projects below.
     Invoke-Checked dotnet @('build', 'src/Greenshot.Tests/Greenshot.Tests.csproj', '--configuration', 'Release', '--verbosity', 'minimal', '-m:1', '/p:UseSharedCompilation=false')
-    Invoke-Checked dotnet @('test', 'src/Greenshot.Tests/Greenshot.Tests.csproj', '--configuration', 'Release', '--no-build', '--no-restore', '--filter', 'FullyQualifiedName~DimensionFormatTests|FullyQualifiedName~ObjectRotationTests|FullyQualifiedName~BrandingSmokeTests|FullyQualifiedName~BuckShotIdentityTests|FullyQualifiedName~MarqueeSelectionTests|FullyQualifiedName~EditorTidyTests|FullyQualifiedName~StageOnePerformanceTests|FullyQualifiedName~DimensionTests|FullyQualifiedName~StageTwoPerformanceTests|FullyQualifiedName~ObjectSnappingTests|FullyQualifiedName~SnappingGestureTests|FullyQualifiedName~GroupTests|FullyQualifiedName~PolygonTests|FullyQualifiedName~LineRotationCaptureTests|FullyQualifiedName~ProjectDefaultsTests', '--logger', 'trx;LogFileName=editor-regressions.trx')
+    Invoke-Checked dotnet @('test', 'src/Greenshot.Tests/Greenshot.Tests.csproj', '--configuration', 'Release', '--no-build', '--no-restore', '--filter', 'FullyQualifiedName~DimensionFormatTests|FullyQualifiedName~ObjectRotationTests|FullyQualifiedName~BrandingSmokeTests|FullyQualifiedName~BuckShotIdentityTests|FullyQualifiedName~MarqueeSelectionTests|FullyQualifiedName~EditorTidyTests|FullyQualifiedName~StageOnePerformanceTests|FullyQualifiedName~DimensionTests|FullyQualifiedName~StageTwoPerformanceTests|FullyQualifiedName~ObjectSnappingTests|FullyQualifiedName~SnappingGestureTests|FullyQualifiedName~GroupTests|FullyQualifiedName~PolygonTests|FullyQualifiedName~LineRotationCaptureTests|FullyQualifiedName~ProjectDefaultsTests|FullyQualifiedName~DrawableContainerClipboardTests|FullyQualifiedName~AiToolAccessTests', '--logger', 'trx;LogFileName=editor-regressions.trx')
     foreach ($project in @('greenshot-proxy', 'greenshot-cli')) {
         Invoke-Checked msbuild @("src/greenshot-proxy/$project.vcxproj", '/p:Configuration=Release', '/p:Platform=x64', "/p:PlatformToolset=$PlatformToolset", '/v:minimal')
     }
     Invoke-Checked dotnet @('restore', 'src/Greenshot-Installer/Greenshot-Installer.csproj', '--verbosity', 'quiet')
     $output = Join-Path $repository 'src/Greenshot/bin/Release/net480'
+    & ./installer/prepare-buckshot-payload.ps1 -BuildOutput $output
+    $output = Join-Path $PSScriptRoot 'payload'
     & ./src/Greenshot-Installer/scripts/prune-plugin-files.ps1 -OutputDir $output
     & ./src/Greenshot-Installer/scripts/check-core-files.ps1 -OutputDir $output -CoreFilesIss ./src/Greenshot-Installer/includes/core-files.iss
     if ($LASTEXITCODE -ne 0) { throw 'Installer file inventory validation failed' }
     & ./src/Greenshot-Installer/scripts/generate-checksums.ps1 -OutputDir $output
 
-    $sourceVersion = ([version][Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $output 'Greenshot.exe')).FileVersion).ToString(3)
+    $sourceVersion = ([version][Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $output 'BuckShot.exe')).FileVersion).ToString(3)
     if ($ReleaseVersion -and $ReleaseVersion -ne $sourceVersion) { throw 'ReleaseVersion must match src/version.json' }
     $env:BuildVersionSimple = $sourceVersion
     $env:BuildVersionEnhanced = $sourceVersion

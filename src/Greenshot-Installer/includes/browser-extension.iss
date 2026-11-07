@@ -1,6 +1,6 @@
 ; Browser integration: the Native Messaging host for the Greenshot browser extension.
 ; Not part of the installer yet. To build an installer that includes it, uncomment the #include of this file in
-; setup.iss (and setup-light.iss). greenshot-proxy.exe itself is always installed, it also opens files (see tasks-icons-reg.iss)
+; setup.iss (and setup-light.iss). buckshot-proxy.exe itself is always installed, it also opens files (see tasks-icons-reg.iss)
 ; and greenshot: URLs (see url-protocol.iss).
 
 [Files]

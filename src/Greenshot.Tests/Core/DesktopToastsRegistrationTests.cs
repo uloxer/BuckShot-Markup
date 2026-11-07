@@ -36,10 +36,10 @@ namespace Greenshot.Tests.Core
         private const string AppIdsKey = @"Software\Classes\AppUserModelId";
 
         [Theory]
-        [InlineData("\"C:\\Program Files\\Greenshot\\Greenshot.exe\" -ToastActivated", "Greenshot.exe")]
-        [InlineData("C:\\Tools\\Greenshot.exe -ToastActivated", "Greenshot.exe")]
-        [InlineData("\"C:\\Users\\a b\\Downloads\\Greenshot-PORTABLE-1.3.304-RELEASE\\Greenshot.exe\"", "Greenshot.exe")]
-        [InlineData("\"C:\\Tools\\MyGreenshot.exe\" -ToastActivated", "MyGreenshot.exe")]
+        [InlineData("\"C:\\Program Files\\Greenshot\\BuckShot.exe\" -ToastActivated", "BuckShot.exe")]
+        [InlineData("C:\\Tools\\BuckShot.exe -ToastActivated", "BuckShot.exe")]
+        [InlineData("\"C:\\Users\\a b\\Downloads\\Greenshot-PORTABLE-1.3.304-RELEASE\\BuckShot.exe\"", "BuckShot.exe")]
+        [InlineData("\"C:\\Tools\\MyBuckShot.exe\" -ToastActivated", "MyBuckShot.exe")]
         [InlineData("", null)]
         [InlineData(null, null)]
         public void GetExeFileName_ReturnsTheFileNameOfTheStartedExe(string commandLine, string expected)

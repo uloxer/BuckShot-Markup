@@ -3,8 +3,8 @@ Name: "plugins\office"; Description: {cm:office}; Types: default full custom; Fl
 
 [Files]
 ; The plugin and the libraries only it uses; the build removed its copies of the files Greenshot itself installs
-Source: {#PluginDir}\Greenshot.Plugin.Office\*.dll; DestDir: {app}\Plugins\Greenshot.Plugin.Office; Components: plugins\office; Flags: {#DefaultInstallFlags};
-Source: {#SolutionDir}\Greenshot.Plugin.Office\Languages\greenshot.office.*.ini; DestDir: {app}\Languages; Components: plugins\office; Flags: {#DefaultInstallFlags};
+Source: {#PluginDir}\BuckShot.Plugin.Office\*.dll; DestDir: {app}\Plugins\BuckShot.Plugin.Office; Components: plugins\office; Flags: {#DefaultInstallFlags};
+Source: {#LanguagesDir}\buckshot.office.*.ini; DestDir: {app}\Languages; Components: plugins\office; Flags: {#DefaultInstallFlags};
 
 [CustomMessages]
 office=Microsoft Office plug-in

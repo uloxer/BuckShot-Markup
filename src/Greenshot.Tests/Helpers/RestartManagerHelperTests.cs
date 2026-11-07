@@ -40,7 +40,7 @@ namespace Greenshot.Tests.Helpers
         /// </summary>
         private static string[] SplitArguments(string arguments)
         {
-            IntPtr argv = CommandLineToArgvW("Greenshot.exe " + arguments, out int count);
+            IntPtr argv = CommandLineToArgvW("BuckShot.exe " + arguments, out int count);
             Assert.NotEqual(IntPtr.Zero, argv);
             try
             {
