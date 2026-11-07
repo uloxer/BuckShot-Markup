@@ -1,8 +1,8 @@
-// BuckShot - a free and open source screenshot tool
+// Greenshot - a free and open source screenshot tool
 // Copyright (C) 2007-2026 Thomas Braun, Jens Klingen, Robin Krom
 // 
 // For more information see: https://getgreenshot.org/
-// The BuckShot project is hosted on GitHub https://github.com/greenshot/greenshot
+// The Greenshot project is hosted on GitHub https://github.com/greenshot/greenshot
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

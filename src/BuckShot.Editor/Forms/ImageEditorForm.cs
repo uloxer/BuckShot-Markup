@@ -458,67 +458,71 @@ if (!IsDisposed && !Disposing && IsHandleCreated)
             // The InitializeComponent() call is required for Windows Forms designer support.
             //
             InitializeComponent();
-            ApplyImages();
-            InitializeMeasurements();
-            RefreshBuckShotIcons();
-            timing.Mark("Icons");
-            Disposed += (s, e) => DisposeBuckShotIcons();
-            BuckShot.Base.Wpf.WpfThemeHelper.ThemeChanged += BuckShotThemeChanged;
-            CreateHdrLabel();
-            // Before the texts are applied
-            CreateTabContextMenu();
-            timing.Mark("InitializeComponent");
-            InitializeLanguage();
-            timing.Mark("InitializeLanguage");
-            // Emoji insertion is unchanged; the toolbar now uses the BuckShot vector glyph.
-            // Add the destinations after the form is loaded, this is needed for the dynamic destinations which need the handle of the form
-            Load += (s, eventArgs) =>
+            timing.Mark("Designer");
+            var startupLayout = SuspendStartupLayout();
+            try
             {
-                AddDestinations();
-                UpdateRecipesMenu();
-            };
-
-            EventHandler recipesChangedHandler = (s, e) =>
-            {
-                // Raised from file watchers and flows: always marshal to the UI thread
-                var ui = SimpleServiceProvider.Current.GetInstance<IUiDispatcher>(isOptional: true) ?? InlineUiDispatcher.Instance;
-                ui.InvokeAsync(() =>
+                InitializeMeasurements();
+                timing.Mark("Measurements");
+                RefreshBuckShotIcons();
+                timing.Mark("Icons");
+                Disposed += (s, e) => DisposeBuckShotIcons();
+                BuckShot.Base.Wpf.WpfThemeHelper.ThemeChanged += BuckShotThemeChanged;
+                CreateHdrLabel();
+                // Before the texts are applied
+                CreateTabContextMenu();
+                timing.Mark("InitializeComponent");
+                InitializeLanguage();
+                timing.Mark("InitializeLanguage");
+                // Emoji insertion is unchanged; the toolbar now uses the BuckShot vector glyph.
+                // Add the destinations after the form is loaded, this is needed for the dynamic destinations which need the handle of the form
+                Load += (s, eventArgs) =>
                 {
-                    if (IsDisposed || Disposing) return;
+                    AddDestinations();
                     UpdateRecipesMenu();
-                }).FireAndLog("Update the editor recipes menu", Log);
-            };
+                };
 
-            var recipeManager = SimpleServiceProvider.Current.GetInstance<IRecipeManager>(isOptional: true);
-            if (recipeManager != null)
-            {
-                recipeManager.RecipesChanged += recipesChangedHandler;
+                EventHandler recipesChangedHandler = (s, e) =>
+                {
+                    // Raised from file watchers and flows: always marshal to the UI thread
+                    var ui = SimpleServiceProvider.Current.GetInstance<IUiDispatcher>(isOptional: true) ?? InlineUiDispatcher.Instance;
+                    ui.InvokeAsync(() =>
+                    {
+                        if (IsDisposed || Disposing) return;
+                        UpdateRecipesMenu();
+                    }).FireAndLog("Update the editor recipes menu", Log);
+                };
+
+                var recipeManager = SimpleServiceProvider.Current.GetInstance<IRecipeManager>(isOptional: true);
+                if (recipeManager != null)
+                {
+                    recipeManager.RecipesChanged += recipesChangedHandler;
+                    FormClosed += (s, e) =>
+                    {
+                        recipeManager.RecipesChanged -= recipesChangedHandler;
+                    };
+                }
+
+                // Keep paste enabled/disabled while the editor is open and something else is copied
+                Load += (s, e) => SubscribeToClipboardChanges();
                 FormClosed += (s, e) =>
                 {
-                    recipeManager.RecipesChanged -= recipesChangedHandler;
+                    _clipboardSubscription?.Dispose();
+                    _clipboardSubscription = null;
                 };
-            }
 
-            // Keep paste enabled/disabled while the editor is open and something else is copied
-            Load += (s, e) => SubscribeToClipboardChanges();
-            FormClosed += (s, e) =>
-            {
-                _clipboardSubscription?.Dispose();
-                _clipboardSubscription = null;
-            };
+                tabStrip.TabSelected += (s, e) => SelectTab(e.Tab);
+                tabStrip.TabCloseRequested += (s, e) => CloseTabAsync(e.Tab).FireAndLog("Close a tab of the editor", Log);
+                tabStrip.NewTabRequested += (s, e) => AddNewImageTab();
+                Activated += (s, e) => _lastActiveWindow = this;
+                // The keys reach the canvas without F6
+                Shown += (s, e) => FocusCanvas(fromKeyboard: false);
+                FormClosed += (s, e) => CloseAllTabs();
+                FormClosed += (s, e) => _editorWindowClosed?.Invoke(this, EventArgs.Empty);
+                // Also when the window is disposed without closing it
+                Disposed += (s, e) => RemoveFromOpenWindows();
 
-            tabStrip.TabSelected += (s, e) => SelectTab(e.Tab);
-            tabStrip.TabCloseRequested += (s, e) => CloseTabAsync(e.Tab).FireAndLog("Close a tab of the editor", Log);
-            tabStrip.NewTabRequested += (s, e) => AddNewImageTab();
-            Activated += (s, e) => _lastActiveWindow = this;
-            // The keys reach the canvas without F6
-            Shown += (s, e) => FocusCanvas(fromKeyboard: false);
-            FormClosed += (s, e) => CloseAllTabs();
-            FormClosed += (s, e) => _editorWindowClosed?.Invoke(this, EventArgs.Empty);
-            // Also when the window is disposed without closing it
-            Disposed += (s, e) => RemoveFromOpenWindows();
-
-            timing.Mark("Events");
+                timing.Mark("Events");
             }
             finally
             {
