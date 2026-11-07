@@ -3053,97 +3053,114 @@ namespace Greenshot.Editor.Drawing
 
             NativeRect imageClipRectangle = ZoomClipRectangle(targetClipRectangle, _zoomFactor.Inverse(), 2);
 
-            if (_elements.HasIntersectingFilters(imageClipRectangle) || _zoomFactor > Fraction.Identity)
+            // Object renderers may change quality/transform state. Overlay pixels must not depend on scene culling.
+            var sceneState = targetGraphics.Save();
+            try
             {
-                if (_buffer != null)
+                if (_elements.HasIntersectingFilters(imageClipRectangle) || _zoomFactor > Fraction.Identity)
                 {
-                    if (_buffer.Width != Image.Width || _buffer.Height != Image.Height || _buffer.PixelFormat != Image.PixelFormat)
+                    if (_buffer != null)
                     {
-                        _buffer.Dispose();
-                        _buffer = null;
+                        if (_buffer.Width != Image.Width || _buffer.Height != Image.Height || _buffer.PixelFormat != Image.PixelFormat)
+                        {
+                            _buffer.Dispose();
+                            _buffer = null;
+                        }
                     }
-                }
 
-                if (_buffer == null)
-                {
-                    _buffer = ImageHelper.CreateEmpty(Image.Width, Image.Height, Image.PixelFormat, Color.Empty, Image.HorizontalResolution, Image.VerticalResolution);
-                    LOG.DebugFormat("Created buffer with size: {0}x{1}", Image.Width, Image.Height);
-                }
-
-                // Elements might need the bitmap, so we copy the part we need
-                using (Graphics graphics = Graphics.FromImage(_buffer))
-                {
-                    // do not set the following, the containers need to decide this themselves!
-                    //graphics.SmoothingMode = SmoothingMode.HighQuality;
-                    //graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                    //graphics.CompositingQuality = CompositingQuality.HighQuality;
-                    //graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    DrawBackground(graphics, imageClipRectangle);
-                    graphics.DrawImage(Image, imageClipRectangle, imageClipRectangle, GraphicsUnit.Pixel);
-                    graphics.SetClip(ZoomClipRectangle(Rectangle.Round(targetGraphics.ClipBounds), _zoomFactor.Inverse(), 2));
-                    _elements.Draw(graphics, _buffer, RenderMode.EDIT, imageClipRectangle);
-                }
-
-                if (_zoomFactor == Fraction.Identity)
-                {
-                    targetGraphics.DrawImage(_buffer, imageClipRectangle, imageClipRectangle, GraphicsUnit.Pixel);
-                }
-                else
-                {
-                    targetGraphics.ScaleTransform(_zoomFactor, _zoomFactor);
-                    if (_zoomFactor > Fraction.Identity)
+                    if (_buffer == null)
                     {
-                        DrawSharpImage(targetGraphics, _buffer, imageClipRectangle);
+                        _buffer = ImageHelper.CreateEmpty(Image.Width, Image.Height, Image.PixelFormat, Color.Empty, Image.HorizontalResolution, Image.VerticalResolution);
+                        LOG.DebugFormat("Created buffer with size: {0}x{1}", Image.Width, Image.Height);
+                    }
+
+                    // Elements might need the bitmap, so we copy the part we need
+                    using (Graphics graphics = Graphics.FromImage(_buffer))
+                    {
+                        // do not set the following, the containers need to decide this themselves!
+                        //graphics.SmoothingMode = SmoothingMode.HighQuality;
+                        //graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                        //graphics.CompositingQuality = CompositingQuality.HighQuality;
+                        //graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                        DrawBackground(graphics, imageClipRectangle);
+                        graphics.DrawImage(Image, imageClipRectangle, imageClipRectangle, GraphicsUnit.Pixel);
+                        graphics.SetClip(ZoomClipRectangle(Rectangle.Round(targetGraphics.ClipBounds), _zoomFactor.Inverse(), 2));
+                        _elements.Draw(graphics, _buffer, RenderMode.EDIT, imageClipRectangle);
+                    }
+
+                    if (_zoomFactor == Fraction.Identity)
+                    {
+                        targetGraphics.DrawImage(_buffer, imageClipRectangle, imageClipRectangle, GraphicsUnit.Pixel);
                     }
                     else
                     {
-                        DrawSmoothImage(targetGraphics, _buffer, imageClipRectangle);
-                    }
+                        targetGraphics.ScaleTransform(_zoomFactor, _zoomFactor);
+                        if (_zoomFactor > Fraction.Identity)
+                        {
+                            DrawSharpImage(targetGraphics, _buffer, imageClipRectangle);
+                        }
+                        else
+                        {
+                            DrawSmoothImage(targetGraphics, _buffer, imageClipRectangle);
+                        }
 
-                    targetGraphics.ResetTransform();
-                }
-            }
-            else
-            {
-                DrawBackground(targetGraphics, targetClipRectangle);
-                if (_zoomFactor == Fraction.Identity)
-                {
-                    targetGraphics.DrawImage(Image, imageClipRectangle, imageClipRectangle, GraphicsUnit.Pixel);
-                    _elements.Draw(targetGraphics, null, RenderMode.EDIT, imageClipRectangle);
+                        targetGraphics.ResetTransform();
+                    }
                 }
                 else
                 {
-                    targetGraphics.ScaleTransform(_zoomFactor, _zoomFactor);
-                    DrawSmoothImage(targetGraphics, Image, imageClipRectangle);
-                    _elements.Draw(targetGraphics, null, RenderMode.EDIT, imageClipRectangle);
-                    targetGraphics.ResetTransform();
+                    DrawBackground(targetGraphics, targetClipRectangle);
+                    if (_zoomFactor == Fraction.Identity)
+                    {
+                        targetGraphics.DrawImage(Image, imageClipRectangle, imageClipRectangle, GraphicsUnit.Pixel);
+                        _elements.Draw(targetGraphics, null, RenderMode.EDIT, imageClipRectangle);
+                    }
+                    else
+                    {
+                        targetGraphics.ScaleTransform(_zoomFactor, _zoomFactor);
+                        DrawSmoothImage(targetGraphics, Image, imageClipRectangle);
+                        _elements.Draw(targetGraphics, null, RenderMode.EDIT, imageClipRectangle);
+                        targetGraphics.ResetTransform();
+                    }
                 }
-            }
 
-            // No clipping for the adorners
-            targetGraphics.ResetClip();
-            PaintScalePreview(targetGraphics);
-            PaintSnapGuide(targetGraphics);
-            // Resolve multi-member groups once for this paint, rather than scanning per selected member.
-            var groupedSelection = new HashSet<Guid>(_elements.OfType<DrawableContainer>()
-                .Where(element => element.GroupId != Guid.Empty).GroupBy(element => element.GroupId)
-                .Where(group => group.Skip(1).Any()).Select(group => group.Key));
-            // Draw adorners last
-            foreach (var drawableContainer in selectedElements)
+            }
+            finally { targetGraphics.Restore(sceneState); }
+
+            var overlayState = targetGraphics.Save();
+            try
             {
-                if (drawableContainer is DrawableContainer grouped && groupedSelection.Contains(grouped.GroupId)) continue;
-                foreach (var adorner in drawableContainer.Adorners)
+                // Selection chrome is crisp, device-aligned UI, independent of bitmap rendering quality.
+                targetGraphics.SmoothingMode = SmoothingMode.None;
+                targetGraphics.PixelOffsetMode = PixelOffsetMode.Default;
+                targetGraphics.CompositingMode = CompositingMode.SourceOver;
+                targetGraphics.CompositingQuality = CompositingQuality.Default;
+                // No clipping for the adorners
+                targetGraphics.ResetClip();
+                PaintScalePreview(targetGraphics);
+                PaintSnapGuide(targetGraphics);
+                // Resolve multi-member groups once for this paint, rather than scanning per selected member.
+                var groupedSelection = new HashSet<Guid>(_elements.OfType<DrawableContainer>()
+                    .Where(element => element.GroupId != Guid.Empty).GroupBy(element => element.GroupId)
+                    .Where(group => group.Skip(1).Any()).Select(group => group.Key));
+                // Draw adorners last
+                foreach (var drawableContainer in selectedElements)
                 {
-                    adorner.Paint(paintEventArgs);
+                    if (drawableContainer is DrawableContainer grouped && groupedSelection.Contains(grouped.GroupId)) continue;
+                    foreach (var adorner in drawableContainer.Adorners)
+                    {
+                        adorner.Paint(paintEventArgs);
+                    }
                 }
-            }
 
-            PaintGroupSelection(targetGraphics);
-            PaintPolygonInteraction(targetGraphics);
-            PaintSelectionBox(targetGraphics);
-            PaintRotationHandle(targetGraphics);
-            PaintFocusFrame(targetGraphics);
-            RememberSelectionVisuals();
+                PaintGroupSelection(targetGraphics);
+                PaintPolygonInteraction(targetGraphics);
+                PaintSelectionBox(targetGraphics);
+                PaintRotationHandle(targetGraphics);
+                PaintFocusFrame(targetGraphics);
+                RememberSelectionVisuals();
+            }
+            finally { targetGraphics.Restore(overlayState); }
         }
 
         /// <summary>

@@ -122,6 +122,42 @@ namespace Greenshot.Tests.Editor
 
         [Theory]
         [InlineData(1, 1)]
+        [InlineData(2, 3)]
+        public void DistantImageCullingCannotChangeSelectionHandlePixels(int numerator, int denominator)
+        {
+            DimensionFormatTests.Sta(() =>
+            {
+                using var background = new Bitmap(650, 450);
+                using (var graphics = Graphics.FromImage(background)) graphics.Clear(Color.White);
+                using var surface = new Surface((Bitmap)background.Clone());
+                surface.ZoomFactor = new Fraction((uint)numerator, (uint)denominator);
+                var box = new RectangleContainer(surface) { Left = 120, Top = 150, Width = 85, Height = 65 };
+                surface.AddElement(box, false); surface.SelectElement(box);
+                surface.RotateSelectedObjects(17);
+                using var content = new Bitmap(45, 30);
+                using (var graphics = Graphics.FromImage(content)) graphics.Clear(Color.Green);
+                surface.AddElement(new ImageContainer(surface) { Image = content, Left = 450, Top = 300, Width = 45, Height = 30 }, false);
+                using var full = new Bitmap(surface.Width, surface.Height);
+                surface.DrawToBitmap(full, new Rectangle(Point.Empty, full.Size));
+                var clip = Rectangle.FromLTRB(30, 20, (int)(300 * (double)surface.ZoomFactor), (int)(260 * (double)surface.ZoomFactor));
+                using var partial = new Bitmap(surface.Width, surface.Height);
+                using (var graphics = Graphics.FromImage(partial))
+                {
+                    graphics.SetClip(clip);
+                    typeof(Surface).GetMethod("SurfacePaint", BindingFlags.Instance | BindingFlags.NonPublic)
+                        .Invoke(surface, new object[] { surface, new PaintEventArgs(graphics, clip) });
+                }
+                // This includes the full ring/stem and resize handles while excluding the distant image.
+                var zoom = (double)surface.ZoomFactor;
+                var handles = Rectangle.FromLTRB((int)(80 * zoom), (int)(70 * zoom), (int)(245 * zoom), (int)(245 * zoom));
+                for (int y = handles.Top; y < handles.Bottom; y++)
+                    for (int x = handles.Left; x < handles.Right; x++)
+                        Assert.True(full.GetPixel(x, y) == partial.GetPixel(x, y), $"Culling changed selection pixels at ({x}, {y}).");
+            });
+        }
+
+        [Theory]
+        [InlineData(1, 1)]
         [InlineData(3, 2)]
         [InlineData(2, 3)]
         public void RetainedVisualDirtyRegionsMatchFullRenderAcrossRotationResizeUndoAndGroupMove(int numerator, int denominator)
