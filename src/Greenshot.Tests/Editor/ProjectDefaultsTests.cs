@@ -157,7 +157,7 @@ namespace Greenshot.Tests.Editor
                     Assert.True(control.Height >= control.PreferredSize.Height, $"{name} clipped at {scale}");
                     Assert.True(control.Parent.Height >= control.Bottom, $"{name} parent clipped at {scale}");
                 }
-                string directory = Path.Combine(Environment.CurrentDirectory, "TestResults", "project-defaults"); Directory.CreateDirectory(directory);
+                string directory = Path.Combine(Environment.GetEnvironmentVariable("GITHUB_WORKSPACE") ?? Path.GetTempPath(), "TestResults", "project-defaults"); Directory.CreateDirectory(directory);
                 using var bitmap = new Bitmap(editor.Width, editor.Height); editor.DrawToBitmap(bitmap, new Rectangle(Point.Empty, bitmap.Size));
                 bitmap.Save(Path.Combine(directory, $"measurement-layout-{scale:0.0}-{panelWidth}-top.png"), ImageFormat.Png);
                 Field<Panel>(panel, "_body").ScrollControlIntoView(Field<Label>(panel, "_dimensionStyleLabel")); Application.DoEvents();
