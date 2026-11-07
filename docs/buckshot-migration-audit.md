@@ -1,6 +1,6 @@
 # BuckShot Markup migration audit
 
-Base: GreenShotPlus 0.8.666, commit `6157fb40e1b790886cce3251a8faa4e5966ad1bf`. Work is confined to the new BuckShot-Markup checkout. The original checkout, installation and configuration are not migrated or modified.
+Base: BuckShotPlus 0.8.666, commit `6157fb40e1b790886cce3251a8faa4e5966ad1bf`. Work is confined to the new BuckShot-Markup checkout. The original checkout, installation and configuration are not migrated or modified.
 
 ## Identity and version
 
@@ -14,7 +14,7 @@ Localized INI display values and language fallback attributes are rebranded with
 
 BuckShot uses `buckshot-markup.ini`, separate defaults/fixed files, `BuckShot-Markup` roaming/local/temp directories, a new application mutex, distinct managed/native/MCP pipe prefixes, startup value, AppUserModelID and toast COM identifier. Installer AppId, installation directory, Start-menu links and project ProgID are independent.
 
-Installer legacy cleanup and uninstall migration logic that touched Greenshot's registration is removed. `.greenshot` receives an additional BuckShot Open-with ProgID; existing file defaults and the upstream `greenshot:` protocol are not replaced. Executables retain their internal names inside the separate installation directory. The GNU GPL licence file remains intact; its installer page adds a labelled `TNewLinkLabel` source hyperlink.
+Installer legacy cleanup and uninstall migration logic that touched BuckShot's registration is removed. `.greenshot` receives an additional BuckShot Open-with ProgID; existing file defaults and the upstream `buckshot:` protocol are not replaced. Executables retain their internal names inside the separate installation directory. The GNU GPL licence file remains intact; its installer page adds a labelled `TNewLinkLabel` source hyperlink.
 
 ## Recipes boundary
 
@@ -28,7 +28,7 @@ The private `RecipeManager`, built-in flows, trigger manager, capture runner, pi
 - C# namespaces, assembly names, resource names, language keys and language-pack filenames.
 - `.greenshot` project/clipboard serialization markers and type allowlists, native helper executable names and internal IPC source identifiers.
 - Upstream history, historical release notes, migration provenance, development documentation and unreachable authoring implementation resources.
-- The original remote is retained as `greenshotplus` and official upstream as `upstream`; publication targets the new repository.
+- The original remote is retained as `buckshotplus` and official upstream as `upstream`; publication targets the new repository.
 
 ## Validation scope
 
@@ -39,9 +39,9 @@ The private `RecipeManager`, built-in flows, trigger manager, capture runner, pi
 - Settings > Measurements persists fresh-document precision, font, text/background colour, transparency and snapping. Project metadata continues to override new-document defaults; calibration remains document-specific.
 - Fresh capture destinations are Clipboard and FileDefault; existing configured destinations are not migrated or overwritten.
 - A selected individual object has a draggable rotation handle, with one undo record, Shift angle steps and rollback on interruption. The exact-angle dialog remains available.
-- Update checks use this repository's `update-feed.json` and releases, not Greenshot's upstream service. The feed records published release availability; `src/version.json` remains the authority for the built product version.
+- Update checks use this repository's `update-feed.json` and releases, not BuckShot's upstream service. The feed records published release availability; `src/version.json` remains the authority for the built product version.
 - Recipe catalog/page publishing workflows and MCP's dynamic public recipe discovery are removed.
-- Upstream Greenshot deployment, Chocolatey, Pages and Cloudflare publishing workflows are retired in this fork. The BuckShot Windows-installer workflow is the supported packaging path.
+- Upstream BuckShot deployment, Chocolatey, Pages and Cloudflare publishing workflows are retired in this fork. The BuckShot Windows-installer workflow is the supported packaging path.
 
 ## Integration validation
 

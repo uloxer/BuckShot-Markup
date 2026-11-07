@@ -14,7 +14,7 @@ compare it with what is on the screen, or just to look at it. It is a destinatio
 
 Choose *Show in a viewer* as a destination in the settings, or pick it in the destination picker (letter `V`). Every capture opens
 in a new viewer, there can be as many as you like. A viewer has its own copy of the capture: it isn't saved, and it is gone when
-you close the viewer. The first time, Greenshot tells you so.
+you close the viewer. The first time, BuckShot tells you so.
 
 ## Zoom, 1:1 and moving around
 
@@ -78,10 +78,10 @@ The keys close with `Esc`, `H`, their close button or a click next to them.
 
 ## Settings
 
-The *Viewer* tab of the settings ([greenshot://settings?tab=viewer](greenshot://settings?tab=viewer)) has the size of a new viewer,
+The *Viewer* tab of the settings ([buckshot://settings?tab=viewer](buckshot://settings?tab=viewer)) has the size of a new viewer,
 always on top, the title bar, the mouse pointer and the border with its color. A change of *always on top*, the title bar, the
 mouse pointer or the border in a viewer
-becomes the default for the next viewers too. They are in the `[Viewer]` section of greenshot.ini:
+becomes the default for the next viewers too. They are in the `[Viewer]` section of buckshot.ini:
 
 | Setting | Default | What it does |
 |---|---|---|

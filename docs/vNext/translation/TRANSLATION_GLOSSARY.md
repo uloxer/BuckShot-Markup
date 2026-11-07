@@ -1,6 +1,6 @@
-# Greenshot Translation Glossary
+# BuckShot Translation Glossary
 
-This glossary maintains consistent translations of Greenshot-specific terms across all languages. When translating, always refer to this glossary to ensure consistency.
+This glossary maintains consistent translations of BuckShot-specific terms across all languages. When translating, always refer to this glossary to ensure consistency.
 
 ## How to Use This Glossary
 
@@ -23,7 +23,7 @@ Each entry should include:
 
 ### Screenshot / Screen Capture
 
-**Context**: The main purpose of Greenshot - capturing images of the screen
+**Context**: The main purpose of BuckShot - capturing images of the screen
 
 | Language | Translation | Notes |
 |----------|-------------|-------|
@@ -290,10 +290,10 @@ Expressions like `${now:yyyy-MM-dd HH:mm:ss}` or `${user.username}` (in the `[Re
 
 Example (`about_license` in `[Core]`):
 ```ini
-; English (greenshot.en-US.ini)
+; English (buckshot.en-US.ini)
 about_license=Copyright © 2007-2026 Thomas Braun, Jens Klingen, Robin Krom\nGreenshot comes with ABSOLUTELY NO WARRANTY. This is free software, ...
 
-; German (greenshot.de-DE.ini)
+; German (buckshot.de-DE.ini)
 about_license=Copyright © 2007-2026 Thomas Braun, Jens Klingen, Robin Krom\nFür Greenshot besteht KEINERLEI GARANTIE. Greenshot ist freie Software, ...
 ```
 

@@ -1,12 +1,12 @@
 ---
 name: release-documentation
-description: Specialist skill for generating and maintaining changelogs, release notes, and blog posts for Greenshot releases, including creating PRs against base branches and gh-pages.
+description: Specialist skill for generating and maintaining changelogs, release notes, and blog posts for BuckShot releases, including creating PRs against base branches and gh-pages.
 disable-model-invocation: true
 ---
 
 # Release Documentation Skill
 
-This skill defines the procedures, standards, and workflows for creating and maintaining Greenshot release documentation, changelogs, and release blog posts.
+This skill defines the procedures, standards, and workflows for creating and maintaining BuckShot release documentation, changelogs, and release blog posts.
 
 ## General Principles
 
@@ -64,7 +64,7 @@ Security bullets have extra requirements:
 #### Downloads & Full Changelog
 
 Keep the existing per-release footer used in prior entries:
-- **Downloads**: installer and portable ZIP links (`https://github.com/greenshot/greenshot/releases/download/v<version>/Greenshot-INSTALLER-<version>-RELEASE.exe` / `...-PORTABLE-<version>-RELEASE.zip`).
+- **Downloads**: installer and portable ZIP links (`https://github.com/greenshot/greenshot/releases/download/v<version>/BuckShot-INSTALLER-<version>-RELEASE.exe` / `...-PORTABLE-<version>-RELEASE.zip`).
 - **Full Changelog**: compare link between release tags (e.g., `https://github.com/greenshot/greenshot/compare/v1.3.312...v1.3.315`).
 
 ### Changelog PR Workflow
@@ -80,7 +80,7 @@ Keep the existing per-release footer used in prior entries:
 
 ## 2. Release Blog Posts (`gh-pages` branch)
 
-Blog posts announce new official releases on the Greenshot website ([getgreenshot.org](https://getgreenshot.org)).
+Blog posts announce new official releases on the BuckShot website ([getbuckshot.org](https://getgreenshot.org)).
 
 ### Target Branch & File Location
 - **Branch**: `gh-pages` — draft the blog post on a branch created from `gh-pages` and target the PR back at `gh-pages`.
@@ -93,7 +93,7 @@ Every blog post must begin with standard frontmatter:
 layout: post
 status: publish
 published: true
-title: Greenshot <VERSION> Released — <Short Highlight Summary>
+title: BuckShot <VERSION> Released — <Short Highlight Summary>
 tags:
 - status
 - '<MAJOR>.<MINOR>'
@@ -101,9 +101,9 @@ tags:
 ```
 
 ### Blog Post Content Requirements
-1. **Mandatory Download Link**: The **first paragraph** MUST include a prominent link to Greenshot's official download page:
-   `https://getgreenshot.org/downloads/` (e.g., `We are pleased to announce the release of **Greenshot 1.3.315**... Download it from the [official download page](https://getgreenshot.org/downloads/).`)
-2. **Tone**: Keep the writing casual, warm, and approachable. Write like a helpful announcement to Greenshot users, not like a formal press release. Use contractions where natural, avoid corporate language, and explain technical changes in plain English.
+1. **Mandatory Download Link**: The **first paragraph** MUST include a prominent link to BuckShot's official download page:
+   `https://getgreenshot.org/downloads/` (e.g., `We are pleased to announce the release of **BuckShot 1.3.315**... Download it from the [official download page](https://getgreenshot.org/downloads/).`)
+2. **Tone**: Keep the writing casual, warm, and approachable. Write like a helpful announcement to BuckShot users, not like a formal press release. Use contractions where natural, avoid corporate language, and explain technical changes in plain English.
 3. **Content**: Cover the same changes as the changelog entry, written as full, engaging sentences (not a copy-pasted bullet list) that highlight the most important changes.
 4. **Sections**:
    - 🔒 **Security Fixes** (with responsible disclosure credits, subject to the same "don't fabricate unpublished advisory details" rule as the changelog).
@@ -126,10 +126,10 @@ Do not mention changes that do not affect shipped software, including GitHub wor
 4. Commit the new post:
    ```bash
    git add _posts/YYYY-MM-DD-<title-slug>.md
-   git commit -m "Add blog post for Greenshot <VERSION> release"
+   git commit -m "Add blog post for BuckShot <VERSION> release"
    ```
 5. Push the branch to the remote.
-6. **Create a Pull Request targeting the `gh-pages` branch** on `greenshot/greenshot`.
+6. **Create a Pull Request targeting the `gh-pages` branch** on `buckshot/buckshot`.
 
 ---
 

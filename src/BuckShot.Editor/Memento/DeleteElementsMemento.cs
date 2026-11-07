@@ -1,0 +1,84 @@
+﻿/*
+ * Greenshot - a free and open source screenshot tool
+ * Copyright (C) 2007-2026 Thomas Braun, Jens Klingen, Robin Krom
+ * 
+ * For more information see: https://getgreenshot.org/
+ * The Greenshot project is hosted on GitHub https://github.com/greenshot/greenshot
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+using System;
+using System.Linq;
+using BuckShot.Base.Interfaces;
+using BuckShot.Base.Interfaces.Drawing;
+
+namespace BuckShot.Editor.Memento
+{
+    /// <summary>
+    /// The DeleteElementMemento makes it possible to undo deleting an element
+    /// </summary>
+    public class DeleteElementsMemento : IMemento
+    {
+        private IDrawableContainerList _containerList;
+        private ISurface _surface;
+        private readonly int[] _positions;
+
+        public DeleteElementsMemento(ISurface surface, IDrawableContainerList containerList)
+        {
+            _surface = surface;
+            _containerList = containerList;
+            _positions = containerList.Select(c => surface.Elements.IndexOf(c)).ToArray();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing && _containerList != null)
+            {
+                foreach (var container in _containerList)
+                    if (!_surface.Elements.Contains(container)) container.Dispose();
+            }
+
+            _containerList = null;
+            _surface = null;
+        }
+
+        public bool Merge(IMemento otherMemento)
+        {
+            return false;
+        }
+
+        public IMemento Restore()
+        {
+            var oldState = new AddElementsMemento(_surface, _containerList);
+            _surface.AddElements(_containerList, false);
+            // Members may straddle unrelated objects. Restore their original paint
+            // positions rather than appending a deleted group above everything else.
+            foreach (var member in _containerList) _surface.Elements.Remove(member);
+            foreach (var entry in _containerList.Select((member, i) => new { Member = member, Position = _positions[i] }).OrderBy(e => e.Position))
+                _surface.Elements.Insert(Math.Max(0, Math.Min(entry.Position, _surface.Elements.Count)), entry.Member);
+            // After
+            _surface.Invalidate();
+            // Restoring transfers ownership back to the surface, including when this record is later disposed.
+            _containerList = null;
+            _surface = null;
+            return oldState;
+        }
+    }
+}

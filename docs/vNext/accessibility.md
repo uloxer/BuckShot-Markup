@@ -1,6 +1,6 @@
 # Accessibility
 
-Greenshot has to work for people who use a screen reader, only a keyboard, high contrast, larger text or no animations.
+BuckShot has to work for people who use a screen reader, only a keyboard, high contrast, larger text or no animations.
 This page lists the rules every window, page and control follows, how to meet each one, and how to check the result.
 It applies to people and to AI coding assistants alike: new UI is not done until it meets these rules.
 
@@ -32,9 +32,9 @@ It applies to people and to AI coding assistants alike: new UI is not done until
 
 - Use real controls (`Button`, `ToggleButton`, `CheckBox`, `ListBox`...). A `Border` or `Grid` with a `MouseDown` handler can't be reached
   with Tab and has no name: make it a `Button` with a template instead (see the thumbnail in `DynamicDestinationWindow.xaml`).
-- Never set `FocusVisualStyle="{x:Null}"`. The shared styles in `Greenshot.Base/Wpf/Styles` use `GreenshotFocusVisual` (`FocusStyles.xaml`),
+- Never set `FocusVisualStyle="{x:Null}"`. The shared styles in `BuckShot.Base/Wpf/Styles` use `BuckShotFocusVisual` (`FocusStyles.xaml`),
   a 2px frame in the text color of the theme. A style of your own sets
-  `<Setter Property="FocusVisualStyle" Value="{StaticResource GreenshotFocusVisual}"/>` and merges `FocusStyles.xaml`.
+  `<Setter Property="FocusVisualStyle" Value="{StaticResource BuckShotFocusVisual}"/>` and merges `FocusStyles.xaml`.
 - `IsDefault="True"` on the main button and `IsCancel="True"` on Cancel, so Enter and Esc work.
 - A grid of many small items (colors, emoji) is one Tab stop: `KeyboardNavigation.TabNavigation="Once"` and
   `KeyboardNavigation.DirectionalNavigation="Contained"` on the panel, the arrow keys move inside (see `ColorPickerWindow.xaml`).
@@ -60,7 +60,7 @@ It applies to people and to AI coding assistants alike: new UI is not done until
 
 - Bind an `AutomationProperties` text with `TargetNullValue=''`: these properties refuse null, a binding to a null value fails
   with a binding error in the log.
-- Status lines, errors, search results and progress use the `LiveRegion` attached property (`Greenshot.Base/Wpf/LiveRegion.cs`):
+- Status lines, errors, search results and progress use the `LiveRegion` attached property (`BuckShot.Base/Wpf/LiveRegion.cs`):
   `wpf:LiveRegion.Mode="Polite"` (or `Assertive` for an error that blocks the user). It sets `AutomationProperties.LiveSetting` and raises
   the event a screen reader listens for whenever the text changes.
 - For text that is not on screen, `LiveRegion.Notify(element, text, activityId)` raises a UI Automation notification (the window
@@ -141,7 +141,7 @@ When you add a tool or a mode:
 - Use the high contrast colors when `SystemParameters.HighContrast` is on.
 - Window capture selects the window under the cursor as soon as it starts, so a screen reader says its title without a mouse move.
 - The frozen capture window takes the focus back when another application takes it (`TakeFocusBack`): it isn't in Alt+Tab, a
-  keyboard user couldn't return to it otherwise. Not on the live screen, not for Greenshot's own windows, at most once a second.
+  keyboard user couldn't return to it otherwise. Not on the live screen, not for BuckShot's own windows, at most once a second.
 - While the screen reader flag of Windows is on (`User32Api.IsScreenReaderRunning()` of Dapplo.Windows), a region capture starts as
   window capture. Applications can leave that flag on, even saved over a restart, so use it only for a default the user changes with
   one key (Space), never to turn something off. Check `ICoreConfiguration.IgnoreScreenReader` (Expert tab) with it, log when the flag
@@ -163,7 +163,7 @@ When you add a tool or a mode:
 
 ## What the tests check
 
-`Greenshot.Tests/Core/AccessibilityXamlTests.cs` reads every `.xaml` file of the source tree and fails on:
+`BuckShot.Tests/Core/AccessibilityXamlTests.cs` reads every `.xaml` file of the source tree and fails on:
 
 | Test | Fails when |
 |---|---|
@@ -172,7 +172,7 @@ When you add a tool or a mode:
 | `Sliders_SayTheValueTheyShow` | a plain `Slider` is used instead of `wpf:ValueSlider` |
 | `AutomationTexts_AreNeverNull` | an `AutomationProperties` text (Name, HelpText, ItemStatus, ...) is bound without `TargetNullValue=''` |
 | `ButtonsWithoutText_HaveAnAccessibleName` | a `Button`, `ToggleButton` or `RepeatButton` shows no text and has no `AutomationProperties.Name` or `LabeledBy` |
-| `Texts_ComeFromTheLanguagePacks` | `Text`, `Content`, `Header`, `ToolTip`, `Title` or an accessible name is literal text instead of `{wpf:Text …}` (links, "Greenshot" and glyphs are fine) |
+| `Texts_ComeFromTheLanguagePacks` | `Text`, `Content`, `Header`, `ToolTip`, `Title` or an accessible name is literal text instead of `{wpf:Text …}` (links, "BuckShot" and glyphs are fine) |
 
 `LanguagePackTests` checks that every `{wpf:Text …}` exists and has an English text, and `ThemePaletteTests` checks the contrast of the
 palette. Don't silence a failing test: fix the view.

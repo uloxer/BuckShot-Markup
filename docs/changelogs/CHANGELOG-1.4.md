@@ -1,12 +1,12 @@
-# Greenshot 1.4 Development Changelog
+# BuckShot 1.4 Development Changelog
 
-This document contains the changelog for Greenshot 1.4, which is currently in active development as continuous builds (unstable releases).
+This document contains the changelog for BuckShot 1.4, which is currently in active development as continuous builds (unstable releases).
 
 **Note**: Version 1.4 is not yet released as a stable version. All builds are continuous/development builds and are unsigned. These builds are marked as "UNSTABLE-UNSIGNED" and should be considered beta quality.
 
-## About Greenshot 1.4
+## About BuckShot 1.4
 
-Greenshot 1.4 represents the next major version currently under active development. Development began in November 2025 after the final 1.3 stable release (1.3.312 in January 2026).
+BuckShot 1.4 represents the next major version currently under active development. Development began in November 2025 after the final 1.3 stable release (1.3.312 in January 2026).
 
 **Current Status**: Continuous Development Builds (Prereleases)
 **Latest Build**: v1.4.108 (March 14, 2026)
@@ -79,15 +79,15 @@ Continuous builds are automatically created for every commit to the `main` branc
 - Command line help is now automatically generated with comprehensive option descriptions
 - Old format (`/help`, `/exit`, `/reload`, `/norun`, `/language`, `/inidirectory`) replaced with modern alternatives (`--help`, `--exit`, `--reload`, `--no-run`, `--language <code>`, `--ini-directory <path>`)
 - Added hidden `--restore` option for Windows Restart Manager integration
-- Run `Greenshot --help` to see all available options
+- Run `BuckShot --help` to see all available options
 
 #### 🔄 Windows Restart Manager Integration
 
 **Automatic State Recovery During Updates**
-- Greenshot now integrates with Windows Restart Manager to seamlessly handle system updates and maintenance
+- BuckShot now integrates with Windows Restart Manager to seamlessly handle system updates and maintenance
 - Automatically registers for restart with Windows, allowing it to participate in graceful shutdown scenarios
-- When Windows Update or other installers request a shutdown, Greenshot saves all open image editors to temporary `.greenshot` files
-- Upon restart by the Windows Restart Manager, Greenshot automatically reopens all previously open editors
+- When Windows Update or other installers request a shutdown, BuckShot saves all open image editors to temporary `.greenshot` files
+- Upon restart by the Windows Restart Manager, BuckShot automatically reopens all previously open editors
 - Enhances reliability during Windows Updates, preventing loss of unsaved work
 - Uses the `--restore` command line argument internally to detect restart scenarios
 
@@ -119,7 +119,7 @@ Continuous builds are automatically created for every commit to the `main` branc
 - Screenshots use the modern Windows Graphics Capture, one monitor at a time, which works better with modern Windows applications
 - HDR screens are supported: bright parts of HDR games and videos keep their color and detail, like with the Xbox Game Bar
 - Screenshots without HDR content keep their colors exactly as on the screen, also on HDR screens
-- HDR captures: on an HDR display Greenshot can save the bright highlights as a JPEG XR file, also after editing. Switch it on in Settings > Capture.
+- HDR captures: on an HDR display BuckShot can save the bright highlights as a JPEG XR file, also after editing. Switch it on in Settings > Capture.
 - By @Lakritzator
 
 **Improved Cursor Capture** (#863)
@@ -129,7 +129,7 @@ Continuous builds are automatically created for every commit to the `main` branc
 - By @Lakritzator
 
 **Windows 11 Capture Behavior** (#771)
-- Reverted the change that made Greenshot prefer PrintWindow on Windows 11
+- Reverted the change that made BuckShot prefer PrintWindow on Windows 11
 - Improved capture compatibility
 - By @Lakritzator
 
@@ -182,7 +182,7 @@ Continuous builds are automatically created for every commit to the `main` branc
 - By @danrhodes
 
 **Plugin Start**
-- The tray icon is there before the plugins start, they no longer hold up the start of Greenshot
+- The tray icon is there before the plugins start, they no longer hold up the start of BuckShot
 - A plugin which fails to start is switched off completely, it no longer leaves destinations behind which don't work
 - The "Configure ..." entries of the plugins are no longer in the tray menu, the plugin settings are under Settings > Plugins
 
@@ -201,8 +201,8 @@ Continuous builds are automatically created for every commit to the `main` branc
 **Smaller PNG files**
 - PNG files, uploads, attachments and the clipboard are written as small as possible without losing anything, like optipng does
 - Images with few colors get much smaller
-- Greenshot now writes PNG, JPEG, BMP, GIF and WebP files with ImageSharp for everyone, not only for beta testers
-- For problems, greenshot.ini has OutputFilePngCompressionLevel (default 9) and ClipboardPngCompressionLevel (default 8) to save faster, and OutputFilePngPalette to turn off PNG files with a palette
+- BuckShot now writes PNG, JPEG, BMP, GIF and WebP files with ImageSharp for everyone, not only for beta testers
+- For problems, buckshot.ini has OutputFilePngCompressionLevel (default 9) and ClipboardPngCompressionLevel (default 8) to save faster, and OutputFilePngPalette to turn off PNG files with a palette
 - The unused settings OptimizePNGCommand and OptimizePNGCommandArguments were removed, the External Command recipe step can still run any tool
 
 **Open image from file lists every format**
@@ -232,37 +232,37 @@ Continuous builds are automatically created for every commit to the `main` branc
 
 **Better notifications** (#1516)
 - After a capture you get one notification that shows a small preview and lists where the capture went
-- Click the notification to send the capture somewhere else, even after Greenshot was closed
+- Click the notification to send the capture somewhere else, even after BuckShot was closed
 - Buttons on the notification let you edit the capture, open its folder or copy the link of an upload
 - If an export fails, the notification says which one and why
 - QR codes found in a capture are shown on the notification, and their links can be copied
-- Greenshot appears only once in the Windows notification settings
+- BuckShot appears only once in the Windows notification settings
 - Choose in the settings which notifications you want to see (all, warnings and errors, errors only, or none) and whether they show a preview
 
 #### 🩺 Help with problems
 
 **Log viewer in Self-Service**
-- Read Greenshot's log in its own window and copy it, for example for an issue report
+- Read BuckShot's log in its own window and copy it, for example for an issue report
 - Search the log: only the entries with your text are shown, including the details of an error
 - New entries appear while the log viewer is open, also in a search
-- Choose how much Greenshot writes to the log, until Greenshot restarts
-- Links like `greenshot://log?search=HDR` open the log viewer with that search, a link never changes a setting
+- Choose how much BuckShot writes to the log, until BuckShot restarts
+- Links like `buckshot://log?search=HDR` open the log viewer with that search, a link never changes a setting
 
 #### 🖼️ Imgur
 
 **Imgur uploads removed, delete your old ones in Self-Service**
-- Greenshot no longer uploads to Imgur: Imgur would only allow it with paid or capped access for all Greenshot users
-- If you uploaded images anonymously with an earlier Greenshot, it still has their delete keys: Self-Service lists those images so you can delete them from Imgur
+- BuckShot no longer uploads to Imgur: Imgur would only allow it with paid or capped access for all BuckShot users
+- If you uploaded images anonymously with an earlier BuckShot, it still has their delete keys: Self-Service lists those images so you can delete them from Imgur
 - Save the delete links as a web page to keep them
 
 #### 🩺 Self-Service
 
 **Screenshots no longer end up on the Desktop unnoticed**
-- When the screenshot folder couldn't be found, Greenshot switched it to the Desktop for good, without a message: e.g. a network drive without VPN, a renamed folder, or a folder with variables like ${YYYY}
-- Now a missing folder is created, variables are filled in first, and only when the folder really can't be used (e.g. the network drive isn't there), Greenshot saves that one screenshot to the Desktop and says so: the setting stays
+- When the screenshot folder couldn't be found, BuckShot switched it to the Desktop for good, without a message: e.g. a network drive without VPN, a renamed folder, or a folder with variables like ${YYYY}
+- Now a missing folder is created, variables are filled in first, and only when the folder really can't be used (e.g. the network drive isn't there), BuckShot saves that one screenshot to the Desktop and says so: the setting stays
 
 **Check where screenshots are saved**
-- Self-Service shows whether the screenshot folder exists, whether Greenshot can write to it, and whether it's a network or OneDrive folder
+- Self-Service shows whether the screenshot folder exists, whether BuckShot can write to it, and whether it's a network or OneDrive folder
 - It also tells if the drive of the folder is missing, or the filename pattern gives no valid name
 - The folder and the filename pattern can be reset to the default with one click
 
@@ -271,7 +271,7 @@ Continuous builds are automatically created for every commit to the `main` branc
 **Screen readers, keyboard, high contrast and text size** (settings, Self-Service, welcome, dialogs, plugins, recipe editor, capture)
 - Narrator and other screen readers can name the buttons, lists and fields, and hear status changes
 - The keyboard focus is always visible, also in dark mode
-- Greenshot follows the Windows "Text size" setting and the "Animation effects" switch
+- BuckShot follows the Windows "Text size" setting and the "Animation effects" switch
 - In the capture window, Tab and Shift+Tab select the next or previous window, and a screen reader hears the mode, window and size
 
 ### Bug Fixes & Improvements
@@ -307,17 +307,17 @@ Continuous builds are automatically created for every commit to the `main` branc
 - By @danrhodes
 
 **Remote Desktop / RemoteApp (RAIL)** (#1324)
-- Fixed the system tray icon permanently disappearing after taking a capture when using Greenshot over a RemoteApp/RAIL session (e.g. Azure Virtual Desktop)
-- Greenshot no longer hides and re-shows the tray icon to dismiss a stale balloon tip when running in a Terminal Server/RDP session, since the RAIL shell could fail to resynchronize the icon recreation back to the local taskbar
+- Fixed the system tray icon permanently disappearing after taking a capture when using BuckShot over a RemoteApp/RAIL session (e.g. Azure Virtual Desktop)
+- BuckShot no longer hides and re-shows the tray icon to dismiss a stale balloon tip when running in a Terminal Server/RDP session, since the RAIL shell could fail to resynchronize the icon recreation back to the local taskbar
 - By @Copilot
 
 #### ⚙️ Configuration & Settings
 
 **Switching plugins and destinations on or off**
-- Plugins and destinations can be switched on or off in the settings, without typing their names into greenshot.ini
-- Administrators can block plugins and destinations, or allow only some and block everything else, with greenshot-fixed.ini, and decide if users may switch off more; the settings show the lines to copy
+- Plugins and destinations can be switched on or off in the settings, without typing their names into buckshot.ini
+- Administrators can block plugins and destinations, or allow only some and block everything else, with buckshot-fixed.ini, and decide if users may switch off more; the settings show the lines to copy
 - A destination of a plugin which isn't loaded is no longer removed from the settings
-- A plugin in a folder you can change (e.g. the portable version) which isn't signed by the makers of Greenshot isn't loaded until you allow it
+- A plugin in a folder you can change (e.g. the portable version) which isn't signed by the makers of BuckShot isn't loaded until you allow it
 - The plugin list in the settings shows who signed each plugin
 
 **MAPI Client Detection** (#861)
@@ -336,7 +336,7 @@ Continuous builds are automatically created for every commit to the `main` branc
 - By @Copilot
 
 **External Commands**
-- An external command whose program isn't found when Greenshot starts (e.g. on a USB stick or a network drive) is no longer deleted from the settings, it is only left out of the menu until Greenshot starts with the program available again
+- An external command whose program isn't found when BuckShot starts (e.g. on a USB stick or a network drive) is no longer deleted from the settings, it is only left out of the menu until BuckShot starts with the program available again
 
 **Plugin Configuration** (#733)
 - Improved plugin configuration handling
@@ -377,12 +377,12 @@ Continuous builds are automatically created for every commit to the `main` branc
 - By @Christian-Schulz
 
 **Print Footer** (#820, #804)
-- Use Greenshot's UI language for date formatting in print footer
+- Use BuckShot's UI language for date formatting in print footer
 - By @tsiakoulias
 
 **Language**
 - The first start uses the language of Windows instead of asking, the settings change it
-- `--reload` also applies a language set in greenshot-fixed.ini
+- `--reload` also applies a language set in buckshot-fixed.ini
 
 #### 🔒 Security Improvements
 
@@ -393,7 +393,7 @@ Continuous builds are automatically created for every commit to the `main` branc
 
 **Clipboard data is treated as untrusted**
 - Fixed an out-of-bounds read when pasting a crafted CF_DIBV5 (DIB) image: DIB data is now decoded by Dapplo.Windows.Clipboard's `DibImage`, from managed arrays with validated headers, also for `.dib` files
-- Pasting editor elements no longer deserializes .NET objects from the clipboard with an unrestricted BinaryFormatter: elements are placed in Greenshot's own `Greenshot.DrawableContainerList` format, and on paste only the types a `.greenshot` file may contain are created, with a size limit
+- Pasting editor elements no longer deserializes .NET objects from the clipboard with an unrestricted BinaryFormatter: elements are placed in BuckShot's own `Greenshot.DrawableContainerList` format, and on paste only the types a `.greenshot` file may contain are created, with a size limit
 - Names of dropped or pasted virtual files (e.g. Outlook attachments) are sanitized
 
 #### 🏗️ Development & Infrastructure
@@ -439,7 +439,7 @@ Continuous builds are automatically created for every commit to the `main` branc
 
 ### New Contributors in 1.4
 
-The following contributors made their first contributions to Greenshot during the 1.4 development cycle:
+The following contributors made their first contributions to BuckShot during the 1.4 development cycle:
 
 - @Copilot - Multiple AI-assisted improvements and fixes
 - @danrhodes - Extensive memory leak fixes and improvements
@@ -500,7 +500,7 @@ The following contributors made their first contributions to Greenshot during th
 
 ## Comparison with 1.3
 
-Greenshot 1.4 builds upon the stable 1.3 release with these key additions:
+BuckShot 1.4 builds upon the stable 1.3 release with these key additions:
 
 ### New in 1.4
 ✨ Emoji support in editor  
@@ -529,7 +529,7 @@ Greenshot 1.4 builds upon the stable 1.3 release with these key additions:
 
 ## Getting Involved
 
-Greenshot 1.4 is under active development, and we welcome contributions!
+BuckShot 1.4 is under active development, and we welcome contributions!
 
 - **Report Issues**: [GitHub Issues](https://github.com/greenshot/greenshot/issues)
 - **Submit Pull Requests**: [Contributing Guide](../../CONTRIBUTING.md)
@@ -556,11 +556,11 @@ For detailed commit-by-commit changes, visit the [GitHub Releases page](https://
 
 If you're upgrading from 1.3 to a 1.4 continuous build:
 
-1. **Backup your configuration**: Your settings in `%APPDATA%\Greenshot` should be preserved, but it's good practice to back them up
+1. **Backup your configuration**: Your settings in `%APPDATA%\BuckShot` should be preserved, but it's good practice to back them up
 2. **Uninstall 1.3**: Completely uninstall the stable 1.3 release first
 3. **Install 1.4 build**: Install the latest 1.4 continuous build
 4. **Test thoroughly**: As these are development builds, test your usual workflows
-5. **Update command line scripts**: If you use Greenshot with command line arguments, update from `/` style (e.g., `/exit`, `/reload`) to `--` style (e.g., `--exit`, `--reload`)
+5. **Update command line scripts**: If you use BuckShot with command line arguments, update from `/` style (e.g., `/exit`, `/reload`) to `--` style (e.g., `--exit`, `--reload`)
 
 ### Plugin API changes (clipboard)
 
@@ -571,19 +571,19 @@ If you're upgrading from 1.3 to a 1.4 continuous build:
 
 ### Command Line Argument Changes
 
-If you have scripts or shortcuts that use Greenshot's command line arguments, you'll need to update them:
+If you have scripts or shortcuts that use BuckShot's command line arguments, you'll need to update them:
 
 | Old Argument | New Argument | Description |
 |--------------|--------------|-------------|
 | `/help`, `/h`, `/?` | `--help`, `-h` | Show help information |
-| `/exit` | `--exit` | Close running Greenshot instance |
-| `/reload` | `--reload` | Apply a changed greenshot-fixed.ini (greenshot.ini is locked while Greenshot runs) |
+| `/exit` | `--exit` | Close running BuckShot instance |
+| `/reload` | `--reload` | Apply a changed buckshot-fixed.ini (buckshot.ini is locked while BuckShot runs) |
 | `/norun` | `--no-run` | Start in configuration mode |
 | `/language [code]` | `--language <language-code>` | Set interface language |
 | `/inidirectory [path]` | `--ini-directory <directory>` | Set configuration directory |
 | `[filename...]` | `[files...]` | Capture files (unchanged) |
 
-Run `Greenshot --help` to see the complete list of available options with descriptions.
+Run `BuckShot --help` to see the complete list of available options with descriptions.
 
 ⚠️ **Important**: Since 1.4 builds are unsigned, you may see Windows SmartScreen warnings. This is expected for continuous builds.
 
@@ -596,7 +596,7 @@ As 1.4 is in active development, there may be issues. Please check the [GitHub I
 - Planned features
 - Work in progress
 
-Report any issues you encounter to help improve Greenshot!
+Report any issues you encounter to help improve BuckShot!
 
 ---
 

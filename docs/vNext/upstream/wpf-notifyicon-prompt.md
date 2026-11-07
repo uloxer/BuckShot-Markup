@@ -1,13 +1,13 @@
 # Prompt: improvements for hardcodet/wpf-notifyicon
 
-A prompt for a coding session on https://github.com/hardcodet/wpf-notifyicon. It lists the changes Greenshot would like
-upstream, so Greenshot can drop its workarounds. Each item says why, what Greenshot does today and what is expected.
+A prompt for a coding session on https://github.com/hardcodet/wpf-notifyicon. It lists the changes BuckShot would like
+upstream, so BuckShot can drop its workarounds. Each item says why, what BuckShot does today and what is expected.
 
 ---
 
 You are working on the open source library **wpf-notifyicon** (`Hardcodet.NotifyIcon.Wpf`, repository
-https://github.com/hardcodet/wpf-notifyicon, branch `develop`). The library is used by Greenshot (a screenshot tool,
-https://github.com/greenshot/greenshot) for its notification area icon. Greenshot is a per-monitor-v2 DPI aware
+https://github.com/hardcodet/wpf-notifyicon, branch `develop`). The library is used by BuckShot (a screenshot tool,
+https://github.com/greenshot/greenshot) for its notification area icon. BuckShot is a per-monitor-v2 DPI aware
 .NET Framework 4.8 WPF application, often used on setups with several monitors at different scaling (e.g. 100 % and 150 %).
 
 Prepare the changes below as **separate, small pull requests** (one topic each), in the style of the existing code.
@@ -28,7 +28,7 @@ factor is used for `ShowTrayPopup` / `GetPopupTrayPosition` and the custom ballo
 differs from the system DPI, the menu and the popups open at the wrong position (offset, or on the wrong monitor)
 and in the wrong size.
 
-**Greenshot's workaround:** it handles `PreviewTrayContextMenuOpen` (sets `Handled`), and opens its own `ContextMenu`
+**BuckShot's workaround:** it handles `PreviewTrayContextMenuOpen` (sets `Handled`), and opens its own `ContextMenu`
 with `PlacementMode.MousePoint`, which lets WPF place and scale it for the monitor under the cursor.
 
 **Expected:** the context menu, the tray popup and the custom balloons open at the right position and scale on every
@@ -57,7 +57,7 @@ context menu. The context menu opened by the keyboard is placed like a mouse men
 `LeftClickCommand` runs and the popup opens, unless `NoLeftClickDelay` is set, in which case a double click also raises
 the single click.
 
-**Greenshot's workaround:** `NoLeftClickDelay = true` plus its own `DispatcherTimer` on `TrayLeftMouseUp`: when the
+**BuckShot's workaround:** `NoLeftClickDelay = true` plus its own `DispatcherTimer` on `TrayLeftMouseUp`: when the
 user configured no double click action the single click runs at once, otherwise it waits the double click time.
 
 **Expected (opt-in):** a mode where the delay only happens when a double click can do something: a
@@ -71,7 +71,7 @@ user configured no double click action the single click runs at once, otherwise 
 a longer text is cut silently by the marshaller, which can split a surrogate pair (an emoji) and leaves no hint that
 the text was cut.
 
-**Greenshot's workaround:** `NotifyIconTextHelper` collapses whitespace and shortens the text at a word boundary with
+**BuckShot's workaround:** `NotifyIconTextHelper` collapses whitespace and shortens the text at a word boundary with
 an ellipsis (to 63 characters, the old WinForms `NotifyIcon` limit).
 
 **Expected:** when the text is longer than 127 characters, the library shortens it without splitting a surrogate pair
@@ -90,13 +90,13 @@ the library picks the size which matches the small icon size for the DPI of the 
 (`WM_DPICHANGED` of the message window, or a taskbar restart). An `Icon` with a single size is used as it is.
 Verify that the icon stays sharp after moving the taskbar to a monitor with a different scaling.
 
-## What Greenshot will do after these are released
+## What BuckShot will do after these are released
 
 - Remove the `PreviewTrayContextMenuOpen` bypass and use the library's context menu placement (item 1), keeping its
   own menu building in the preview event.
 - Use `KeySelectAction = LeftClick` (item 2).
 - Remove the own double click timer (item 3) and `NotifyIconTextHelper` (item 4).
-- Pass the multi-size Greenshot icon and let the library pick the size (item 5).
+- Pass the multi-size BuckShot icon and let the library pick the size (item 5).
 
-The Greenshot code which uses the library is `src/Greenshot/Shell/TrayIcon.cs` and
-`src/Greenshot/Helpers/NotifyIconTextHelper.cs` in https://github.com/greenshot/greenshot.
+The BuckShot code which uses the library is `src/BuckShot/Shell/TrayIcon.cs` and
+`src/BuckShot/Helpers/NotifyIconTextHelper.cs` in https://github.com/greenshot/greenshot.

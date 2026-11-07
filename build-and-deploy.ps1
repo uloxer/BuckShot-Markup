@@ -1,6 +1,6 @@
 # USAGE
 # * Enable script execution in Powershell: 'Set-ExecutionPolicy RemoteSigned'
-# * Create a GitHub personal access token (PAT) for greenshot repository
+# * Create a GitHub personal access token (PAT) for buckshot repository
 #   * user must be owner of the repository
 #   * token needs read and write permissions ""for Contents"" and ""Pages""
 # * Execute the script and paste your token
@@ -11,12 +11,12 @@ $ReleaseToken = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([Syste
 
 # Variables
 $RepoPath = "."  # Replace with your local repo path
-$BuildArtifactsPath = "$RepoPath\src\Greenshot\bin\Release\net480"
-# Greenshot Light is its own build of Greenshot.exe, made by the Release build (see Greenshot.csproj)
-$LightBuildArtifactsPath = "$RepoPath\src\Greenshot\bin\Release-Light\net480"
+$BuildArtifactsPath = "$RepoPath\src\BuckShot\bin\Release\net480"
+# BuckShot Light is its own build of BuckShot.exe, made by the Release build (see BuckShot.csproj)
+$LightBuildArtifactsPath = "$RepoPath\src\BuckShot\bin\Release-Light\net480"
 $ArtifactsPath = "$RepoPath\artifacts"
 $PortableFilesPath = "$ArtifactsPath\portable-files"
-$SolutionFile = "$RepoPath\src\Greenshot.sln"
+$SolutionFile = "$RepoPath\src\BuckShot.sln"
 
 # Clear Artifacts Directory
 Remove-Item -Path "$ArtifactsPath\*" -Recurse -Force
@@ -43,12 +43,12 @@ if ($LASTEXITCODE -ne 0) {
 
 # Extract Version from File Name
 Write-Host "Extracting version from installer file name..."
-$InstallerFile = Get-ChildItem "$RepoPath\installer" -Filter "Greenshot-INSTALLER-*.exe" | Select-Object -Last 1
+$InstallerFile = Get-ChildItem "$RepoPath\installer" -Filter "BuckShot-INSTALLER-*.exe" | Select-Object -Last 1
 if (-not $InstallerFile) {
     Write-Error "No matching installer file found in '$RepoPath\installer'."
     exit 1
 }
-if ($InstallerFile.Name -match "Greenshot-INSTALLER-([\d\.]+).*\.exe") {
+if ($InstallerFile.Name -match "BuckShot-INSTALLER-([\d\.]+).*\.exe") {
     $Version = $matches[1]
     Write-Host "Extracted version: $Version"
 } else {
@@ -58,13 +58,13 @@ if ($InstallerFile.Name -match "Greenshot-INSTALLER-([\d\.]+).*\.exe") {
 
 # Copy Installer Files
 Write-Host "Copying installer files..."
-$ExeArtifactPath = "$ArtifactsPath\Greenshot-INSTALLER-$Version-RELEASE.exe"
+$ExeArtifactPath = "$ArtifactsPath\BuckShot-INSTALLER-$Version-RELEASE.exe"
 if (-not (Test-Path $ArtifactsPath)) {
     New-Item -ItemType Directory -Force -Path $ArtifactsPath
 }
-Copy-Item "$RepoPath\installer\Greenshot-INSTALLER-*.exe" -Destination $ExeArtifactPath -Force
-$LightExeArtifactPath = "$ArtifactsPath\Greenshot-Light-INSTALLER-$Version-RELEASE.exe"
-Copy-Item "$RepoPath\installer\Greenshot-Light-INSTALLER-*.exe" -Destination $LightExeArtifactPath -Force
+Copy-Item "$RepoPath\installer\BuckShot-INSTALLER-*.exe" -Destination $ExeArtifactPath -Force
+$LightExeArtifactPath = "$ArtifactsPath\BuckShot-Light-INSTALLER-$Version-RELEASE.exe"
+Copy-Item "$RepoPath\installer\BuckShot-Light-INSTALLER-*.exe" -Destination $LightExeArtifactPath -Force
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Failed to copy installer files."
     exit $LASTEXITCODE
@@ -83,14 +83,14 @@ if ($LASTEXITCODE -ne 0) {
 
 # Create ZIP Archive
 Write-Host "Creating ZIP archive..."
-$ZipArtifactPath = "$ArtifactsPath\Greenshot-PORTABLE-$Version-RELEASE.zip"
+$ZipArtifactPath = "$ArtifactsPath\BuckShot-PORTABLE-$Version-RELEASE.zip"
 Compress-Archive -Path "$PortableFilesPath/*" -DestinationPath $ZipArtifactPath -Force
 
 # Create the light ZIP Archive (the basics only: no plugins, no AI tools, no browser extension)
 Write-Host "Creating light ZIP archive..."
 $LightPortableFilesPath = "$ArtifactsPath\portable-files-light"
 ./prepare-portable.ps1 -RepositoryRootPath . -BuildArtifactsPath $LightBuildArtifactsPath -OutputPath $LightPortableFilesPath -Light
-$LightZipArtifactPath = "$ArtifactsPath\Greenshot-Light-PORTABLE-$Version-RELEASE.zip"
+$LightZipArtifactPath = "$ArtifactsPath\BuckShot-Light-PORTABLE-$Version-RELEASE.zip"
 Compress-Archive -Path "$LightPortableFilesPath/*" -DestinationPath $LightZipArtifactPath -Force
 
 # Create Git Tag
@@ -111,8 +111,8 @@ $Headers = @{
 }
 $ReleaseData = @{
     tag_name              = "v$Version"
-    name                  = "Greenshot $Version unstable"
-    body                  = "Pre-release of Greenshot $Version."
+    name                  = "BuckShot $Version unstable"
+    body                  = "Pre-release of BuckShot $Version."
     draft                 = $true
     prerelease            = $true
     generate_release_notes = $true

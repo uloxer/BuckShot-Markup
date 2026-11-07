@@ -1,6 +1,6 @@
-# Greenshot 1.3 Release Changelogs
+# BuckShot 1.3 Release Changelogs
 
-This document contains changelogs for all stable releases in the Greenshot 1.3 series.
+This document contains changelogs for all stable releases in the BuckShot 1.3 series.
 
 ---
 
@@ -24,7 +24,7 @@ Released: March 20, 2026
 ### Installation Improvements
 
 - Reduces issues caused by leftover files from previous installations
-- Old 1.2 and 1.3 plugin files are now removed before new files are installed (only Greenshot-provided plugins are affected)
+- Old 1.2 and 1.3 plugin files are now removed before new files are installed (only BuckShot-provided plugins are affected)
 
 ### Downloads
 - [Installer](https://github.com/greenshot/greenshot/releases/download/v1.3.315/Greenshot-INSTALLER-1.3.315-RELEASE.exe)
@@ -82,11 +82,11 @@ Released: October 30, 2025
 
 ### What's New
 
-**Portable Version**: This release introduces an official portable ZIP package, making it easier to run Greenshot without installation.
+**Portable Version**: This release introduces an official portable ZIP package, making it easier to run BuckShot without installation.
 
 ### Bug Fixes
 
-Fixed an issue where file associations and launching Greenshot with file arguments didn't work correctly when the application was already running.
+Fixed an issue where file associations and launching BuckShot with file arguments didn't work correctly when the application was already running.
 
 ### Downloads
 - [Installer](https://github.com/greenshot/greenshot/releases/download/v1.3.304/Greenshot-INSTALLER-1.3.304-RELEASE.exe)
@@ -141,7 +141,7 @@ Released: July 26, 2025
 
 ### What's New
 
-**Installation Choice**: You can now choose between installing Greenshot for all users (requires administrator privileges) or just for the current user.
+**Installation Choice**: You can now choose between installing BuckShot for all users (requires administrator privileges) or just for the current user.
 
 ### Bug Fixes
 
@@ -180,7 +180,7 @@ Fixed a critical issue with elevated (administrator) installations where registr
 
 Released: May 23, 2025
 
-**This was the first stable release of Greenshot 1.3 and marked as the final release for the 1.3 series.**
+**This was the first stable release of BuckShot 1.3 and marked as the final release for the 1.3 series.**
 
 ### Security
 
@@ -218,7 +218,7 @@ Released: May 23, 2025
 - **Ellipse and Highlight Duplication**: Fixed duplication bug (#322, #331)
 - **Arrow File Opening**: Fixed error when opening .greenshot files with arrows (#572, #574)
 - **MAPI Detection**: Fixed MAPI detection issue (BUG-2693, #266)
-- **Wine Support**: Fixed issues when running Greenshot via Wine (#262)
+- **Wine Support**: Fixed issues when running BuckShot via Wine (#262)
 - **Initial Crop Selection**: Fixed initial crop selection (#407)
 - **Confirm for Drawable Containers**: Added IsConfirmable property for IDrawableContainer (#399)
 - **Resize Hotkey**: Added resize hotkey functionality (#480)
@@ -260,9 +260,9 @@ Released: May 23, 2025
 
 ---
 
-## About Greenshot 1.3
+## About BuckShot 1.3
 
-Greenshot 1.3 was built on the `release/1.3` branch and received multiple stable releases from May 2025 through March 2026. **Version 1.3.315 (March 20, 2026) is the final stable release of the 1.3 series.** The series introduced significant improvements in:
+BuckShot 1.3 was built on the `release/1.3` branch and received multiple stable releases from May 2025 through March 2026. **Version 1.3.315 (March 20, 2026) is the final stable release of the 1.3 series.** The series introduced significant improvements in:
 
 - **Security**: Multiple critical security fixes (CVE-2023-34634, GHSA-8f7f-x7ww-xx5w, GHSA-7hvw-q8q5-gpmj, GHSA-f8v9-7fph-fr2j)
 - **Editor functionality**: Zoom, keyboard shortcuts, better DPI support, and rendering fixes

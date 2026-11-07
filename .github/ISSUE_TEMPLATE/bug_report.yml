@@ -9,7 +9,7 @@ body:
         Please search existing issues first, including closed ones, to avoid creating duplicates.
         [Search existing issues here: https://github.com/greenshot/greenshot/issues](https://github.com/greenshot/greenshot/issues?q=is%3Aissue)
 
-        We also recommend updating to the latest version of Greenshot to see if the issue has already been fixed. You can download the latest version from our website: [https://getgreenshot.org/downloads/](https://getgreenshot.org/downloads/) 
+        We also recommend updating to the latest version of BuckShot to see if the issue has already been fixed. You can download the latest version from our website: [https://getgreenshot.org/downloads/](https://getgreenshot.org/downloads/)
 
   - type: checkboxes
     id: duplicate-check
@@ -21,10 +21,10 @@ body:
           required: true
 
   - type: input
-    id: greenshot-version
+    id: buckshot-version
     attributes:
-      label: Greenshot version
-      placeholder: e.g. 1.3.277 (You can find this in the about section of Greenshot)
+      label: BuckShot version
+      placeholder: e.g. 1.3.277 (You can find this in the about section of BuckShot)
     validations:
       required: true
 

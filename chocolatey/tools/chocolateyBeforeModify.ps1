@@ -1,1 +1,1 @@
-﻿Get-Process Greenshot* | Stop-Process -Force -ErrorAction SilentlyContinue
+﻿Get-Process BuckShot* | Stop-Process -Force -ErrorAction SilentlyContinue

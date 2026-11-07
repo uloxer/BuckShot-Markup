@@ -1,10 +1,10 @@
 # Translation Documentation
 
-This directory contains comprehensive documentation for working with translations in the Greenshot project.
+This directory contains comprehensive documentation for working with translations in the BuckShot project.
 
 ## Quick Start
 
-**New to Greenshot translations?** Start here:
+**New to BuckShot translations?** Start here:
 1. Read the [Translation Guide](TRANSLATION_GUIDE.md) to understand the structure
 2. Review the [Translation Glossary](TRANSLATION_GLOSSARY.md) for standard terms
 3. Follow the appropriate checklist in the [Translation Workflow](TRANSLATION_WORKFLOW.md)
@@ -13,7 +13,7 @@ This directory contains comprehensive documentation for working with translation
 ## Documentation Files
 
 ### 📖 [TRANSLATION_GUIDE.md](TRANSLATION_GUIDE.md)
-**Comprehensive guide to Greenshot translations**
+**Comprehensive guide to BuckShot translations**
 
 - Overview of the translation system (40 languages, INI language packs)
 - Repository structure and file locations
@@ -24,7 +24,7 @@ This directory contains comprehensive documentation for working with translation
 - Common issues and workarounds
 - TODOs
 
-**Read this first** to understand how translations work in Greenshot.
+**Read this first** to understand how translations work in BuckShot.
 
 ### 📚 [TRANSLATION_GLOSSARY.md](TRANSLATION_GLOSSARY.md)
 **Project-specific terminology and standard translations**
@@ -69,7 +69,7 @@ Includes checklists for:
 
 ## Common Tasks
 
-### I want to translate Greenshot to a new language
+### I want to translate BuckShot to a new language
 
 1. Read [TRANSLATION_GUIDE.md](TRANSLATION_GUIDE.md) - "Adding a New Language" section
 2. Follow Checklist 5 in [TRANSLATION_WORKFLOW.md](TRANSLATION_WORKFLOW.md)
@@ -78,14 +78,14 @@ Includes checklists for:
 
 ### I want to update existing translations
 
-1. Check what changed in `greenshot.en-US.ini`
+1. Check what changed in `buckshot.en-US.ini`
 2. Follow Checklist 3 in [TRANSLATION_WORKFLOW.md](TRANSLATION_WORKFLOW.md)
 3. Refer to [TRANSLATION_GLOSSARY.md](TRANSLATION_GLOSSARY.md) for consistency
 4. Validate using tools in [TRANSLATION_TOOLS.md](TRANSLATION_TOOLS.md)
 
 ### I'm a developer adding new strings
 
-1. Add `key=value` to `greenshot.en-US.ini` in the right section, and the matching property to the language interface
+1. Add `key=value` to `buckshot.en-US.ini` in the right section, and the matching property to the language interface
 2. Follow Checklist 1 in [TRANSLATION_WORKFLOW.md](TRANSLATION_WORKFLOW.md)
 3. Add context in the property comment if meaning is not obvious
 4. Update glossary if introducing new project-specific terms
@@ -109,19 +109,19 @@ Includes checklists for:
 
 ### Main Application
 ```
-src/Greenshot/Languages/
-├── greenshot.en-US.ini        ← Base language (597 keys)
-├── greenshot.de-DE.ini
-├── greenshot.fr-FR.ini
-├── greenshot.es-ES.ini
+src/BuckShot/Languages/
+├── buckshot.en-US.ini        ← Base language (597 keys)
+├── buckshot.de-DE.ini
+├── buckshot.fr-FR.ini
+├── buckshot.es-ES.ini
 └── ... (40 languages)
 ```
 
 ### Plugins
 ```
-src/Greenshot.Plugin.*/Languages/
-├── greenshot.{module}.en-US.ini
-├── greenshot.{module}.de-DE.ini
+src/BuckShot.Plugin.*/Languages/
+├── buckshot.{module}.en-US.ini
+├── buckshot.{module}.de-DE.ini
 └── ... (typically 20-22 languages)
 ```
 
@@ -185,8 +185,8 @@ When working with the translation agent, reference the appropriate documentation
 
 ## Additional Resources
 
-- **Language Loader Code**: `src/Greenshot.Base/Languages/Texts.cs`
-- **Language Interfaces**: `src/Greenshot.Base/Languages/I*Language.cs`, `src/Greenshot.Plugin.*/I*Language.cs`
+- **Language Loader Code**: `src/BuckShot.Base/Languages/Texts.cs`
+- **Language Interfaces**: `src/BuckShot.Base/Languages/I*Language.cs`, `src/BuckShot.Plugin.*/I*Language.cs`
 - **IETF Language Tags**: [RFC 5646](https://tools.ietf.org/html/rfc5646)
 - **Contributing Guidelines**: `CONTRIBUTING.md` (for code style)
 

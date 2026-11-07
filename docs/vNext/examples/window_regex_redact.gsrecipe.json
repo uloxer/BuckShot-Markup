@@ -28,7 +28,7 @@
       "name": "Capture Target Window",
       "parameters": {
         "SourceType": "ActiveWindow",
-        "WindowTitlePattern": ".*(Notepad|Editor|Greenshot|Chrome|Edge).*",
+        "WindowTitlePattern": ".*(Notepad|Editor|BuckShot|Chrome|Edge).*",
         "MatchCase": false
       }
     },

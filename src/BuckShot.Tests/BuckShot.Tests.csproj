@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <IsPackable>false</IsPackable>
+    <!-- xunit.v3 test projects are programs -->
+    <OutputType>Exe</OutputType>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- The tests don't pass TestContext.Current.CancellationToken to every call that takes a token, a hanging test is stopped by the runner -->
+    <NoWarn>$(NoWarn);xUnit1051</NoWarn>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <!-- Like BuckShot.exe, which it references (see BuckShot.csproj) -->
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <!-- Without Microsoft Testing Platform: dotnet test (and tools\build-runner) keep using VSTest on the .NET 10 SDK -->
+    <PackageReference Include="xunit.v3.mtp-off" Version="4.0.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="10.1.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Files and messages as other programs (and BuckShot with Json.NET) wrote them -->
+    <None Include="TestData\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BuckShot.Base\BuckShot.Base.csproj" />
+    <ProjectReference Include="..\BuckShot.Editor\BuckShot.Editor.csproj" />
+    <ProjectReference Include="..\BuckShot\BuckShot.csproj" />
+    <ProjectReference Include="..\BuckShot.Plugin.ExternalCommand\BuckShot.Plugin.ExternalCommand.csproj" />
+    <ProjectReference Include="..\BuckShot.Plugin.Zxing\BuckShot.Plugin.Zxing.csproj" />
+    <ProjectReference Include="..\BuckShot.Plugin.Atlassian\BuckShot.Plugin.Atlassian.csproj" />
+    <ProjectReference Include="..\BuckShot.Plugin.Box\BuckShot.Plugin.Box.csproj" />
+    <ProjectReference Include="..\BuckShot.Plugin.CustomUploader\BuckShot.Plugin.CustomUploader.csproj" />
+    <ProjectReference Include="..\BuckShot.Plugin.Dropbox\BuckShot.Plugin.Dropbox.csproj" />
+    <ProjectReference Include="..\BuckShot.Plugin.Office\BuckShot.Plugin.Office.csproj" />
+    <ProjectReference Include="..\BuckShot.Plugin.Pdf\BuckShot.Plugin.Pdf.csproj" />
+    <ProjectReference Include="..\BuckShot.Plugin.RecipeEditor\BuckShot.Plugin.RecipeEditor.csproj" />
+    <ProjectReference Include="..\BuckShot.Plugin.Stamps\BuckShot.Plugin.Stamps.csproj" />
+  </ItemGroup>
+</Project>

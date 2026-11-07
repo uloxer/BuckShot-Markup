@@ -53,7 +53,7 @@ jobs:
                   normalizedLines.push(match[1]);
                 }
               } else {
-                const frameMatch = trimmed.match(/^(?:[^\s(]+\s+)?((?:Greenshot|Dapplo)\.[^(]+(?:\([^)]*\))?)/);
+                const frameMatch = trimmed.match(/^(?:[^\s(]+\s+)?((?:BuckShot|Dapplo)\.[^(]+(?:\([^)]*\))?)/);
                 if (frameMatch) {
                   normalizedLines.push('at ' + frameMatch[1]);
                 }

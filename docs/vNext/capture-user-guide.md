@@ -1,10 +1,10 @@
-# Capturing with Greenshot 1.4
+# Capturing with BuckShot 1.4
 
-This describes Greenshot 1.4, which is still in development. For Greenshot 1.3, the current release, see [the 1.3 guide](../capture-user-guide.md).
+This describes BuckShot 1.4, which is still in development. For BuckShot 1.3, the current release, see [the 1.3 guide](../capture-user-guide.md).
 
-This guide explains what happens when you take a screenshot with Greenshot: the ways to start a capture, the modes you can
+This guide explains what happens when you take a screenshot with BuckShot: the ways to start a capture, the modes you can
 choose from while you select (region, window, fixed size and text), the helpers on the screen (zoomer, keys, info and preview),
-every key, what Greenshot remembers for the next time, and the settings which change how capturing works.
+every key, what BuckShot remembers for the next time, and the settings which change how capturing works.
 
 - [Starting a capture](#starting-a-capture)
 - [The capture screen](#the-capture-screen)
@@ -22,7 +22,7 @@ every key, what Greenshot remembers for the next time, and the settings which ch
   - [QR codes](#qr-codes)
 - [Why the panels and the zoomer move](#why-the-panels-and-the-zoomer-move)
 - [All keys](#all-keys)
-- [What Greenshot remembers](#what-greenshot-remembers)
+- [What BuckShot remembers](#what-buckshot-remembers)
 - [Settings which change capturing](#settings-which-change-capturing)
 - [Good to know](#good-to-know)
 
@@ -36,7 +36,7 @@ every key, what Greenshot remembers for the next time, and the settings which ch
 | Capture last region | `Shift` + `PrintScreen` | Captures the same area as your last capture again, without the capture screen. |
 | Open image from clipboard | none | Opens the image on the clipboard. |
 
-The same captures are in the menu of the Greenshot icon next to the clock. There, *Capture window* always opens the capture screen
+The same captures are in the menu of the BuckShot icon next to the clock. There, *Capture window* always opens the capture screen
 in the window mode. With more than one monitor, *Capture full screen* has a sub menu: *all* monitors, or one of them.
 *Capture window from list* lists the open windows and captures the one you pick, without the capture screen.
 
@@ -58,7 +58,7 @@ flowchart LR
 
 ## The capture screen
 
-Greenshot takes a picture of all your monitors first, then shows it on top of everything. What you see is a frozen picture:
+BuckShot takes a picture of all your monitors first, then shows it on top of everything. What you see is a frozen picture:
 nothing on the screen changes while you select, so a tooltip or an open menu stays where it was.
 You choose what to capture in this picture, and only that part is used.
 To select on the live screen instead, see [Without freezing the screen](#without-freezing-the-screen).
@@ -95,12 +95,12 @@ An example of how it can look, while a region is selected (the places change, se
 ```
 
 `Esc` closes the capture screen without capturing anything. Clicking or pressing `Enter` (depending on the mode) captures the
-selection, and Greenshot sends it to your destinations (the editor, a file, the clipboard, ...) as it always does.
+selection, and BuckShot sends it to your destinations (the editor, a file, the clipboard, ...) as it always does.
 
 ### Without freezing the screen
 
 Turn off *Freeze the screen while selecting* on the Capture tab of the settings, and the capture screen is see-through: what is on
-the screen keeps moving while you select, a video keeps playing. Greenshot takes no picture first, so the capture screen appears
+the screen keeps moving while you select, a video keeps playing. BuckShot takes no picture first, so the capture screen appears
 at once, and only what you selected is captured, at the moment you release the mouse (or press `Enter`). Bright HDR content
 looks the same while you select as on the screen.
 
@@ -168,7 +168,7 @@ and press `Enter` again to capture.
 The selection follows the window under the mouse: it slides from window to window as you move. Click, or press `Enter`, to capture it.
 Without a mouse, `Tab` selects the next window (the top one first) and `Shift` + `Tab` the previous one.
 
-- Greenshot selects the innermost window under the mouse, e.g. a panel or a toolbar inside a program, when the program is built from
+- BuckShot selects the innermost window under the mouse, e.g. a panel or a toolbar inside a program, when the program is built from
   several windows. Move to the outer edge of a program window to select the whole window.
 - Only the visible part of a window is captured: a part which lies outside of its program window, or outside of the screens, is left out.
 - The windows are those of the moment the picture was taken.
@@ -176,15 +176,15 @@ Without a mouse, `Tab` selects the next window (the top one first) and `Shift` +
   and for an area its type and name. This helps when you report a problem with a certain program.
 
 **For beta testers** (Expert settings, *Enable to enable beta-test features*): many programs draw their whole content themselves,
-e.g. web browsers, so Greenshot only finds one window for them. In those programs the window mode also finds the **areas** of the
+e.g. web browsers, so BuckShot only finds one window for them. In those programs the window mode also finds the **areas** of the
 content, like the menu, a side bar or a part of a web page, and selects the smallest area under the mouse (areas smaller than
 64 pixels are skipped).
 
 - `PgUp` selects the larger area around the current one, up to the whole window.
 - `PgDn` selects the smaller area inside it again.
 - Moving the mouse to another area starts again with the smallest one.
-- Some programs need a moment to tell Greenshot their areas, e.g. a browser right after it started. A small turning circle next to
-  the mouse shows that Greenshot is waiting for them. Until they arrive the window is selected as a whole.
+- Some programs need a moment to tell BuckShot their areas, e.g. a browser right after it started. A small turning circle next to
+  the mouse shows that BuckShot is waiting for them. Until they arrive the window is selected as a whole.
 
 ### Fixed size
 
@@ -215,7 +215,7 @@ A panel lists the sizes:
 ```
 
 - **The sizes** are your own sizes from the settings (Capture tab, *Fixed capture sizes*), followed by your last region and window
-  captures (also *Capture active window*) under *Recently captured*, with the place where each was captured. Greenshot keeps the last five; an entry which is
+  captures (also *Capture active window*) under *Recently captured*, with the place where each was captured. BuckShot keeps the last five; an entry which is
   already in your own list (same size and place) isn't repeated.
 - **`1` – `9` and `0`** (also on the number pad) pick an entry from the list, `0` the tenth. **`PgUp`** and **`PgDn`** go to the previous or next
   entry (after the last one comes the first again), also to those after the tenth.
@@ -243,7 +243,7 @@ A panel lists the sizes:
 - **Keep a recent one:** the settings list your recent captures below your own sizes; the `+` on one makes it one of your own sizes,
   so it stays in the list.
 - **Your own places:** in the settings, *Add a size* takes an optional X and Y, from the top left of the main screen, another screen,
-  or a window of a program you name (e.g. notepad.exe). In greenshot.ini they are written like the geometry of X11 programs:
+  or a window of a program you name (e.g. notepad.exe). In buckshot.ini they are written like the geometry of X11 programs:
   `1280x720` is only the size, `1280x720+100+200` is 100, 200 from the top left of the main screen, `1280x720+100+200@1920+0` from the
   top left of the screen whose top left corner is at 1920, 0 (a screen on the left of the main one: `@-1920+0`), and
   `1280x720+10-30@notepad.exe` from the top left of the content of a window of notepad.exe. A minus is a negative number, here 30
@@ -258,7 +258,7 @@ A panel lists the sizes:
 
 ### Text
 
-Press `T` to capture text. Greenshot reads the text on the screen with the text recognition of Windows, which can take a moment when
+Press `T` to capture text. BuckShot reads the text on the screen with the text recognition of Windows, which can take a moment when
 the mode starts. Then every line of text it found gets a thin frame.
 
 - **Click a line** to capture just that line. The line under the mouse is highlighted.
@@ -270,12 +270,12 @@ of the built-in region and window capture recipes (the branch *Text or image* af
 something else with the text. With recipes turned on (*Enable recipes*, in the settings of the recipe editor plugin), the built-in recipe *OCR text to clipboard* starts the capture
 in this mode and copies only the text; give it a hotkey or a menu entry to use it (see [capture-recipes.md](capture-recipes.md)).
 
-The text recognition needs a language installed in Windows (Time and language, Language and region). Which language Greenshot reads
+The text recognition needs a language installed in Windows (Time and language, Language and region). Which language BuckShot reads
 is set in the settings, Capture tab, *Text recognition (OCR)*. Without a recognition language no lines are shown.
 
 ## The helpers
 
-The helpers are there to help you select exactly what you want. Each one can be shown or hidden with one key, and Greenshot
+The helpers are there to help you select exactly what you want. Each one can be shown or hidden with one key, and BuckShot
 remembers your choice for the next capture.
 
 ### Zoomer
@@ -307,7 +307,7 @@ The panel is shown the first time. When you hide it with `F1`, it stays hidden, 
 | Window | The title of the window under the mouse. |
 | Mouse | The position of the mouse. |
 
-Positions are those of your desktop, as Windows counts them. Like the keys, the panel is shown at first, and Greenshot remembers when you hide it.
+Positions are those of your desktop, as Windows counts them. Like the keys, the panel is shown at first, and BuckShot remembers when you hide it.
 
 ### Preview of the selection
 
@@ -325,7 +325,7 @@ flowchart LR
 ```
 
 In the place of the zoomer the preview moves with the mouse, so you see the result right where you work. When the zoomer isn't shown
-(it is turned off with `Z`, or in the window mode), the preview stays in its corner. Greenshot remembers the choice.
+(it is turned off with `Z`, or in the window mode), the preview stays in its corner. BuckShot remembers the choice.
 
 ### Crosshair and size labels
 
@@ -335,11 +335,11 @@ In the place of the zoomer the preview moves with the mouse, so you see the resu
 
 ### QR codes
 
-When the QR code plugin is installed, Greenshot looks for QR codes on the screen while the capture screen is open. A QR code it finds
+When the QR code plugin is installed, BuckShot looks for QR codes on the screen while the capture screen is open. A QR code it finds
 gets a dashed frame. Moving the mouse over it shows its content, a click opens a menu: *Copy to Clipboard* copies the content, and for a
 web address *Open URL in Browser* opens it. Choosing one of them ends the capture. Only the QR codes in the selection stay with the
 capture (and are named in the notification). This can be turned off in the settings of the QR code plugin, or with `ScanOnCapture` in
-the `[Zxing]` section of greenshot.ini.
+the `[Zxing]` section of buckshot.ini.
 
 ## Why the panels and the zoomer move
 
@@ -436,12 +436,12 @@ The **Keys** panel (`F1`) always shows the keys which work at that moment. This 
 | Click on a line (text) | Capture that line |
 | Click on a QR code frame | Open the menu of the QR code |
 
-## What Greenshot remembers
+## What BuckShot remembers
 
-Some choices you make in the capture screen are kept for the next capture, also after a restart of Greenshot. They are stored in
-greenshot.ini, so you can also set them there (see [Settings](#settings-which-change-capturing)).
+Some choices you make in the capture screen are kept for the next capture, also after a restart of BuckShot. They are stored in
+buckshot.ini, so you can also set them there (see [Settings](#settings-which-change-capturing)).
 
-| What | Changed with | Remembered | Setting in greenshot.ini |
+| What | Changed with | Remembered | Setting in buckshot.ini |
 |---|---|---|---|
 | Keys panel shown or hidden | `F1` | yes | `CaptureHelpVisible` |
 | Info panel shown or hidden | `I` | yes | `CaptureInfoVisible` |
@@ -479,11 +479,11 @@ So if the keys panel is gone, it isn't lost: you hid it with `F1` once, and `F1`
 | Expert tab | *Enable to enable beta-test features* | Turns on features which are still tested, e.g. the areas in the window mode. |
 | Expert tab | *Take screenshots with DirectX* | The way the picture of the screens is taken; needed for HDR screens. |
 | Expert tab | *Ignore the screen reader flag of Windows when capturing* | The capture starts as without a screen reader (live screen, region), also while the screen reader flag of Windows is on. For a flag a program left on, see [the screen reader flag stays on](#the-screen-reader-flag-stays-on). |
-| Expert tab | *Prepare the capture in the background after the start* | The first capture after the start of Greenshot opens faster, but uses more memory. |
+| Expert tab | *Prepare the capture in the background after the start* | The first capture after the start of BuckShot opens faster, but uses more memory. |
 
-**Only in greenshot.ini**
+**Only in buckshot.ini**
 
-greenshot.ini is in `%APPDATA%\Greenshot`, the portable Greenshot keeps it next to Greenshot.exe. Change it while Greenshot isn't running.
+buckshot.ini is in `%APPDATA%\BuckShot`, the portable BuckShot keeps it next to BuckShot.exe. Change it while BuckShot isn't running.
 All of these are in the `[Core]` section, unless said otherwise.
 
 | Setting | Default | What it does |
@@ -521,7 +521,7 @@ All of these are in the `[Core]` section, unless said otherwise.
   starts as a window capture. Window capture (its own hotkey, or `Space`) selects the window under the cursor right away and says its
   title: `Enter` captures it, `Tab` selects the next window, `Space` switches to the region. On the live screen the `Insert` and
   `Caps Lock` keys, and the keys pressed with them, stay with the screen reader.
-  Greenshot knows a screen reader runs from the screen reader flag of Windows, see
+  BuckShot knows a screen reader runs from the screen reader flag of Windows, see
   [the screen reader flag stays on](#the-screen-reader-flag-stays-on) when it starts like this without one.
 - **Destination picker:** every destination has a fixed letter, underlined in the menu (for example `C` for the clipboard, `S` to
   save). The letter stays the same whatever other destinations are there, so you can learn it.
@@ -535,7 +535,7 @@ Windows has one screen reader flag for everybody ([SystemParametersInfo, `SPI_GE
 [screen reader parameter](https://learn.microsoft.com/windows/win32/winauto/screen-reader-parameter)). A screen reader or another
 accessibility aid turns it on; Windows doesn't turn it off when that program ends or crashes, the program has to. A program which saves
 it in the user profile (`SPIF_UPDATEINIFILE`, value `On` in `HKEY_CURRENT_USER\Control Panel\Accessibility\Blind Access`) leaves it on
-after a restart too. Greenshot only reads the flag, at every capture, and never stores what it read.
+after a restart too. BuckShot only reads the flag, at every capture, and never stores what it read.
 
 When the capture keeps starting as window capture on the frozen screen without a screen reader, the log says
 `The screen reader flag of Windows is on`. This PowerShell line shows the flag (1 = on), the saved value and the screen readers which run:
@@ -551,6 +551,6 @@ Add-Type -Name S2 -Namespace W -MemberDefinition '[DllImport("user32.dll")] publ
 ```
 
 When a program keeps turning it on again, *Ignore the screen reader flag of Windows when capturing* on the Expert tab
-(`IgnoreScreenReader=true` in greenshot.ini) makes Greenshot capture as without a screen reader.
+(`IgnoreScreenReader=true` in buckshot.ini) makes BuckShot capture as without a screen reader.
 
 For developers: how the modes and helpers are built and how a plugin can add its own is described in [capture-tools.md](capture-tools.md).

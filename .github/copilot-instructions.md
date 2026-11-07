@@ -1,11 +1,11 @@
-# Greenshot Copilot Instructions
+# BuckShot Copilot Instructions
 
 ## Repository Overview
 
-**Greenshot** is a free, open-source screenshot tool for Windows optimized for productivity. It allows users to capture screenshots, annotate them, and export to various destinations (file, printer, clipboard, email, cloud services).
+**BuckShot** is a free, open-source screenshot tool for Windows optimized for productivity. It allows users to capture screenshots, annotate them, and export to various destinations (file, printer, clipboard, email, cloud services).
 
 - **Repository Size**: ~13MB, ~1,100 files
-- **Primary Language**: C# (.NET Framework 4.8, target `net480`); `Greenshot.Mcp` targets .NET 10
+- **Primary Language**: C# (.NET Framework 4.8, target `net480`); `BuckShot.Mcp` targets .NET 10
 - **Project Type**: Windows Desktop Application (WinForms/WPF)
 - **Build System**: MSBuild (requires Visual Studio or MSBuild Tools for Windows)
 - **Versioning**: Nerdbank.GitVersioning (version base: 1.4.x)
@@ -24,7 +24,7 @@
 - **Operating System**: Windows (Linux/Mac not supported for building)
 - **Build Tools**: Visual Studio 2026 with the Desktop development with C++ workload, MSVC v145 x64/x86 build tools, Windows 10 SDK, and the .NET Framework 4.8 Developer Pack
 - **.NET SDK**: .NET SDK 10.0.100 or newer (the MCP server targets .NET 10)
-- **Target Frameworks**: Most projects target .NET Framework 4.8 (`net480`); `Greenshot.Mcp` targets `net10.0-windows`
+- **Target Frameworks**: Most projects target .NET Framework 4.8 (`net480`); `BuckShot.Mcp` targets `net10.0-windows`
 - **Git Clone**: MUST use full clone with history (NOT shallow clone) due to Nerdbank.GitVersioning requirements
 
 ### Critical Build Notes
@@ -36,33 +36,33 @@
 
 ### Restore NuGet Packages
 ```powershell
-msbuild src/Greenshot.sln /p:Configuration=Release /restore /t:PrepareForBuild
+msbuild src/BuckShot.sln /p:Configuration=Release /restore /t:PrepareForBuild
 ```
 **Note**: This is the restore/preparation step used by the release workflow. OAuth credentials are optional for local builds.
 
 ### Build Solution
 ```powershell
-msbuild src/Greenshot.sln /p:Configuration=Release /t:Rebuild /v:normal
+msbuild src/BuckShot.sln /p:Configuration=Release /t:Rebuild /v:normal
 ```
-**Output**: `src/Greenshot/bin/Release/net480/` (main executable and plugins)
+**Output**: `src/BuckShot/bin/Release/net480/` (main executable and plugins)
 
-**Note**: Release also builds Greenshot Light, installers, checksums, SBOMs, portable ZIPs, and the MCP server. It requires the C++ build tools and .NET 10 SDK.
+**Note**: Release also builds BuckShot Light, installers, checksums, SBOMs, portable ZIPs, and the MCP server. It requires the C++ build tools and .NET 10 SDK.
 
 ### Build for Debug
 ```powershell
-msbuild src/Greenshot.sln /p:Configuration=Debug /t:Rebuild /v:normal
+msbuild src/BuckShot.sln /p:Configuration=Debug /t:Rebuild /v:normal
 ```
 
 ### Clean Build
 ```powershell
-msbuild src/Greenshot.sln /t:Clean /p:Configuration=Release
+msbuild src/BuckShot.sln /t:Clean /p:Configuration=Release
 ```
 
 ### Run the Tests
-The repository has an xUnit v3 test project at `src/Greenshot.Tests/Greenshot.Tests.csproj`. First build with Visual Studio MSBuild (the solution includes MSBuild-specific tasks and C++ projects), then run the test project without rebuilding. From the repository root, use:
+The repository has an xUnit v3 test project at `src/BuckShot.Tests/BuckShot.Tests.csproj`. First build with Visual Studio MSBuild (the solution includes MSBuild-specific tasks and C++ projects), then run the test project without rebuilding. From the repository root, use:
 ```powershell
-msbuild src/Greenshot.sln /m /t:Build /p:Configuration=Debug /p:Restore=true /v:minimal
-dotnet test src/Greenshot.Tests/Greenshot.Tests.csproj --configuration Debug --no-build
+msbuild src/BuckShot.sln /m /t:Build /p:Configuration=Debug /p:Restore=true /v:minimal
+dotnet test src/BuckShot.Tests/BuckShot.Tests.csproj --configuration Debug --no-build
 ```
 For Release, change the MSBuild property to `/p:Configuration=Release` and use `--configuration Release` with `dotnet test`. To run a subset, add a VSTest filter, for example `--filter "FullyQualifiedName~Ipc"`. Tests that require clipboard or desktop interaction need an active, unlocked Windows session; interactive-desktop tests are skipped when the session is unavailable.
 
@@ -71,7 +71,7 @@ For Release, change the MSBuild property to `/p:Configuration=Release` and use `
 ### Root Directory Files
 - **src/** - All source code (solution and projects)
 - **installer/** - Generated installers and portable ZIP artifacts
-- **src/Greenshot-Installer/** - Inno Setup scripts and release packaging targets
+- **src/BuckShot-Installer/** - Inno Setup scripts and release packaging targets
 - **docs/** - Project documentation, including `release-management.md`
 - **build-and-deploy.ps1** - Manual release script (for signed releases)
 - **prepare-portable.ps1** - Prepares a portable folder from build artifacts
@@ -80,33 +80,33 @@ For Release, change the MSBuild property to `/p:Configuration=Release` and use `
 ### Source Directory (`src/`)
 ```
 src/
-├── Greenshot.sln              # Main solution file
+├── BuckShot.sln              # Main solution file
 ├── Directory.Build.props      # Shared MSBuild properties
 ├── Directory.Build.targets    # Shared MSBuild targets (token replacement)
 ├── .editorconfig              # Code style configuration
 ├── version.json               # Nerdbank.GitVersioning config
-├── Greenshot/                 # Main application project
-├── Greenshot.Base/            # Core/shared library
-├── Greenshot.Editor/          # Image editor component
-├── Greenshot.Tests/           # xUnit v3 test project
-├── Greenshot.Mcp/             # .NET 10 MCP server
-├── greenshot-proxy/           # Native C++ proxy and CLI projects
-├── Greenshot-Installer/       # Release packaging and installer targets
-└── Greenshot.Plugin.*/        # Plugin projects
+├── BuckShot/                 # Main application project
+├── BuckShot.Base/            # Core/shared library
+├── BuckShot.Editor/          # Image editor component
+├── BuckShot.Tests/           # xUnit v3 test project
+├── BuckShot.Mcp/             # .NET 10 MCP server
+├── buckshot-proxy/           # Native C++ proxy and CLI projects
+├── BuckShot-Installer/       # Release packaging and installer targets
+└── BuckShot.Plugin.*/        # Plugin projects
 ```
 
 ### Main Application
-- **Entry Point**: `src/Greenshot/GreenshotMain.cs`
-- **Shell (startup, services, tray icon and menu)**: `src/Greenshot/Shell/`
-- **Configuration**: `src/Greenshot/Configuration/`
-- **Destination Handlers**: `src/Greenshot/Destinations/` (clipboard, email, file, etc.)
-- **Capture Helpers**: `src/Greenshot/Helpers/CaptureHelper.cs`
+- **Entry Point**: `src/BuckShot/BuckShotMain.cs`
+- **Shell (startup, services, tray icon and menu)**: `src/BuckShot/Shell/`
+- **Configuration**: `src/BuckShot/Configuration/`
+- **Destination Handlers**: `src/BuckShot/Destinations/` (clipboard, email, file, etc.)
+- **Capture Helpers**: `src/BuckShot/Helpers/CaptureHelper.cs`
 
 ### Plugins Architecture
 Each plugin follows a consistent structure:
-- Located in `src/Greenshot.Plugin.{Name}/`
-- Has INI language files in `Languages/greenshot.{plugin}.{locale}.ini`
-- Build output goes to `src/Greenshot/bin/{Configuration}/net480/Plugins/{PluginName}/`
+- Located in `src/BuckShot.Plugin.{Name}/`
+- Has INI language files in `Languages/buckshot.{plugin}.{locale}.ini`
+- Build output goes to `src/BuckShot/bin/{Configuration}/net480/Plugins/{PluginName}/`
 - A post-build target in `src/Directory.Build.props` copies plugins to the main app output
 
 ### Key Configuration Files
@@ -122,17 +122,17 @@ Each plugin follows a consistent structure:
 
 **Build Process**:
 1. **Setup**: Windows runner, MSBuild, .NET 10 SDK, and a full-history checkout
-2. **Restore**: `msbuild src/Greenshot.sln /p:Configuration=Release /restore /t:PrepareForBuild`
-3. **Build**: `msbuild src/Greenshot.sln /p:Configuration=Release /t:Rebuild /v:normal`
-4. **Package Installer**: Copies from `installer/Greenshot-INSTALLER-*.exe`
+2. **Restore**: `msbuild src/BuckShot.sln /p:Configuration=Release /restore /t:PrepareForBuild`
+3. **Build**: `msbuild src/BuckShot.sln /p:Configuration=Release /t:Rebuild /v:normal`
+4. **Package Installer**: Copies from `installer/BuckShot-INSTALLER-*.exe`
 5. **Package Portable**: Runs `prepare-portable.ps1`, creates ZIP
 6. **Deploy**: Creates GitHub release with installer and portable ZIP
 
 **OAuth credentials**: The build templates currently consume Box, Dropbox, and Imgur credentials. They are optional for local builds; without them, those integrations use placeholder credentials.
 
 ### Build Artifacts
-- **Installers**: `installer/Greenshot-INSTALLER-*.exe` and `installer/Greenshot-Light-INSTALLER-*.exe` (unsigned/unstable names for local builds; signing depends on the configured certificate)
-- **Portable**: `installer/Greenshot-PORTABLE-*.zip` and `installer/Greenshot-Light-PORTABLE-*.zip`
+- **Installers**: `installer/BuckShot-INSTALLER-*.exe` and `installer/BuckShot-Light-INSTALLER-*.exe` (unsigned/unstable names for local builds; signing depends on the configured certificate)
+- **Portable**: `installer/BuckShot-PORTABLE-*.zip` and `installer/BuckShot-Light-PORTABLE-*.zip`
 
 ## Coding Conventions
 
@@ -170,7 +170,7 @@ Or ensure initial clone uses: `git clone --depth=0` or full clone without `--dep
 ### Issue 3: Missing API Credentials
 **Symptoms**: Box or Dropbox authorization, or the deletion of Imgur uploads, is not configured in a local build  
 **Cause**: Environment variables for API keys not set  
-**Context**: Build templates replace credentials for the Box and Dropbox plugins and the Imgur client id of Greenshot (Self-Service deletes earlier Imgur uploads)  
+**Context**: Build templates replace credentials for the Box and Dropbox plugins and the Imgur client id of BuckShot (Self-Service deletes earlier Imgur uploads)
 **Solution for Local Dev**: Credentials are optional for building. Set the relevant environment variables if you need to test those integrations:
 ```powershell
 $env:Box13_ClientId = "your_id"
@@ -182,31 +182,31 @@ $env:Imgur13_ClientId = "your_id"
 
 ### Issue 4: Installer Not Built
 **Symptoms**: No .exe in `installer/` after build  
-**Cause**: Installer creation is part of Greenshot project's post-build using Inno Setup (Tools.InnoSetup NuGet package)  
+**Cause**: Installer creation is part of BuckShot project's post-build using Inno Setup (Tools.InnoSetup NuGet package)
 **Solution**: Build succeeds without installer; use CI workflow or manual build-and-deploy.ps1 for full release
 
 ## Making Code Changes
 
 ### Typical Workflow
-1. **Restore**: `msbuild src/Greenshot.sln /p:Configuration=Debug /restore /t:PrepareForBuild`
-2. **Build**: `msbuild src/Greenshot.sln /p:Configuration=Debug /t:Build /v:minimal`
+1. **Restore**: `msbuild src/BuckShot.sln /p:Configuration=Debug /restore /t:PrepareForBuild`
+2. **Build**: `msbuild src/BuckShot.sln /p:Configuration=Debug /t:Build /v:minimal`
 3. **Make Changes**: Edit C# files following conventions
-4. **Rebuild**: `msbuild src/Greenshot.sln /p:Configuration=Debug /t:Rebuild /v:minimal` (incremental)
-5. **Test Manually**: Run `src/Greenshot/bin/Debug/net480/Greenshot.exe`
+4. **Rebuild**: `msbuild src/BuckShot.sln /p:Configuration=Debug /t:Rebuild /v:minimal` (incremental)
+5. **Test Manually**: Run `src/BuckShot/bin/Debug/net480/BuckShot.exe`
 
 ### Adding New Features
-- Core functionality: `src/Greenshot.Base/` or `src/Greenshot/`
-- Editor features: `src/Greenshot.Editor/`
-- New plugins: Create new `Greenshot.Plugin.{Name}` project following existing plugin structure
+- Core functionality: `src/BuckShot.Base/` or `src/BuckShot/`
+- Editor features: `src/BuckShot.Editor/`
+- New plugins: Create new `BuckShot.Plugin.{Name}` project following existing plugin structure
 - Where code goes and how it is named (Views/ViewModels, `Forms` only for WinForms, Recipes, optional parts, frozen .greenshot types): see `docs/vNext/code-structure.md`
 - Accessibility is part of every UI change: follow `docs/vNext/accessibility.md` (keyboard, names, live regions, theme colors, `{wpf:FontSize N}`, no literal texts); `AccessibilityXamlTests` must stay green, never weaken it
-- UI changes: WPF in the `Views`/`ViewModels` folders of the feature, WinForms in `src/Greenshot/Forms/` or `src/Greenshot.Editor/Forms/`; styles, texts and settings: see `docs/vNext/ui-how-to.md`
+- UI changes: WPF in the `Views`/`ViewModels` folders of the feature, WinForms in `src/BuckShot/Forms/` or `src/BuckShot.Editor/Forms/`; styles, texts and settings: see `docs/vNext/ui-how-to.md`
 - Documentation: `docs/` describes the released 1.3, `docs/vNext/` what is new in 1.4 (`main`); document new features in `docs/vNext/`
-- New plugin language packs use INI format: `Languages/greenshot.{plugin}.{locale}.ini`
-- Recipe format (`docs/vNext/recipe.schema.json`, steps, triggers, options): the recipes of the catalog [greenshot/greenshot-recipes](https://github.com/greenshot/greenshot-recipes) must stay valid; the `Recipe catalog` check validates them against the PR's schema, so a breaking change needs a matching PR there
+- New plugin language packs use INI format: `Languages/buckshot.{plugin}.{locale}.ini`
+- Recipe format (`docs/vNext/recipe.schema.json`, steps, triggers, options): the recipes of the catalog [buckshot/buckshot-recipes](https://github.com/greenshot/greenshot-recipes) must stay valid; the `Recipe catalog` check validates them against the PR's schema, so a breaking change needs a matching PR there
 
 ### Modifying Plugins
-Each plugin in `src/Greenshot.Plugin.*/` is self-contained. Changes are automatically copied to main output via post-build events.
+Each plugin in `src/BuckShot.Plugin.*/` is self-contained. Changes are automatically copied to main output via post-build events.
 
 ## Translation Tasks
 
@@ -232,8 +232,8 @@ The translation-manager agent is a specialized expert with comprehensive knowled
 ## Validation Checklist
 
 Before submitting changes:
-- [ ] Build succeeds with Visual Studio MSBuild: `msbuild src/Greenshot.sln /m /p:Configuration=Debug /t:Build`
-- [ ] Tests pass: `dotnet test src/Greenshot.Tests/Greenshot.Tests.csproj --configuration Debug --no-build` after building the solution
+- [ ] Build succeeds with Visual Studio MSBuild: `msbuild src/BuckShot.sln /m /p:Configuration=Debug /t:Build`
+- [ ] Tests pass: `dotnet test src/BuckShot.Tests/BuckShot.Tests.csproj --configuration Debug --no-build` after building the solution
 - [ ] Code follows style conventions (see .editorconfig and CONTRIBUTING.md)
 - [ ] No new TODO/HACK/FIXME without justification
 - [ ] Manually test affected UI or capture features as appropriate
@@ -250,4 +250,4 @@ Before submitting changes:
 
 ## Trust These Instructions
 
-These instructions have been validated against the actual repository structure and build process. When information here conflicts with generic .NET knowledge, trust these specific instructions for Greenshot. Only search further if encountering undocumented errors.
+These instructions have been validated against the actual repository structure and build process. When information here conflicts with generic .NET knowledge, trust these specific instructions for BuckShot. Only search further if encountering undocumented errors.

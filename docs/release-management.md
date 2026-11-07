@@ -1,6 +1,6 @@
 # Release Management
 
-Greenshot releases are delivered in different flavors.
+BuckShot releases are delivered in different flavors.
 
 ## Versioning
 

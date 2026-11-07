@@ -1,8 +1,8 @@
-# Greenshot Capture Recipes: Put Your Screen on Autopilot
+# BuckShot Capture Recipes: Put Your Screen on Autopilot
 
 Tired of the same repetitive routine? Capture ➔ crop ➔ annotate ➔ copy to clipboard ➔ upload to cloud ➔ open in browser?
 
-Say hello to **Greenshot Recipes**!
+Say hello to **BuckShot Recipes**!
 
 Recipes introduce a flexible workflow engine that lets you define and automate the entire journey of a capture from trigger to destination:
 
@@ -13,37 +13,37 @@ Recipes introduce a flexible workflow engine that lets you define and automate t
 Recipes provide the flexibility, this feature has a lot of power, but as Spidermans uncle said, with great power comes great responsibility.
 For the people who do not have that much experience with computers, recipes will unfortunately be overwhelmingly complex, because of this we will think about how to share recipes with friends and members of the community, who might know their way around computers. We will also look at other ways to make this easier to use, but we first need to lay a foundation which works.
 
-Greenshot features a modular, recipe-driven capture pipeline powered by a **Directed Acyclic Graph (DAG)** workflow engine, *we didn't invent that name*! Instead of linear, hardcoded sequences, screenshot workflows are defined as graphs of configurable execution nodes with support for parallel branch splitting (fork), path merging (join), variable assignment, scoped user/computer environment expressions, and rich surface drawable placement.
+BuckShot features a modular, recipe-driven capture pipeline powered by a **Directed Acyclic Graph (DAG)** workflow engine, *we didn't invent that name*! Instead of linear, hardcoded sequences, screenshot workflows are defined as graphs of configurable execution nodes with support for parallel branch splitting (fork), path merging (join), variable assignment, scoped user/computer environment expressions, and rich surface drawable placement.
 
-Recipes can be written in code or provided as external `.json` (`.gsrecipe.json`) files. External JSON recipes can create new custom capture workflows or securely override Greenshot's built-in recipes.
+Recipes can be written in code or provided as external `.json` (`.gsrecipe.json`) files. External JSON recipes can create new custom capture workflows or securely override BuckShot's built-in recipes.
 
 > [!IMPORTANT]
 > **Experimental**: recipes, the recipe editor and recipe files are for experts for now. We don't know yet in what form recipes will be available to everyone else, and the format can still change.
 >
 > ### Using recipes
-> Recipes are on as soon as the Recipe Editor plug-in is installed. To switch them off, set `EnableRecipeFeature=False` in the `[Recipe]` section of `greenshot.ini` (`%APPDATA%\Greenshot\greenshot.ini`, or next to Greenshot.exe when portable). Greenshot Light only has the built-in recipes.
+> Recipes are on as soon as the Recipe Editor plug-in is installed. To switch them off, set `EnableRecipeFeature=False` in the `[Recipe]` section of `buckshot.ini` (`%APPDATA%\BuckShot\buckshot.ini`, or next to BuckShot.exe when portable). BuckShot Light only has the built-in recipes.
 >
-> Right-click the Greenshot tray icon and open **Recipes**:
+> Right-click the BuckShot tray icon and open **Recipes**:
 > - **your recipes' menu entries**: run them with a single click.
 > - **Import Recipe...**: approve a `.gsrecipe.json` file and add it to your recipes.
 > - **Reload Recipes**: read the recipe files again.
 > - **Recipe Manager...** and **Recipe Editor...**: manage, create and change recipes.
 >
-> Greenshot doesn't scan a folder for recipe files: it only loads the files listed in `RecipeFiles` in the `[Recipe]` section, which Import and the recipe editor fill in for you.
+> BuckShot doesn't scan a folder for recipe files: it only loads the files listed in `RecipeFiles` in the `[Recipe]` section, which Import and the recipe editor fill in for you.
 
 
 ### Approving recipe files
 
 A recipe file only runs after you approved it. The approval window shows what the recipe does in plain words (written
-by Greenshot from the recipe, with uploads, external programs and file access marked), each trigger with its own
+by BuckShot from the recipe, with uploads, external programs and file access marked), each trigger with its own
 switch and what it means, and a permission for each kind of action that needs one: uploads (network), external
 commands and file access. Without those permissions the recipe isn't loaded. A changed file is shown with what was
 added and removed and the changed lines, and a file that replaces a built-in recipe says so (the recipe manager's
 "Reset Default" brings the built-in recipe back).
 
 The approval is pinned to the exact content of the file (SHA-256) and stored, per recipe of the file, in the
-encrypted trust store (`%LOCALAPPDATA%\Greenshot\recipe_trust.dat`), not in the recipe file: which triggers are
-switched on and which permissions were given. When the file is changed outside Greenshot you are asked again, right after the change. Saving in Greenshot's recipe
+encrypted trust store (`%LOCALAPPDATA%\BuckShot\recipe_trust.dat`), not in the recipe file: which triggers are
+switched on and which permissions were given. When the file is changed outside BuckShot you are asked again, right after the change. Saving in BuckShot's recipe
 editor renews the approval for the saved content without asking: triggers keep their switch, and new harmless ones
 (hotkey, menu entry) are on. Only a change which adds a trigger that starts the recipe on its own or from outside
 (clipboard, schedule, command line, web pages, browser extension, AI tools), a new kind of permission, or the first
@@ -51,46 +51,46 @@ replacement of a built-in recipe shows the approval window when you save. To cha
 use "Permissions" in the recipe manager: "Save Changes" keeps the new switches, "Keep as Is" (or closing the window)
 changes nothing, and "Revoke Approval" takes an approval back; Settings > AI tools >
 "Approved recipes" offers the same (Details, Review, Revoke) without the recipe editor plug-in. "Details" shows the approval window read-only: what a recipe does, its approval and the changes against the
-built-in recipe it replaces. The recipe editor works on a copy: changes reach Greenshot only when you save, the
+built-in recipe it replaces. The recipe editor works on a copy: changes reach BuckShot only when you save, the
 title shows "*" while there are unsaved changes, and closing the editor, switching the recipe, New and Open ask to save
 or discard them. Undo and Redo (Ctrl+Z, Ctrl+Y) go back and forth through the changes of each recipe while the editor is open, also past a
 save. A bar under the toolbar says what is pending: what saving will ask for, or that the file changed outside
-Greenshot or has triggers switched off by the approval. Recipes proposed by AI tools
+BuckShot or has triggers switched off by the approval. Recipes proposed by AI tools
 go through the same window, see [mcp-server.md](mcp-server.md#recipes-written-by-ai-tools).
 
 ### Recipes from the catalog
 
 The [recipe catalog](https://github.com/greenshot/greenshot-recipes) collects reviewed recipes. Its pages on
-getgreenshot.org have an "Install" button, which opens the link `greenshot:install-recipe?id=<id>`; the recipe manager and
-Settings > Recipes offer "Get More Recipes" (beta testers only) to open the catalog. Greenshot then:
+getbuckshot.org have an "Install" button, which opens the link `buckshot:install-recipe?id=<id>`; the recipe manager and
+Settings > Recipes offer "Get More Recipes" (beta testers only) to open the catalog. BuckShot then:
 
 1. downloads the catalog index from the latest catalog release and checks its signature (ECDSA P-256, the public keys
-   are part of Greenshot); an index without a valid signature is refused,
-2. finds the recipe in the index, checks that it runs on this Greenshot version (`minGreenshot`), downloads the file
+   are part of BuckShot); an index without a valid signature is refused,
+2. finds the recipe in the index, checks that it runs on this BuckShot version (`minBuckShot`), downloads the file
    from the catalog repository and checks it against the SHA-256 of the index,
 3. shows the approval window, marked "from the catalog", with the catalog version, its authors, a link to its page and
    the recipe's options (settings) to fill in right away,
-4. after the approval saves the file as `Recipes\Catalog\<id>.gsrecipe.json` next to `greenshot.ini`, with the
+4. after the approval saves the file as `Recipes\Catalog\<id>.gsrecipe.json` next to `buckshot.ini`, with the
    approval's origin `catalog:<id>@<version>`, and stores the option values in `[RecipeOptions]`.
 
 Installing a newer version of the same recipe shows what changed, like any changed file. A recipe with the same id
 that didn't come from the catalog (a built-in recipe, or one of your own files) is never replaced, and only one install
 window is open at a time. Administrators switch catalog installs off with `AllowCatalogInstall=False` in the `[Recipe]`
-section of `greenshot-fixed.ini`; the Light edition, which has no recipe files, refuses them too.
+section of `buckshot-fixed.ini`; the Light edition, which has no recipe files, refuses them too.
 
 ---
 
 ## 1. Core Architecture: Decoupling Triggers from Recipes
 
-In Greenshot:
-- **A Trigger** defines *when and how* a capture is initiated (e.g. pressing a hotkey like `PrintScreen`, clicking an item in the context menu opened from Greenshot's system tray icon, or receiving a clipboard image).
+In BuckShot:
+- **A Trigger** defines *when and how* a capture is initiated (e.g. pressing a hotkey like `PrintScreen`, clicking an item in the context menu opened from BuckShot's system tray icon, or receiving a clipboard image).
 - **A Recipe** defines *what DAG workflow of nodes* executes once triggered (e.g. acquiring pixels, showing an interactive selection rectangle, evaluating environment variables, branching to parallel feedback and watermark steps, running OCR, stamping drawables, and exporting to destinations).
 
 Triggers and recipes are decoupled. Any trigger can run any recipe, and a single recipe can be executed by multiple triggers or invoked manually.
 
 ### Menu trigger groups
 
-`ContextMenu` triggers add items to the **Recipes** menu in the context menu opened from Greenshot's system tray icon; 
+`ContextMenu` triggers add items to the **Recipes** menu in the context menu opened from BuckShot's system tray icon;
 `Editor` triggers add items to the image editor's **Recipes** menu. 
 The destination window (destination "Ask for destination every time, in a window", Export in the viewer and the
 `DynamicDestination` step) lists the same
@@ -141,7 +141,7 @@ written exactly as documented (`stepType`, `SourceType`), an unknown or repeated
 type the property or the step's parameter declares (`true`, not `"true"`; `2`, not `"2"`). An expression (`${...}`) can
 stand for any value. A parameter which holds a list of objects, like the `Branches` of a `Conditional` node or the `Choices`
 of a `UserPrompt` node, is read the same way: `{ "Key": "A", "Expression": "else" }`, not `"key"` or `"expresion"`.
-Comments and trailing commas are allowed. Recipes of an earlier Greenshot beta (`"version": "1.x"`) are
+Comments and trailing commas are allowed. Recipes of an earlier BuckShot beta (`"version": "1.x"`) are
 not read; the error says what changed.
 
 
@@ -233,12 +233,12 @@ flowchart TD
 You can copy and paste this text directly into Markdown files, GitHub READMEs, or pull request descriptions.
 
 ### Declaring Extension Requirements (`requires`)
-When recipes rely on functionality provided by external plugins or extensions (such as `Greenshot.Plugin.Zxing` for QR codes or `Greenshot.Plugin.ExternalCommand` for scripts), they can explicitly declare their requirements in the top-level `"requires"` array:
+When recipes rely on functionality provided by external plugins or extensions (such as `BuckShot.Plugin.Zxing` for QR codes or `BuckShot.Plugin.ExternalCommand` for scripts), they can explicitly declare their requirements in the top-level `"requires"` array:
 
 ```json
 "requires": [
   {
-    "id": "Greenshot.Plugin.Zxing",
+    "id": "BuckShot.Plugin.Zxing",
     "name": "ZXing Barcode & QR Code Extension",
     "minVersion": "1.3.0",
     "url": "https://getgreenshot.org/plugins/zxing"
@@ -251,7 +251,7 @@ When recipes rely on functionality provided by external plugins or extensions (s
 - **`minVersion`** *(optional)*: Minimum compatible version required.
 - **`url`** *(optional)*: Download or help URL where the extension can be obtained.
 
-When Greenshot loads or validates recipes (or when opened in the Visual Recipe Editor), `RecipeValidator` checks if every declared requirement is installed and enabled. If a required extension is missing, Greenshot prevents execution and presents the user with a clear, actionable diagnostic message specifying what is missing and where to acquire it.
+When BuckShot loads or validates recipes (or when opened in the Visual Recipe Editor), `RecipeValidator` checks if every declared requirement is installed and enabled. If a required extension is missing, BuckShot prevents execution and presents the user with a clear, actionable diagnostic message specifying what is missing and where to acquire it.
 
 ### Author and license (`authors`, `copyright`, `license`)
 A recipe or an automatic step can say who wrote it and under which license it may be shared. These keys are in the file
@@ -270,7 +270,7 @@ itself, so the credit and the license notice stay with every copy:
 The approval window shows the authors with the license ("Jane Doe (MIT)") and the copyright notice as its tooltip. They
 are part of the approved content, so a change of author shows up in the changes of an update.
 
-What Greenshot knows about a loaded recipe (built in, replaced, switched off, its file) is never written into the file.
+What BuckShot knows about a loaded recipe (built in, replaced, switched off, its file) is never written into the file.
 
 ### Translations (`translations`)
 The texts of a recipe or an automatic step are written in one language, usually English. `translations` adds them in
@@ -286,7 +286,7 @@ other languages, in the file itself, so they travel with it:
 }
 ```
 
-- The keys are languages: `de` for every German, `de-DE` for one. Greenshot takes the text of its own language
+- The keys are languages: `de` for every German, `de-DE` for one. BuckShot takes the text of its own language
   (`de-DE`), else of the language alone (`de`), else the text of the file.
 - The texts are named by their place: `name`, `description`, `options.{key}.label`, `options.{key}.description`,
   `options.{key}.choices.{value}` for the label of a choice of an `Enum` option, and `triggers.{index}.menuItemText` for
@@ -297,7 +297,7 @@ other languages, in the file itself, so they travel with it:
   `DynamicDestination`. A translation may hold expressions (`${...}`) like the text of the file.
 - A language which isn't one, a text the file doesn't have, or an empty text is an error, so a typo shows right away.
 - A menu entry without its own `MenuItemText` shows the translated name.
-- The recipe editor has a *Translations* box on the Recipe tab: choose a language of Greenshot in *Add a language*,
+- The recipe editor has a *Translations* box on the Recipe tab: choose a language of BuckShot in *Add a language*,
   then type the translation under each text of the file; an empty box keeps the text of the file. Removing a trigger
   there moves the translations of the menu texts of the triggers after it. Renaming a node keeps the translations of
   its texts; the translations of a removed node or choice are removed when the recipe is saved.
@@ -325,13 +325,13 @@ step, the OCR destination and the editor's text obfuscation, each on the image i
 Recipe step parameters support embedded mathematical expressions, boolean conditions, string interpolation, and system environment information using `${...}` syntax exclusively.
 
 ### Scopes & Variable Sources
-Greenshot expression evaluation separates system information into distinct scopes:
+BuckShot expression evaluation separates system information into distinct scopes:
 
 | Scope Prefix | Source | Description | Example |
 |---|---|---|---|
 | `user.*` | Windows User Environment | User-specific environment variables (from `EnvironmentVariableTarget.User`) | `${user.username}`, `${user.temp}`, `${user.appdata}` |
 | `machine.*` | Windows Machine Environment | System-wide / machine-scoped environment variables (from `EnvironmentVariableTarget.Machine`) | `${machine.computername}`, `${machine.os}`, `${machine.programfiles}` |
-| `config.*` | Greenshot INI Configuration | Live configuration settings from `greenshot.ini` | `${config.language}`, `${config.capturemousepointer}` |
+| `config.*` | BuckShot INI Configuration | Live configuration settings from `buckshot.ini` | `${config.language}`, `${config.capturemousepointer}` |
 | `context.*` | Pipeline Flow Context | Variables stored in `context.Properties` or set by preceding steps | `${context.watermark_text}`, `${context.WindowTitle}` |
 | `payload.*` | Capture Surface Metrics | Dynamic dimensions and details of the current capture; `payload.hdr` is `Available` (can be saved as an HDR file), `Lost` (monochrome or reduce colors changed the image) or `None` (no HDR content: not on an HDR display, or nothing brighter than SDR white or outside sRGB), e.g. to ask with a `UserPrompt` step how to save, or `NoHdrNote` of the `Notification` step to say so | `${payload.width}`, `${payload.height}`, `${payload.extractedtext}`, `${payload.hdr == 'Available'}` |
 | `now:format` | Date / Time | Current timestamp formatted with .NET DateTime format strings | `${now:yyyy-MM-dd HH:mm:ss}` |
@@ -391,7 +391,7 @@ The step only changes the details of the capture; put it before the steps which 
 
 ## 4. Surface Annotations (`Annotation` Step)
 
-The `Annotation` step allows adding any Greenshot annotation container to the captured surface.
+The `Annotation` step allows adding any BuckShot annotation container to the captured surface.
 
 ### Supported Annotation Types
 - **Shapes & Lines**: `Rectangle`, `Ellipse`, `Line`, `Arrow`, `Freehand`
@@ -427,7 +427,7 @@ Sizes, positions and numbers (`LineThickness`, `Number`, ...) are whole numbers,
 `Italic`, `FitToText`, `LockAspectRatio` and `RoundedDots` are `true`/`false`, the rest are texts.
 
 ### Barcode & QR Code Annotations (`QRCode`, `Barcode`)
-When `Greenshot.Plugin.Zxing` is active, recipes can stamp 2D QR codes and 1D barcodes directly onto the capture surface with uniform positioning, anchoring, and colors. When opened in the Greenshot Image Editor, double-clicking any stamped QR code opens the interactive editor to modify or inspect its payload.
+When `BuckShot.Plugin.Zxing` is active, recipes can stamp 2D QR codes and 1D barcodes directly onto the capture surface with uniform positioning, anchoring, and colors. When opened in the BuckShot Image Editor, double-clicking any stamped QR code opens the interactive editor to modify or inspect its payload.
 
 #### 1. Specifying the QR Code Type Contract:
 The QR code format is explicitly declared via the `"QrType"` parameter (`"Text"`, `"Payment"`, `"BusinessCard"`, `"WiFi"`, `"Email"`, `"CalendarEvent"`, `"Phone"`, `"Sms"`, `"Geo"`), ensuring a strict contract without guesswork:
@@ -439,18 +439,18 @@ The QR code format is explicitly declared via the `"QrType"` parameter (`"Text"`
 - **Payments (`"QrType": "Payment"`)**:
   - European Payments Council (EPC) SEPA QR Code / GiroCode for instant mobile banking app transfers:
   - `"EpcIban"`: Recipient IBAN (e.g. `"DE89370400440532013000"`).
-  - `"EpcName"`: Recipient account holder name (e.g. `"Greenshot Community e.V."`).
+  - `"EpcName"`: Recipient account holder name (e.g. `"BuckShot Community e.V."`).
   - `"EpcBic"`: Recipient BIC/SWIFT code (optional).
   - `"EpcAmount"`: Payment transfer amount in EUR (a text, e.g. `"15.00"` or `"15,00"`).
   - `"EpcReference"`: Structured remittance reference / invoice number (e.g. `"INV-2026-0042"`).
-  - `"EpcMessage"`: Unstructured payment note or purpose (e.g. `"Support Greenshot"`).
+  - `"EpcMessage"`: Unstructured payment note or purpose (e.g. `"Support BuckShot"`).
 
 - **Business Cards (`"QrType": "BusinessCard"`)**:
   - Standardized vCard 3.0 contact card:
   - `"VcardFirstName"`: First name (e.g. `"Robin"`).
   - `"VcardLastName"`: Last name (e.g. `"Krom"`).
-  - `"VcardCompany"`: Organization / Company (e.g. `"Greenshot Project"`).
-  - `"VcardEmail"`: Email address (e.g. `"robin@getgreenshot.org"`).
+  - `"VcardCompany"`: Organization / Company (e.g. `"BuckShot Project"`).
+  - `"VcardEmail"`: Email address (e.g. `"robin@getbuckshot.org"`).
   - `"VcardPhone"`: Phone number (e.g. `"+49-123-456789"`).
   - `"VcardUrl"`: Website URL (e.g. `"https://getgreenshot.org"`).
 
@@ -462,7 +462,7 @@ The QR code format is explicitly declared via the `"QrType"` parameter (`"Text"`
 
 - **Email (`"QrType": "Email"`)**:
   - Pre-composed email triggering default email client (`mailto:`):
-  - `"EmailTo"`: Recipient email address (e.g. `"support@getgreenshot.org"`).
+  - `"EmailTo"`: Recipient email address (e.g. `"support@getbuckshot.org"`).
   - `"EmailSubject"`: Pre-filled email subject line.
   - `"EmailBody"`: Pre-filled email message body.
 
@@ -504,7 +504,7 @@ In the visual Recipe Editor:
 
 ### Image, Cursor & SVG Annotations
 
-Greenshot supports images (`Image`: bitmaps, and SVG which stays a vector) and Windows mouse cursors (`Cursor`).
+BuckShot supports images (`Image`: bitmaps, and SVG which stays a vector) and Windows mouse cursors (`Cursor`).
 
 #### 1. Embedded (Base64) vs Linked (File Path) Storage:
 An image or cursor comes from exactly one place: `ImageData`, `FilePath` or (for a cursor) `CursorName`. Setting more
@@ -548,7 +548,7 @@ Annotations with scalable visual proportions (`Image`, `Emoji`, `StepLabel`, `Cu
 The visual Recipe Editor includes a built-in workflow to convert open screenshot editor surfaces into recipe annotation steps:
 
 1. **Import from Editor / File**:
-   - In the Recipe Editor, select an `Annotation` step and click **"📥 Import from Editor..."** or **"📂 Import from .greenshot..."**.
+   - In the Recipe Editor, select an `Annotation` step and click **"📥 Import from Editor..."** or **"📂 Import from .buckshot..."**.
    - If multiple image editors are currently open, the **Select Image Editor** window appears:
      - **Side-by-Side Master-Detail View**: Left column lists open editors with titles, canvas dimensions, and annotation counts; right column displays a live full canvas preview of the selected editor.
      - **Always Accessible**: Designed with custom `WindowChrome`, taskbar integration (`ShowInTaskbar="True"`), and topmost layering (`Topmost="True"`) so the dialog never gets obscured or lost behind external editor windows.
@@ -625,8 +625,8 @@ Annotations can be positioned using:
         "BackColor": "#FFFFFF",
         "VcardFirstName": "Jane",
         "VcardLastName": "Doe",
-        "VcardCompany": "Greenshot Team",
-        "VcardEmail": "jane@getgreenshot.org",
+        "VcardCompany": "BuckShot Team",
+        "VcardEmail": "jane@getbuckshot.org",
         "VcardPhone": "+1-555-0199",
         "VcardUrl": "https://getgreenshot.org"
       }
@@ -639,7 +639,7 @@ Annotations can be positioned using:
 
 ## 5. Configuration Precedence Explained
 
-Greenshot resolves every parameter using a strict **three-tier precedence model**:
+BuckShot resolves every parameter using a strict **three-tier precedence model**:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -650,19 +650,19 @@ Greenshot resolves every parameter using a strict **three-tier precedence model*
 │   (Explicitly defined in the recipe JSON or C# code)        │
 ├─────────────────────────────────────────────────────────────┤
 │ Priority 3: Dynamic User Configuration Evaluation           │
-│   (Omitted/null in JSON → evaluated live from greenshot.ini)│
+│   (Omitted/null in JSON → evaluated live from buckshot.ini)│
 └─────────────────────────────────────────────────────────────┘
 ```
 
 1. **Priority 1 (Runtime Context Override)**: Explicit parameters supplied for this specific run in `context.Properties` (e.g. from CLI switch `--no-mouse`).
 2. **Priority 2 (Node Parameter Pre-definition)**: Hardcoded parameter or expression defined on the node in the recipe JSON.
-3. **Priority 3 (Dynamic Evaluation)**: Parameter omitted or `null` in JSON → dynamically evaluates live setting from `greenshot.ini` (`CoreConfig`).
+3. **Priority 3 (Dynamic Evaluation)**: Parameter omitted or `null` in JSON → dynamically evaluates live setting from `buckshot.ini` (`CoreConfig`).
 
 ### Recipe Options (`options`)
 A recipe can offer settings the user sets once, for example whether a border is added and how wide it is. They are
-declared in the recipe and shown by Greenshot in Settings > Recipes, one group per recipe; switches and choices can
+declared in the recipe and shown by BuckShot in Settings > Recipes, one group per recipe; switches and choices can
 also go to the quick settings of the tray menu. The recipe file only holds the definition: the values the user picks are
-stored in `greenshot.ini` (section `[RecipeOptions]`, as `<recipe id>.<option key>`, only when they differ from the
+stored in `buckshot.ini` (section `[RecipeOptions]`, as `<recipe id>.<option key>`, only when they differ from the
 default). Changing a value therefore doesn't change the file and doesn't ask for a new approval.
 
 ```json
@@ -697,14 +697,14 @@ default). Changing a value therefore doesn't change the file and doesn't ask for
   Recipes has a button to choose it. Unlike a `String` option it can be used by a step which needs an approval, e.g.
   `"SaveDirectory": "${option.folder}"` of a `File` step: the approval window names the folder set at that moment, and the
   folder the user chooses later is their own choice, so it needs no new approval. Empty means not set; a `File` step
-  with an empty `SaveDirectory` uses Greenshot's output folder.
-- **Greenshot Light** has no recipe files; it shows only the options of its built-in recipes.
+  with an empty `SaveDirectory` uses BuckShot's output folder.
+- **BuckShot Light** has no recipe files; it shows only the options of its built-in recipes.
 - **Templates**: a `String` option with `"format": "template"` holds a text with `${...}` in it, e.g. a caption
   `"Captured on ${now:yyyy-MM-dd}"`; it is evaluated where the option is used (options can't be used inside it).
 
 ### Automatic Steps (recipe extensions, `"kind": "extension"`)
-An automatic step is a small flow which Greenshot puts into other recipes, the built-in ones included, without copying or
-replacing them: for example a border on every capture. Greenshot's windows call them automatic steps; in the recipe file
+An automatic step is a small flow which BuckShot puts into other recipes, the built-in ones included, without copying or
+replacing them: for example a border on every capture. BuckShot's windows call them automatic steps; in the recipe file
 and the code they are extensions. Recipes and extensions share one file type
 (`.gsrecipe.json`), told apart by `"kind": "recipe"` (the default) or `"kind": "extension"`. Both have `nodes`,
 `flow`, `options` and `requires`; a recipe adds `triggers` and `concurrency`, an extension adds `extends` and `when`.
@@ -766,7 +766,7 @@ settings when the option has `"quickSettings": true`); without one it is always 
 options (`[RecipeOptions]`, as `<extension id>.<option key>`). The keys `applyTo`, `onlyRecipes`, `exceptRecipes` and
 `onlyDestinations` are taken by the settings every extension has.
 
-**How it runs.** When the recipes load and when an option changes, Greenshot composes each recipe with the extensions
+**How it runs.** When the recipes load and when an option changes, BuckShot composes each recipe with the extensions
 which are switched on for it: the slot node is replaced by the extensions' nodes, which get prefixed ids
 (`ext_border/border`) and a tag naming the extension (shown in the log). In their nodes `${option.width}` reads the
 extension's own options. The recipe file and its approval don't change. Settings > Recipes shows which extensions
@@ -780,7 +780,7 @@ change which recipe.
 | Border | on/off, width 1–50 px (default 2), color (default black) | Effect Border | 200 |
 | Drop shadow | on/off, size, darkness, offset | Effect DropShadow | 300 |
 
-So the border goes around the caption bar and the shadow falls outside the border. Greenshot Light has them too.
+So the border goes around the caption bar and the shadow falls outside the border. BuckShot Light has them too.
 
 **Per destination, but only as often as needed.** The export steps (Destinations, the pickers and the Clipboard step) group
 the destinations by the extensions which run for them: each combination gets one copy of the capture, changed once;
@@ -802,9 +802,9 @@ the recipe manager's "Load Recipe..."). The approval window shows what the autom
 which recipes it changes now, whether recipes added later get it too, where it runs and when. Its permissions (uploads,
 programs, files) are its own: approving a recipe never allows what an automatic step brings in, and the reverse. Switching
 an automatic step on in Settings is not approving it: only an approved file is used, and one written by an AI tool starts
-switched off. When its file is changed outside Greenshot, it no longer changes any recipe until the change is approved.
+switched off. When its file is changed outside BuckShot, it no longer changes any recipe until the change is approved.
 Settings > AI tools > "Approved recipes" lists automatic step files too, and per recipe which automatic steps change it;
-the recipe manager lists automatic steps as a group of their own. Greenshot Light doesn't load automatic step files.
+the recipe manager lists automatic steps as a group of their own. BuckShot Light doesn't load automatic step files.
 ---
 
 ## 6. Complete Recipe Examples
@@ -994,7 +994,7 @@ Captures a specific window, applies a drop shadow, scans OCR text for sensitive 
       "stepType": "Source",
       "parameters": {
         "SourceType": "ActiveWindow",
-        "WindowTitlePattern": ".*(Notepad|Editor|Greenshot|Chrome|Edge).*",
+        "WindowTitlePattern": ".*(Notepad|Editor|BuckShot|Chrome|Edge).*",
         "MatchCase": false
       }
     },
@@ -1105,24 +1105,24 @@ Evaluates captured screenshot dimensions to route large screen captures through 
 
 ## 7. Extension & Plugin Step Providers
 
-Greenshot plugins can dynamically register custom recipe step factories by implementing `IRecipeStepProvider`. Plugin step registration is completed before recipes are loaded, ensuring that all available steps are known when recipes are parsed and validated.
+BuckShot plugins can dynamically register custom recipe step factories by implementing `IRecipeStepProvider`. Plugin step registration is completed before recipes are loaded, ensuring that all available steps are known when recipes are parsed and validated.
 
 ### Missing Extension Validation
-If a recipe references a step type provided by a plugin that is **not installed or disabled**, the recipe fails validation during loading and is not made available in Greenshot. An informative error message indicates the exact missing step type and explains that the corresponding plugin/extension is required.
+If a recipe references a step type provided by a plugin that is **not installed or disabled**, the recipe fails validation during loading and is not made available in BuckShot. An informative error message indicates the exact missing step type and explains that the corresponding plugin/extension is required.
 
 ### Available Plugin Step Types
 
 | Step Type | Plugin | Description | Parameters |
 |---|---|---|---|
-| `ExternalCommand` | `Greenshot.Plugin.ExternalCommand` | Saves the capture to a file and runs an external command with it. `Command` runs a command configured in `greenshot.ini`. | `Command`, `CommandLine`, `Arguments`, `WorkingDirectory`, `Verb`, `Format`, `JpegQuality`, `RunInBackground`, `OutputToClipboard`, `UriToClipboard`, `ReloadAfterExecution`, `OutputVariable`, `ExitCodeVariable` |
-| `Box` | `Greenshot.Plugin.Box` | Uploads the capture to Box; sets `Box.UploadUrl`. | (account settings) |
-| `Dropbox` | `Greenshot.Plugin.Dropbox` | Uploads the capture to Dropbox; sets `Dropbox.UploadUrl`. | (account settings) |
-| `Jira` | `Greenshot.Plugin.Atlassian` | Attaches the capture to a Jira issue; sets `Jira.UploadUrl`, `Jira.IssueKey`. A used file name adds another attachment with that name (Jira has no versions). | `IssueKey` (default: variable `Jira.IssueKey`), `Format`, `JpegQuality`, `ReduceColors` |
-| `Confluence` | `Greenshot.Plugin.Atlassian` | Attaches the capture to a Confluence page; sets `Confluence.PageId`, `Confluence.UploadUrl`. When the page has a file with the name, the capture becomes a new version of it. | `PageId`, `Format`, `JpegQuality`, `ReduceColors` |
-| `Office` | `Greenshot.Plugin.Office` | Sends the capture to an Office application. | `Application`: `Word` (default), `Excel`, `PowerPoint`, `OneNote`, `Outlook` |
-| `BarcodeScan` | `Greenshot.Plugin.Zxing` | Scans the capture for barcodes/QR codes; sets `Barcode.Text`, `Barcode.Format` and `Payload.ExtractedText` when something was found. | `OutputVariable`, `CopyToClipboard` |
+| `ExternalCommand` | `BuckShot.Plugin.ExternalCommand` | Saves the capture to a file and runs an external command with it. `Command` runs a command configured in `buckshot.ini`. | `Command`, `CommandLine`, `Arguments`, `WorkingDirectory`, `Verb`, `Format`, `JpegQuality`, `RunInBackground`, `OutputToClipboard`, `UriToClipboard`, `ReloadAfterExecution`, `OutputVariable`, `ExitCodeVariable` |
+| `Box` | `BuckShot.Plugin.Box` | Uploads the capture to Box; sets `Box.UploadUrl`. | (account settings) |
+| `Dropbox` | `BuckShot.Plugin.Dropbox` | Uploads the capture to Dropbox; sets `Dropbox.UploadUrl`. | (account settings) |
+| `Jira` | `BuckShot.Plugin.Atlassian` | Attaches the capture to a Jira issue; sets `Jira.UploadUrl`, `Jira.IssueKey`. A used file name adds another attachment with that name (Jira has no versions). | `IssueKey` (default: variable `Jira.IssueKey`), `Format`, `JpegQuality`, `ReduceColors` |
+| `Confluence` | `BuckShot.Plugin.Atlassian` | Attaches the capture to a Confluence page; sets `Confluence.PageId`, `Confluence.UploadUrl`. When the page has a file with the name, the capture becomes a new version of it. | `PageId`, `Format`, `JpegQuality`, `ReduceColors` |
+| `Office` | `BuckShot.Plugin.Office` | Sends the capture to an Office application. | `Application`: `Word` (default), `Excel`, `PowerPoint`, `OneNote`, `Outlook` |
+| `BarcodeScan` | `BuckShot.Plugin.Zxing` | Scans the capture for barcodes/QR codes; sets `Barcode.Text`, `Barcode.Format` and `Payload.ExtractedText` when something was found. | `OutputVariable`, `CopyToClipboard` |
 
-The complete, current description of every step type (parameters, variables it reads and sets, payload) is its contract: `greenshot --info <recipe>` shows it for the steps of a recipe. See section 8.
+The complete, current description of every step type (parameters, variables it reads and sets, payload) is its contract: `buckshot --info <recipe>` shows it for the steps of a recipe. See section 8.
 
 ### External Command Step In Depth
 
@@ -1131,7 +1131,7 @@ The `ExternalCommand` step allows screenshot automation workflows to invoke exte
 #### Configuration Parameters:
 - **`CommandLine`**: Path or executable to run (e.g. `pngquant.exe`, `powershell.exe`, `curl.exe`). Supports `${...}` variable expansion.
 - **`Arguments`**: Arguments string passed to the process. Supports `{0}` / `{1}` positional tokens or `${context.ExternalCommand.TargetFile}`, `${user.*}`, `${machine.*}`, etc.
-- **`Command`**: Name of a pre-configured command in `greenshot.ini` `[ExternalCommand]` section.
+- **`Command`**: Name of a pre-configured command in `buckshot.ini` `[ExternalCommand]` section.
 - **`RunInBackground`** *(default: `false`)*: Start the command without waiting for it; the output variables are not set then.
 - **`WorkingDirectory`**, **`Verb`**: Working directory, or a shell verb (e.g. `print`) instead of running the executable.
 - **`Format`** *(default: `png`)*: Image format saved to temporary disk before launching the command (`png`, `jpg`, `bmp`, etc.).
@@ -1148,7 +1148,7 @@ The `ExternalCommand` step allows screenshot automation workflows to invoke exte
 
 Every step type has a contract: its parameters (with their allowed values), the variables it reads and sets, and what it needs from and does to the image. The contract is registered together with the step's factory (plugins included), so a step type cannot exist without one.
 
-When a recipe is loaded, Greenshot checks it against the contracts along the flow (see `recipe-contracts-cli-query-plan.md`, section 3). The warnings appear in the log, the recipe editor and `greenshot --info <recipe>`:
+When a recipe is loaded, BuckShot checks it against the contracts along the flow (see `recipe-contracts-cli-query-plan.md`, section 3). The warnings appear in the log, the recipe editor and `buckshot --info <recipe>`:
 
 * `${X}` is used, but `X` is only set in some branches before this node, or only by nodes that do not run before it.
 * A step needs an image, but on some path none was acquired.

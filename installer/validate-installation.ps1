@@ -1,4 +1,4 @@
-# Verifies the files of a Greenshot installation against checksum.SHA256 (run it in the installation directory).
+# Verifies the files of a BuckShot installation against checksum.SHA256 (run it in the installation directory).
 # Files of a plugin that is not installed (its directory under Plugins does not exist) are skipped.
 Get-Content .\checksum.SHA256 | ForEach-Object {
   $parts = $_ -split '  '; $expected = $parts[0]; $file = $parts[1]

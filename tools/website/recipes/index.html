@@ -1,20 +1,20 @@
 ---
-title: Greenshot recipes
+title: BuckShot recipes
 permalink: /recipes/
 layout: page
 sitemap: false
 metarobots: noindex,nofollow
 ---
 {% comment %}
-The catalog overview, unlisted until a released Greenshot has recipes: no menu entry, noindex, not in the sitemap.
-Greenshot links here with ?from=greenshot&version=<x>; recipes needing a newer Greenshot are hidden.
-Written by tools/website/recipes/build_pages.py in greenshot/greenshot, don't edit it here.
+The catalog overview, unlisted until a released BuckShot has recipes: no menu entry, noindex, not in the sitemap.
+BuckShot links here with ?from=buckshot&version=<x>; recipes needing a newer BuckShot are hidden.
+Written by tools/website/recipes/build_pages.py in buckshot/buckshot, don't edit it here.
 {% endcomment %}
 <link rel="stylesheet" href="/css/recipes.css?v={{ site.time | date: '%s' }}">
-<p id="recipes-not-yet" class="recipes-intro">Recipes come with Greenshot 1.4, currently in beta.</p>
+<p id="recipes-not-yet" class="recipes-intro">Recipes come with BuckShot 1.4, currently in beta.</p>
 <div id="recipes" style="display:none">
-  <p class="recipes-intro">Recipes tell Greenshot what to do with a capture: add a watermark, convert a file, read a QR code,
-  run your own tool. Pick one and click "Install"; Greenshot shows what it does and asks before anything runs.</p>
+  <p class="recipes-intro">Recipes tell BuckShot what to do with a capture: add a watermark, convert a file, read a QR code,
+  run your own tool. Pick one and click "Install"; BuckShot shows what it does and asks before anything runs.</p>
 
   <div class="recipes-tools">
     <input type="search" id="recipe-search" placeholder="Search recipes" aria-label="Search recipes">
@@ -27,7 +27,7 @@ Written by tools/website/recipes/build_pages.py in greenshot/greenshot, don't ed
 
   <ul class="recipe-grid" id="recipe-list">
   {% for recipe in site.data.recipes.recipes %}
-    <li class="recipe-card" data-min-greenshot="{{ recipe.minGreenshot }}" data-tags="{{ recipe.tags | join: ' ' }}">
+    <li class="recipe-card" data-min-buckshot="{{ recipe.minBuckShot }}" data-tags="{{ recipe.tags | join: ' ' }}">
       <h2><a href="/recipes/{{ recipe.id }}/">{{ recipe.name }}</a></h2>
       <p>{{ recipe.summary }}</p>
       <div>
@@ -68,7 +68,7 @@ Written by tools/website/recipes/build_pages.py in greenshot/greenshot, don't ed
       var text = search.value.trim().toLowerCase();
       var shown = 0;
       cards.forEach(function (card) {
-        var visible = !(running && older(running, parse(card.getAttribute('data-min-greenshot'))))
+        var visible = !(running && older(running, parse(card.getAttribute('data-min-buckshot'))))
           && (!tag || (' ' + card.getAttribute('data-tags') + ' ').indexOf(' ' + tag + ' ') >= 0)
           && (!text || card.textContent.toLowerCase().indexOf(text) >= 0);
         card.style.display = visible ? '' : 'none';

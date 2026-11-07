@@ -1,8 +1,8 @@
 # Translation Validation Tools
 
-This document describes tools and scripts for validating the language packs in the Greenshot project.
+This document describes tools and scripts for validating the language packs in the BuckShot project.
 
-The language packs are INI files: `src/Greenshot/Languages/greenshot.{ietf}.ini` for the core and `src/Greenshot.Plugin.*/Languages/greenshot.{module}.{ietf}.ini` for the plugins. Every key is a `key=value` line inside a `[Section]`. Greenshot compares keys case-insensitive and ignores `_` and `-`. A key missing in a translation shows the English text, so missing keys are not errors, but they should be translated. See [TRANSLATION_GUIDE.md](TRANSLATION_GUIDE.md) for the format.
+The language packs are INI files: `src/BuckShot/Languages/buckshot.{ietf}.ini` for the core and `src/BuckShot.Plugin.*/Languages/buckshot.{module}.{ietf}.ini` for the plugins. Every key is a `key=value` line inside a `[Section]`. BuckShot compares keys case-insensitive and ignores `_` and `-`. A key missing in a translation shows the English text, so missing keys are not errors, but they should be translated. See [TRANSLATION_GUIDE.md](TRANSLATION_GUIDE.md) for the format.
 
 The commands below are bash and work in Git Bash on Windows. Run them from the repository root.
 
@@ -18,7 +18,7 @@ awk '{ sub(/\r$/, "") }
      FNR == 1 { insection = 0 }
      /^\[.+\]$/ { insection = 1; next }
      /^[[:space:]]*$/ || /^[;#]/ { next }
-     !insection || !/=/ { print FILENAME ":" FNR ": " $0 }' src/Greenshot/Languages/greenshot.en-US.ini
+     !insection || !/=/ { print FILENAME ":" FNR ": " $0 }' src/BuckShot/Languages/buckshot.en-US.ini
 
 # Check all core and plugin language packs
 awk '{ sub(/\r$/, "") }
@@ -26,7 +26,7 @@ awk '{ sub(/\r$/, "") }
      /^\[.+\]$/ { insection = 1; next }
      /^[[:space:]]*$/ || /^[;#]/ { next }
      !insection || !/=/ { print FILENAME ":" FNR ": " $0 }' \
-    src/Greenshot/Languages/greenshot.*.ini src/Greenshot.Plugin.*/Languages/greenshot.*.ini
+    src/BuckShot/Languages/buckshot.*.ini src/BuckShot.Plugin.*/Languages/buckshot.*.ini
 ```
 
 No output means no problems.
@@ -38,14 +38,14 @@ Check how many keys each language has:
 ```bash
 # Count keys in all main app language packs (without the [__language__] section)
 echo "Main Application Key Counts:"
-for file in src/Greenshot/Languages/greenshot.*.ini; do
+for file in src/BuckShot/Languages/buckshot.*.ini; do
     count=$(awk '/^\[/ { section = $0; next } /^[;#]/ || !/=/ || section == "[__language__]" { next } { n++ } END { print n + 0 }' "$file")
     printf "%-30s %d\n" "$(basename "$file")" "$count"
 done | sort -k2 -n
 
 # Count keys per section of one language pack
 awk '/^\[/ { section = $0; next } /^[;#]/ || !/=/ { next } { count[section]++ }
-     END { for (s in count) printf "%-16s %d\n", s, count[s] }' src/Greenshot/Languages/greenshot.de-DE.ini | sort
+     END { for (s in count) printf "%-16s %d\n", s, count[s] }' src/BuckShot/Languages/buckshot.de-DE.ini | sort
 ```
 
 ### Finding Empty Values
@@ -54,10 +54,10 @@ Find keys with an empty value (`about_translation=` is empty in en-US on purpose
 
 ```bash
 # Find empty values in a specific file
-grep -n '^[^;#[][^=]*=[[:space:]]*$' src/Greenshot/Languages/greenshot.de-DE.ini
+grep -n '^[^;#[][^=]*=[[:space:]]*$' src/BuckShot/Languages/buckshot.de-DE.ini
 
 # Check all language packs
-for file in src/Greenshot/Languages/greenshot.*.ini src/Greenshot.Plugin.*/Languages/greenshot.*.ini; do
+for file in src/BuckShot/Languages/buckshot.*.ini src/BuckShot.Plugin.*/Languages/buckshot.*.ini; do
     empty_count=$(grep -c '^[^;#[][^=]*=[[:space:]]*$' "$file")
     if [ "$empty_count" -gt 0 ]; then
         echo "$file has $empty_count empty values"
@@ -81,11 +81,11 @@ LANG_CODE=$1
 MODULE=$2
 
 if [ -z "$MODULE" ]; then
-    DIR="src/Greenshot/Languages"
+    DIR="src/BuckShot/Languages"
     BASE="greenshot"
 else
-    DIR=$(ls -d src/Greenshot.Plugin.*/Languages | grep -i "Plugin\.$MODULE/")
-    BASE="greenshot.$MODULE"
+    DIR=$(ls -d src/BuckShot.Plugin.*/Languages | grep -i "Plugin\.$MODULE/")
+    BASE="buckshot.$MODULE"
 fi
 EN_FILE="$DIR/$BASE.en-US.ini"
 TARGET_FILE="$DIR/$BASE.$LANG_CODE.ini"
@@ -96,7 +96,7 @@ if [ -z "$LANG_CODE" ] || [ ! -f "$TARGET_FILE" ]; then
 fi
 
 # Prints "[section]normalizedkey<TAB>[Section] key" for every key; keys are compared
-# like Greenshot does: case-insensitive, _ and - ignored
+# like BuckShot does: case-insensitive, _ and - ignored
 list_keys() {
     awk '{ sub(/\r$/, "") }
          /^\[/ { section = $0; next }
@@ -123,7 +123,7 @@ Example output:
 
 ```
 $ ./compare_keys.sh fr-FR jira
-Comparing src/Greenshot.Plugin.Atlassian/Languages/greenshot.atlassian.fr-FR.ini to src/Greenshot.Plugin.Atlassian/Languages/greenshot.atlassian.en-US.ini...
+Comparing src/BuckShot.Plugin.Atlassian/Languages/buckshot.atlassian.fr-FR.ini to src/BuckShot.Plugin.Atlassian/Languages/buckshot.atlassian.en-US.ini...
 === Missing in fr-FR (English is shown) ===
 [Jira] column_issueType
 [Jira] upload
@@ -138,13 +138,13 @@ Verify files are UTF-8 without BOM:
 
 ```bash
 # Check encoding of a file (prints nothing when the file is valid UTF-8)
-iconv -f UTF-8 -t UTF-8 src/Greenshot/Languages/greenshot.de-DE.ini > /dev/null
+iconv -f UTF-8 -t UTF-8 src/BuckShot/Languages/buckshot.de-DE.ini > /dev/null
 
 # Check for a BOM (a BOM shows as "ef bb bf"; the language packs start with "5b", the "[" of the first section)
-head -c 3 src/Greenshot/Languages/greenshot.de-DE.ini | od -An -tx1
+head -c 3 src/BuckShot/Languages/buckshot.de-DE.ini | od -An -tx1
 
 # Check all files
-for file in src/Greenshot/Languages/greenshot.*.ini src/Greenshot.Plugin.*/Languages/greenshot.*.ini; do
+for file in src/BuckShot/Languages/buckshot.*.ini src/BuckShot.Plugin.*/Languages/buckshot.*.ini; do
     iconv -f UTF-8 -t UTF-8 "$file" > /dev/null 2>&1 || echo "WARNING: $file is not valid UTF-8"
     if [ "$(head -c 3 "$file" | od -An -tx1 | tr -d ' ')" = "efbbbf" ]; then
         echo "WARNING: $file starts with a BOM"
@@ -161,9 +161,9 @@ Save as `tools/validate_translations.py`:
 ```python
 #!/usr/bin/env python3
 """
-Greenshot Translation Validator
+BuckShot Translation Validator
 
-Validates the INI language packs (greenshot.{ietf}.ini and greenshot.{module}.{ietf}.ini) for:
+Validates the INI language packs (buckshot.{ietf}.ini and buckshot.{module}.{ietf}.ini) for:
 - UTF-8 encoding
 - Lines outside a [Section] or without key=value
 - Duplicate keys
@@ -238,10 +238,10 @@ def validate(file_path, reference):
 
 def language_groups(repo_root):
     """Yields (en-US file, [translation files]) for the core and every plugin"""
-    core = repo_root / 'src' / 'Greenshot' / 'Languages'
-    yield core / 'greenshot.en-US.ini', sorted(core.glob('greenshot.*.ini'))
-    for english in sorted(repo_root.glob('src/Greenshot.Plugin.*/Languages/greenshot.*.en-US.ini')):
-        base = english.name[:-len('en-US.ini')]  # greenshot.{module}.
+    core = repo_root / 'src' / 'BuckShot' / 'Languages'
+    yield core / 'buckshot.en-US.ini', sorted(core.glob('buckshot.*.ini'))
+    for english in sorted(repo_root.glob('src/BuckShot.Plugin.*/Languages/buckshot.*.en-US.ini')):
+        base = english.name[:-len('en-US.ini')]  # buckshot.{module}.
         yield english, sorted(english.parent.glob(base + '*.ini'))
 
 
@@ -297,8 +297,8 @@ python3 tools/validate_translations.py
 For Windows users, save as `tools/Validate-Translations.ps1`:
 
 ```powershell
-# Greenshot Translation Validator (PowerShell)
-# Checks the INI language packs greenshot.{ietf}.ini (core) and greenshot.{module}.{ietf}.ini (plugins)
+# BuckShot Translation Validator (PowerShell)
+# Checks the INI language packs buckshot.{ietf}.ini (core) and buckshot.{module}.{ietf}.ini (plugins)
 
 param(
     [string]$LanguageCode = $null,
@@ -358,14 +358,14 @@ function Get-Placeholders([string]$Text) {
 
 # The core language packs and the language packs of every plugin, each with its en-US pack
 $Groups = @()
-$CoreDir = Join-Path $RepoRoot "src\Greenshot\Languages"
-$Groups += @{ English = Join-Path $CoreDir "greenshot.en-US.ini"; Files = Get-ChildItem $CoreDir -Filter "greenshot.*.ini" }
-foreach ($English in Get-ChildItem (Join-Path $RepoRoot "src\Greenshot.Plugin.*\Languages\greenshot.*.en-US.ini")) {
+$CoreDir = Join-Path $RepoRoot "src\BuckShot\Languages"
+$Groups += @{ English = Join-Path $CoreDir "buckshot.en-US.ini"; Files = Get-ChildItem $CoreDir -Filter "buckshot.*.ini" }
+foreach ($English in Get-ChildItem (Join-Path $RepoRoot "src\BuckShot.Plugin.*\Languages\buckshot.*.en-US.ini")) {
     $Base = $English.Name.Substring(0, $English.Name.Length - "en-US.ini".Length)
     $Groups += @{ English = $English.FullName; Files = Get-ChildItem $English.DirectoryName -Filter "$Base*.ini" }
 }
 
-Write-Host "Greenshot Translation Validator" -ForegroundColor Cyan
+Write-Host "BuckShot Translation Validator" -ForegroundColor Cyan
 Write-Host "================================" -ForegroundColor Cyan
 
 $TotalIssues = 0
@@ -434,7 +434,7 @@ Run it:
 
 ### Unit Tests
 
-`src/Greenshot.Tests/Core/LanguagePackTests.cs` runs with the other tests and checks that:
+`src/BuckShot.Tests/Core/LanguagePackTests.cs` runs with the other tests and checks that:
 - every property of the language interfaces has an English text
 - every `{wpf:Text Section.Property}` in XAML refers to an existing property
 - the language packs contain only known sections (spelled exactly as in en-US), and no line outside a section or without `key=value`
@@ -451,7 +451,7 @@ Add to `.git/hooks/pre-commit`:
 echo "Validating translation files..."
 
 # Check if language packs are being committed (added, copied or modified)
-TRANSLATION_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep 'Languages/greenshot[^/]*\.ini$')
+TRANSLATION_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep 'Languages/buckshot[^/]*\.ini$')
 
 if [ -n "$TRANSLATION_FILES" ]; then
     echo "Found translation file changes, validating..."
@@ -511,7 +511,7 @@ jobs:
              /^\[.+\]$/ { insection = 1; next }
              /^[[:space:]]*$/ || /^[;#]/ { next }
              !insection || !/=/ { print FILENAME ":" FNR ": " $0 }' \
-            src/Greenshot/Languages/greenshot.*.ini src/Greenshot.Plugin.*/Languages/greenshot.*.ini)
+            src/BuckShot/Languages/buckshot.*.ini src/BuckShot.Plugin.*/Languages/buckshot.*.ini)
         if [ -n "$problems" ]; then
           echo "$problems"
           exit 1
@@ -519,7 +519,7 @@ jobs:
     
     - name: Check encoding
       run: |
-        for file in src/Greenshot/Languages/greenshot.*.ini src/Greenshot.Plugin.*/Languages/greenshot.*.ini; do
+        for file in src/BuckShot/Languages/buckshot.*.ini src/BuckShot.Plugin.*/Languages/buckshot.*.ini; do
           if ! iconv -f UTF-8 -t UTF-8 "$file" > /dev/null 2>&1; then
             echo "ERROR: $file is not UTF-8"
             exit 1
@@ -530,7 +530,7 @@ jobs:
       run: python3 tools/validate_translations.py
 ```
 
-The last step needs `tools/validate_translations.py` from above in the repository. The unit tests in `src/Greenshot.Tests/Core/LanguagePackTests.cs` check the format placeholders as well.
+The last step needs `tools/validate_translations.py` from above in the repository. The unit tests in `src/BuckShot.Tests/Core/LanguagePackTests.cs` check the format placeholders as well.
 
 ## Future Enhancements
 

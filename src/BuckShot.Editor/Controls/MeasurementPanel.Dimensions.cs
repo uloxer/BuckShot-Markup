@@ -1,0 +1,130 @@
+using System;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using BuckShot.Editor.Drawing;
+using BuckShot.Editor.Measurements;
+
+namespace BuckShot.Editor.Controls
+{
+    internal sealed partial class MeasurementPanel
+    {
+        private Surface _dimensionDocument;
+        private Control _edgesCategory;
+        private bool _dimensionsUpdating, _dimensionCommit;
+        private readonly DataGridView _dimensionEdges = new DataGridView
+        {
+            Width=214, Height=120, AllowUserToAddRows=false, AllowUserToDeleteRows=false, RowHeadersVisible=false,
+            AllowUserToResizeRows=false, AutoSizeColumnsMode=DataGridViewAutoSizeColumnsMode.Fill,
+            AccessibleName="Edge dimension visibility and length", MultiSelect=false, BackgroundColor=SystemColors.Window
+        };
+        private readonly Button _dimensionFont = new Button { Text="Dimension font…", AutoSize=true };
+        private readonly Button _dimensionColor = new Button { Text="Dimension colour…", AutoSize=true };
+        private readonly Label _dimensionStyleLabel = new Label { AutoSize=true, MaximumSize=new Size(210,0) };
+        private readonly Label _dimensionWarning = new Label { AutoSize=true, MaximumSize=new Size(210,0), ForeColor=Color.DarkRed };
+
+        private void InitializeDimensionControls()
+        {
+            _dimensionEdges.Columns.Add(new DataGridViewCheckBoxColumn { HeaderText="Show", FillWeight=38, SortMode=DataGridViewColumnSortMode.NotSortable });
+            _dimensionEdges.Columns.Add(new DataGridViewTextBoxColumn { HeaderText="Edge", ReadOnly=true, FillWeight=52, SortMode=DataGridViewColumnSortMode.NotSortable });
+            _dimensionEdges.Columns.Add(new DataGridViewTextBoxColumn { HeaderText="Length", ReadOnly=true, FillWeight=100, SortMode=DataGridViewColumnSortMode.NotSortable });
+            ConfigureGrid(_dimensionEdges);
+            // Text-cell padding can consume the checkbox glyph's entire height after DPI scaling.
+            // Empty means inherit in DataGridViewCellStyle, so keep a nonempty horizontal inset.
+            _dimensionEdges.Columns[0].DefaultCellStyle.Padding = new Padding(1, 0, 0, 0);
+            _dimensionEdges.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            _dimensionEdges.Columns[0].MinimumWidth = 50;
+            _dimensionEdges.Columns[1].MinimumWidth = 60;
+            _dimensionEdges.Columns[2].MinimumWidth = 75;
+            _dimensionEdges.CurrentCellDirtyStateChanged += (s,e) =>
+            { if (!_dimensionsUpdating && _dimensionEdges.IsCurrentCellDirty) _dimensionEdges.CommitEdit(DataGridViewDataErrorContexts.Commit); };
+            _dimensionEdges.CellValueChanged += (s,e) =>
+            {
+                if (_dimensionsUpdating || _dimensionCommit || e.RowIndex<0 || e.ColumnIndex!=0 || _selected==null) return;
+                _dimensionCommit=true;
+                try { _selected.SetDimensionVisible((int)_dimensionEdges.Rows[e.RowIndex].Tag, Convert.ToBoolean(_dimensionEdges.Rows[e.RowIndex].Cells[0].Value)); }
+                finally { _dimensionCommit=false; }
+                RefreshDimensionLabels(_dimensionDocument); GeometryEdited?.Invoke(this,EventArgs.Empty);
+            };
+            _dimensionFont.Click += (s,e) =>
+            {
+                if(_dimensionDocument==null)return;
+                var current=_dimensionDocument.DimensionStyle;
+                using var font=current.CreateFont(); using var dialog=new FontDialog { Font=font,MinSize=1,MaxSize=144,FontMustExist=true,ShowEffects=true };
+                if(dialog.ShowDialog(FindForm())!=DialogResult.OK)return;
+                using var chosen=dialog.Font;
+                _dimensionDocument.SetDimensionStyle(new DimensionStyle(chosen.Name,chosen.SizeInPoints,chosen.Style,current.Color,current.Format,current.BackgroundColor));
+                RefreshDimensionLabels(_dimensionDocument); GeometryEdited?.Invoke(this,EventArgs.Empty);
+            };
+            _dimensionColor.Click += (s,e) =>
+            {
+                if(_dimensionDocument==null)return;
+                var current=_dimensionDocument.DimensionStyle;
+                using var dialog=new ColorDialog { Color=current.Color,FullOpen=true };
+                if(dialog.ShowDialog(FindForm())!=DialogResult.OK)return;
+                _dimensionDocument.SetDimensionStyle(new DimensionStyle(current.Family,current.Size,current.FontStyle,dialog.Color,current.Format,current.BackgroundColor));
+                RefreshDimensionLabels(_dimensionDocument); GeometryEdited?.Invoke(this,EventArgs.Empty);
+            };
+            _edgesCategory = AddCategory("Edge dimensions", _dimensionEdges);
+            InitializeDimensionFormatControls();
+            _dimensionFont.Text = "Font…"; _dimensionColor.Text = "Colour…";
+            AddCategory("Shared dimension font", _dimensionStyleLabel, ButtonRow(_dimensionFont, _dimensionColor), _dimensionWarning);
+        }
+
+        internal void RefreshDimensionLabels(Surface document)
+        {
+            if(_dimensionCommit)return;
+            _dimensionDocument=document; _dimensionsUpdating=true;
+            try
+            {
+                var edges=DimensionLayout.Edges(_selected);
+                bool rebuild = _dimensionEdges.Rows.Count != edges.Length;
+                if (!rebuild)
+                    for (int i = 0; i < edges.Length; i++)
+                        if (!Equals(_dimensionEdges.Rows[i].Tag, edges[i].Index)) { rebuild = true; break; }
+                // Keep the current checkbox cell alive while CommitEdit is dispatching CellValueChanged.
+                if (rebuild)
+                {
+                    _dimensionEdges.Rows.Clear();
+                    foreach (var edge in edges)
+                    {
+                        int row = _dimensionEdges.Rows.Add(false, (edge.Index + 1).ToString(), null);
+                        _dimensionEdges.Rows[row].Tag = edge.Index;
+                    }
+                }
+                for (int i = 0; i < edges.Length; i++)
+                {
+                    var edge = edges[i];
+                    string length=DimensionLayout.FormatLength(edge.Length,document?.Measurements ?? MeasurementState.Pixels,_selected.GetDimensionFormat(edge.Index) ?? document?.DimensionStyle.Format);
+                    if(edge.Length==0)length+=" (zero; hidden)";
+                    var row = _dimensionEdges.Rows[i];
+                    row.Cells[0].Value = _selected.IsDimensionVisible(edge.Index);
+                    row.Cells[2].Value = length;
+                    row.Cells[2].ToolTipText = length;
+                }
+                RefreshDimensionFormatControls();
+                _dimensionEdges.Visible=edges.Length>0;
+                _edgesCategory.Visible=edges.Length>0;
+                UpdateGridHeights();
+                _dimensionFont.Enabled=_dimensionColor.Enabled=document!=null;
+                var style=document?.DimensionStyle ?? DimensionStyle.Default;
+                _dimensionStyleLabel.Text=style.Family+", "+style.Size.ToString("0.##")+" pt";
+                _dimensionColor.ForeColor=style.Color;
+                _dimensionWarning.Text=string.Empty;
+                if(document?.Image!=null)
+                {
+                    var labels=document.Elements.OfType<DrawableContainer>().Where(o=>o.HasVisibleDimensions).SelectMany(DimensionLayout.Labels).ToArray();
+                    if(labels.Any(l=>l.Bounds.Left<0 || l.Bounds.Top<0 || l.Bounds.Right>document.Image.Width || l.Bounds.Bottom>document.Image.Height))
+                        _dimensionWarning.Text="Labels clip at the image boundary. Add canvas room manually.";
+                    else if(labels.Any(l=>l.Crowded))_dimensionWarning.Text="Crowded edges: some dimension labels may overlap.";
+                }
+                _dimensionWarning.Visible = _dimensionWarning.Text.Length > 0;
+            }
+            finally
+            {
+                _dimensionsUpdating=false;
+                if (_resetScroll) { _body.AutoScrollPosition = Point.Empty; _resetScroll = false; }
+            }
+        }
+    }
+}

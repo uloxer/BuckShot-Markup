@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Greenshot - a free and open source screenshot tool
+# BuckShot - a free and open source screenshot tool
 # Copyright (C) 2004-2026 Thomas Braun, Jens Klingen, Robin Krom
 #
 # This program is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ Writes (the workflow commits them to gh-pages):
                                 in the index are removed
   _layouts/recipe.html          the layout of a recipe page
   css/recipes.css               the styles of the recipe pages
-  recipes/index.json            the index, byte for byte (Greenshot reads the signed index of the catalog release instead)
+  recipes/index.json            the index, byte for byte (BuckShot reads the signed index of the catalog release instead)
   recipes/<id>.gsrecipe.json    each recipe file, checked against the SHA-256 of the index: the "download the file" link,
                                 served by the website itself, so the browser saves it instead of showing GitHub's raw file
 and adds the "recipes" collection to _config.yml once. A collection, not pages: pages are listed on /sitemap/.
@@ -84,7 +84,7 @@ def add_collection(config_path):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--index", required=True, help="index.json of a greenshot-recipes release")
+    parser.add_argument("--index", required=True, help="index.json of a buckshot-recipes release")
     parser.add_argument("--site", required=True, help="the website checkout")
     arguments = parser.parse_args()
 

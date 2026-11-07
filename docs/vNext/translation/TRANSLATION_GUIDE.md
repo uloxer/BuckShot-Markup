@@ -1,41 +1,41 @@
-# Greenshot Translation Guide
+# BuckShot Translation Guide
 
-This guide provides comprehensive instructions for working with translations in the Greenshot project.
+This guide provides comprehensive instructions for working with translations in the BuckShot project.
 
 ## Overview
 
-Greenshot supports **40 languages** in the main application and varying numbers of languages for different plugins. The application texts are stored in INI language packs, read with Dapplo.Ini. English (en-US) is the base language: every key that is missing in a translation shows the English text.
+BuckShot supports **40 languages** in the main application and varying numbers of languages for different plugins. The application texts are stored in INI language packs, read with Dapplo.Ini. English (en-US) is the base language: every key that is missing in a translation shows the English text.
 
-The help files (`help-{ietf}.html`) and the installer and website translations (`src/Greenshot/Languages/installer`, `src/Greenshot/Languages/website`) are separate and not described here.
+The help files (`help-{ietf}.html`) and the installer and website translations (`src/BuckShot/Languages/installer`, `src/BuckShot/Languages/website`) are separate and not described here.
 
 ### Repository Structure
 
 ```
 src/
-├── Greenshot/
+├── BuckShot/
 │   └── Languages/
-│       ├── greenshot.en-US.ini    (Base language - 598 keys)
-│       ├── greenshot.de-DE.ini
-│       ├── greenshot.fr-FR.ini
+│       ├── buckshot.en-US.ini    (Base language - 598 keys)
+│       ├── buckshot.de-DE.ini
+│       ├── buckshot.fr-FR.ini
 │       └── ... (40 language packs)
-├── Greenshot.Plugin.Atlassian/
+├── BuckShot.Plugin.Atlassian/
 │   └── Languages/
-│       └── greenshot.atlassian.{ietf}.ini    (21 languages, [Jira] and [Confluence])
-├── Greenshot.Plugin.Box/
+│       └── buckshot.atlassian.{ietf}.ini    (21 languages, [Jira] and [Confluence])
+├── BuckShot.Plugin.Box/
 │   └── Languages/
-│       └── greenshot.box.{ietf}.ini    (20 languages)
-├── Greenshot.Plugin.Dropbox/
+│       └── buckshot.box.{ietf}.ini    (20 languages)
+├── BuckShot.Plugin.Dropbox/
 │   └── Languages/
-│       └── greenshot.dropbox.{ietf}.ini    (20 languages)
-├── Greenshot.Plugin.ExternalCommand/
+│       └── buckshot.dropbox.{ietf}.ini    (20 languages)
+├── BuckShot.Plugin.ExternalCommand/
 │   └── Languages/
-│       └── greenshot.externalcommand.{ietf}.ini    (21 languages)
-└── Greenshot.Plugin.Office/
+│       └── buckshot.externalcommand.{ietf}.ini    (21 languages)
+└── BuckShot.Plugin.Office/
     └── Languages/
-        └── greenshot.office.{ietf}.ini    (4 languages)
+        └── buckshot.office.{ietf}.ini    (4 languages)
 ```
 
-All language packs, core and plugins, are installed flat into the `Languages` folder of Greenshot.
+All language packs, core and plugins, are installed flat into the `Languages` folder of BuckShot.
 
 ## Supported Languages
 
@@ -56,16 +56,16 @@ cs-CZ, de-DE, en-US, fr-FR, id-ID, it-IT, ja-JP, kab-DZ, ko-KR, lv-LV, pl-PL, pt
 
 ### Core Language Pack
 
-File name: `greenshot.{ietf}.ini`, for example `greenshot.de-DE.ini`. Example from `greenshot.de-DE.ini`:
+File name: `buckshot.{ietf}.ini`, for example `buckshot.de-DE.ini`. Example from `buckshot.de-DE.ini`:
 
 ```ini
 [__language__]
 Description=Deutsch
 
 [Core]
-about_title=Über Greenshot
+about_title=Über BuckShot
 bugreport_cancel=Schließen
-clipboard_inuse=Greenshot kann nicht in die Zwischenablage schreiben, da sie vom Prozess {0} blockiert ist.
+clipboard_inuse=BuckShot kann nicht in die Zwischenablage schreiben, da sie vom Prozess {0} blockiert ist.
 ClipboardFormat.DIB=Geräteunabhängiges Bitmap (DIB)
 
 [Editor]
@@ -84,7 +84,7 @@ Every key must be inside a section. A key in the wrong section is not found. Wri
 
 ### Plugin Language Pack
 
-File name: `greenshot.{module}.{ietf}.ini`, for example `greenshot.atlassian.de-DE.ini`. The modules are `atlassian`, `box`, `dropbox`, `externalcommand` and `office`. A plugin pack has a section per part of the plugin: `[Jira]` and `[Confluence]` in the atlassian pack, `[Box]`, `[Dropbox]`, `[ExternalCommand]` and `[Office]` in the others. Example from `greenshot.atlassian.de-DE.ini`:
+File name: `buckshot.{module}.{ietf}.ini`, for example `buckshot.atlassian.de-DE.ini`. The modules are `atlassian`, `box`, `dropbox`, `externalcommand` and `office`. A plugin pack has a section per part of the plugin: `[Jira]` and `[Confluence]` in the atlassian pack, `[Box]`, `[Dropbox]`, `[ExternalCommand]` and `[Office]` in the others. Example from `buckshot.atlassian.de-DE.ini`:
 
 ```ini
 [Jira]
@@ -103,14 +103,14 @@ column_id=ID
   about_license=Copyright © 2007-2026 Thomas Braun, Jens Klingen, Robin Krom\nGreenshot comes with ABSOLUTELY NO WARRANTY. ...
   ```
 - `;` and `#` inside a value are fine. Only lines starting with `;` or `#` are comments.
-- No XML escaping: `&`, `<`, `>` and quotes are written as they are (`tooltip=Open Greenshot Self-Service & Troubleshooting (S)`).
+- No XML escaping: `&`, `<`, `>` and quotes are written as they are (`tooltip=Open BuckShot Self-Service & Troubleshooting (S)`).
 - Files are UTF-8 without BOM, like the existing files.
 
 ### Fallback and User Overrides
 
 - A key missing in a translation shows the English (en-US) text. A partial language pack works.
-- Languages fall back through their parent language: for `de-DE`, a `greenshot.de.ini` is also used if it exists, then en-US.
-- A file with the same name in `%APPDATA%\Greenshot\Languages` overrides single keys of the installed pack. It only needs the sections and keys it changes, so users can fix or add translations without replacing the installed files. This is also the easiest way to try a translation in a running Greenshot.
+- Languages fall back through their parent language: for `de-DE`, a `buckshot.de.ini` is also used if it exists, then en-US.
+- A file with the same name in `%APPDATA%\BuckShot\Languages` overrides single keys of the installed pack. It only needs the sections and keys it changes, so users can fix or add translations without replacing the installed files. This is also the easiest way to try a translation in a running BuckShot.
 
 ## Translation Workflow
 
@@ -175,12 +175,12 @@ Every key with a fixed name is a typed string property on a language interface:
 
 | Section | Interface | Used as |
 |---------|-----------|---------|
-| `[Core]` | `src/Greenshot.Base/Languages/ICoreLanguage.cs` | `Texts.Core.AboutTitle` |
-| `[Editor]` | `src/Greenshot.Base/Languages/IEditorLanguage.cs` | `Texts.Editor.Undo` |
-| `[Settings]` | `src/Greenshot.Base/Languages/ISettingsLanguage.cs` | `Texts.Settings.Language` |
-| `[SelfService]` | `src/Greenshot.Base/Languages/ISelfServiceLanguage.cs` | `Texts.SelfService.Title` |
-| `[Recipe]` | `src/Greenshot.Base/Languages/IRecipeLanguage.cs` | `Texts.Recipe.ImportTitle` |
-| `[Jira]` etc. | `src/Greenshot.Plugin.Atlassian/Jira/IJiraLanguage.cs` etc. | `Texts.Get<IJiraLanguage>().UploadMenuItem` |
+| `[Core]` | `src/BuckShot.Base/Languages/ICoreLanguage.cs` | `Texts.Core.AboutTitle` |
+| `[Editor]` | `src/BuckShot.Base/Languages/IEditorLanguage.cs` | `Texts.Editor.Undo` |
+| `[Settings]` | `src/BuckShot.Base/Languages/ISettingsLanguage.cs` | `Texts.Settings.Language` |
+| `[SelfService]` | `src/BuckShot.Base/Languages/ISelfServiceLanguage.cs` | `Texts.SelfService.Title` |
+| `[Recipe]` | `src/BuckShot.Base/Languages/IRecipeLanguage.cs` | `Texts.Recipe.ImportTitle` |
+| `[Jira]` etc. | `src/BuckShot.Plugin.Atlassian/Jira/IJiraLanguage.cs` etc. | `Texts.Get<IJiraLanguage>().UploadMenuItem` |
 
 In XAML a text is used as `{wpf:Text Editor.Undo}`.
 
@@ -195,21 +195,21 @@ Keys that are only known at runtime are looked up with `Texts.Config.GetTranslat
 
 ## Texts in a Plugin
 
-A plugin brings its own language packs, but it can use every text of Greenshot itself: the `[Core]`, `[Editor]`, `[Settings]`, `[SelfService]` and `[Recipe]` sections are loaded by Greenshot before any plugin starts. There is nothing to register for them.
+A plugin brings its own language packs, but it can use every text of BuckShot itself: the `[Core]`, `[Editor]`, `[Settings]`, `[SelfService]` and `[Recipe]` sections are loaded by BuckShot before any plugin starts. There is nothing to register for them.
 
 **Shared texts:** use `Texts.Core.Ok` and `Texts.Core.Cancel` (`{wpf:Text Core.Ok}`, `{wpf:Text Core.Cancel}` in XAML) for the OK and Cancel buttons instead of adding own keys. They are translated in all languages, and translators don't have to translate them again for every plugin. Other texts which look the same (Close, URL, Image format, ...) stay in the plugin: their translation often differs per context.
 
 **Own texts**, using Jira as example:
 
-1. **Language pack:** create `Languages/greenshot.{module}.en-US.ini` in the plugin project, with a section per part of the plugin (most plugins have one, named after the plugin). The module name is the lower-case plugin name, all sections of a plugin use the same one:
+1. **Language pack:** create `Languages/buckshot.{module}.en-US.ini` in the plugin project, with a section per part of the plugin (most plugins have one, named after the plugin). The module name is the lower-case plugin name, all sections of a plugin use the same one:
    ```ini
    [Jira]
    upload_menu_item=Upload to Jira
    column_assignee=Assignee
    ```
-   Translations go next to it as `greenshot.atlassian.de-DE.ini` etc. A missing translation shows English.
+   Translations go next to it as `buckshot.atlassian.de-DE.ini` etc. A missing translation shows English.
 
-2. **Interface:** add an interface with a string property per key. The source generator of Dapplo.Ini, which comes with the reference to Greenshot.Base, generates the implementation `JiraLanguageImpl`:
+2. **Interface:** add an interface with a string property per key. The source generator of Dapplo.Ini, which comes with the reference to BuckShot.Base, generates the implementation `JiraLanguageImpl`:
    ```csharp
    [IniLanguageSection("Jira", ModuleName = "atlassian")]
    public interface IJiraLanguage : INotifyPropertyChanged
@@ -232,27 +232,27 @@ A plugin brings its own language packs, but it can use every text of Greenshot i
    ```
    In code the texts are then available as `Texts.Get<IJiraLanguage>().UploadMenuItem`.
 
-4. **Project file:** copy the packs to the output; the build copies them from there into the `Languages` folder of Greenshot:
+4. **Project file:** copy the packs to the output; the build copies them from there into the `Languages` folder of BuckShot:
    ```xml
-   <None Include="Languages\greenshot*.ini">
+   <None Include="Languages\buckshot*.ini">
      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
    </None>
    ```
 
-5. **Installer:** add the packs to the plugin's file in `src/Greenshot-Installer/includes/plugins/`, installed flat into `{app}\Languages`:
+5. **Installer:** add the packs to the plugin's file in `src/BuckShot-Installer/includes/plugins/`, installed flat into `{app}\Languages`:
    ```
-   Source: {#SolutionDir}\Greenshot.Plugin.Atlassian\Languages\greenshot.atlassian.*.ini; DestDir: {app}\Languages; Components: plugins\atlassian; Flags: {#DefaultInstallFlags};
+   Source: {#SolutionDir}\BuckShot.Plugin.Atlassian\Languages\buckshot.atlassian.*.ini; DestDir: {app}\Languages; Components: plugins\atlassian; Flags: {#DefaultInstallFlags};
    ```
 
 6. **XAML:** add the namespace and use `{wpf:Text Section.Property}`:
    ```xml
    <Window ...
-           xmlns:wpf="clr-namespace:Greenshot.Base.Wpf;assembly=Greenshot.Base"
+           xmlns:wpf="clr-namespace:BuckShot.Base.Wpf;assembly=BuckShot.Base"
            Title="{wpf:Text Imgur.History}">
        <Button Content="{wpf:Text Core.Ok}" IsDefault="True" />
    ```
 
-**What `{wpf:Text ...}` does:** it is a markup extension in Greenshot.Base. `Imgur.History` names a section and a property; the extension finds the registered section object for `Imgur` and creates a normal WPF one-way `Binding` to its `History` property. The section objects raise `PropertyChanged` for the texts that change when the user picks another language, so an open window updates by itself. The unit test `LanguagePackTests.XamlTexts_ReferenceExistingProperties` checks that every `{wpf:Text ...}` in the XAML files names an existing property.
+**What `{wpf:Text ...}` does:** it is a markup extension in BuckShot.Base. `Imgur.History` names a section and a property; the extension finds the registered section object for `Imgur` and creates a normal WPF one-way `Binding` to its `History` property. The section objects raise `PropertyChanged` for the texts that change when the user picks another language, so an open window updates by itself. The unit test `LanguagePackTests.XamlTexts_ReferenceExistingProperties` checks that every `{wpf:Text ...}` in the XAML files names an existing property.
 
 **Texts set from code** (WinForms controls, menu items) don't update by themselves. Set them again in a handler of `Texts.Config.LanguageChanged`, and remove the handler when the plugin shuts down:
 ```csharp
@@ -276,26 +276,26 @@ private void OnLanguageChanged(object sender, EventArgs e)
         FNR == 1 { insection = 0 }
         /^\[.+\]$/ { insection = 1; next }
         /^[[:space:]]*$/ || /^[;#]/ { next }
-        !insection || !/=/ { print FILENAME ":" FNR ": " $0 }' src/Greenshot/Languages/greenshot.de-DE.ini
+        !insection || !/=/ { print FILENAME ":" FNR ": " $0 }' src/BuckShot/Languages/buckshot.de-DE.ini
    ```
 
 2. **Encoding**: All language packs must be UTF-8 (without BOM)
 
 3. **Key Count**: Compare key counts between languages (the count includes the `Description=` line)
    ```bash
-   grep -c '^[^;#[][^=]*=' src/Greenshot/Languages/greenshot.*.ini
+   grep -c '^[^;#[][^=]*=' src/BuckShot/Languages/buckshot.*.ini
    ```
 
 4. **Empty Values**: Look for keys with an empty value (`about_translation=` is empty on purpose)
    ```bash
-   grep -n '^[^;#[][^=]*=[[:space:]]*$' src/Greenshot/Languages/greenshot.*.ini
+   grep -n '^[^;#[][^=]*=[[:space:]]*$' src/BuckShot/Languages/buckshot.*.ini
    ```
 
 See [TRANSLATION_TOOLS.md](TRANSLATION_TOOLS.md) for comparing keys with en-US and for the validation scripts.
 
-### Testing in Greenshot
+### Testing in BuckShot
 
-Copy the language pack to `%APPDATA%\Greenshot\Languages` and restart Greenshot; no build is needed. Remove the file afterwards, otherwise it keeps overriding the installed pack.
+Copy the language pack to `%APPDATA%\BuckShot\Languages` and restart BuckShot; no build is needed. Remove the file afterwards, otherwise it keeps overriding the installed pack.
 
 ### Automated Validation Ideas
 
@@ -315,14 +315,14 @@ Each plugin has its own `Languages/` directory with fewer keys than the main app
 - **Plugins**: 9-25 keys each
 
 **Plugin naming convention:**
-- Pattern: `greenshot.{module}.{ietf}.ini`
-- Example: `greenshot.box.de-DE.ini`, `greenshot.imgur.fr-FR.ini`
+- Pattern: `buckshot.{module}.{ietf}.ini`
+- Example: `buckshot.box.de-DE.ini`, `buckshot.imgur.fr-FR.ini`
 
 ## Translation Priorities
 
 When resources are limited, prioritize:
 
-1. **Main application** (`src/Greenshot/Languages/`) - Most visible to users
+1. **Main application** (`src/BuckShot/Languages/`) - Most visible to users
 2. **Commonly used plugins** (Imgur, Dropbox, Box) - High-traffic features
 3. **Error messages** - Critical for troubleshooting
 4. **UI labels and buttons** - Core user interaction
@@ -358,13 +358,13 @@ If you encounter:
 - [ ] Expand Office plugin translations to match main app language coverage
 
 ### Documentation
-- [ ] Add screenshots of Greenshot UI with key areas labeled
+- [ ] Add screenshots of BuckShot UI with key areas labeled
 - [ ] Create visual guide showing where different sections appear
 - [ ] Build automated translation synchronization tools
 
 ## References
 
-- **Language Loader Code**: `src/Greenshot.Base/Languages/Texts.cs`
-- **Language Interfaces**: `src/Greenshot.Base/Languages/I*Language.cs`, `src/Greenshot.Plugin.*/I*Language.cs`
+- **Language Loader Code**: `src/BuckShot.Base/Languages/Texts.cs`
+- **Language Interfaces**: `src/BuckShot.Base/Languages/I*Language.cs`, `src/BuckShot.Plugin.*/I*Language.cs`
 - **IETF Language Tags**: [RFC 5646](https://tools.ietf.org/html/rfc5646)
 - **Contributing Guidelines**: `CONTRIBUTING.md` (for code style when examining code context)

@@ -1,0 +1,32 @@
+#include "generated-version.h"
+
+1 ICON "..\\BuckShot\\icons\\applicationIcon\\BuckShot-Proxy.ico"
+
+1 VERSIONINFO
+FILEVERSION BUCKSHOT_VERSION_NUMERIC
+PRODUCTVERSION BUCKSHOT_VERSION_NUMERIC
+FILEFLAGSMASK 0x3fL
+FILEFLAGS 0x0L
+FILEOS 0x40004L
+FILETYPE 0x1L
+FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "BuckShot Markup contributors"
+            VALUE "FileDescription", "BuckShot Markup Proxy"
+            VALUE "FileVersion", BUCKSHOT_VERSION_FULL
+            VALUE "InternalName", "buckshot-proxy"
+            VALUE "LegalCopyright", "Copyright (C) 2007-2026 Thomas Braun, Jens Klingen, Robin Krom"
+            VALUE "OriginalFilename", "buckshot-proxy.exe"
+            VALUE "ProductName", "BuckShot Markup"
+            VALUE "ProductVersion", BUCKSHOT_VERSION_FULL
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

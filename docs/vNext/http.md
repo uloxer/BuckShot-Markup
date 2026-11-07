@@ -1,7 +1,7 @@
-# HTTP in Greenshot
+# HTTP in BuckShot
 
-How Greenshot, its plugins and new features talk to services on the Internet: downloading, calling a web API, uploading a
-capture. Everything goes through one class, `HttpService` in `Greenshot.Base/Http`, so the proxy setting, the certificate
+How BuckShot, its plugins and new features talk to services on the Internet: downloading, calling a web API, uploading a
+capture. Everything goes through one class, `HttpService` in `BuckShot.Base/Http`, so the proxy setting, the certificate
 exceptions of the configuration and the logging rules apply everywhere without each caller repeating them.
 
 - [The parts](#the-parts)
@@ -14,14 +14,14 @@ exceptions of the configuration and the logging rules apply everywhere without e
 
 | Type | What it is for |
 |---|---|
-| `HttpService` | `HttpService.Current` is the one HttpClient of Greenshot. `SendAsync` for any request, plus `GetJsonAsync<T>`, `GetBytesAsync`, `GetStatusAsync` and `PostFormAsync`. |
+| `HttpService` | `HttpService.Current` is the one HttpClient of BuckShot. `SendAsync` for any request, plus `GetJsonAsync<T>`, `GetBytesAsync`, `GetStatusAsync` and `PostFormAsync`. |
 | `HttpResult` | What `SendAsync` and `PostFormAsync` return: `StatusCode`, `ReasonPhrase`, `Headers` (response and content headers, names case insensitive), `RequestUri` (the uri which answered, after redirects) and `Content` (string). The response is read completely, nothing needs to be disposed. |
 | `HttpContents` | Request content for a capture: `Upload` (the encoded bytes with their MIME type) and `Multipart` (multipart/form-data with text fields and the file). Both report the upload progress. |
 | `CertificateValidator` | The certificate rules (platform validation plus the allowed hosts and thumbprints of the configuration). |
 | `ImageDownloader` | Downloads an image from a url (HTML on the clipboard, a drop on the editor). |
 | `SiteIcon` | The icon of a web site as 32x32 PNG, e.g. for a destination: `favicon.ico` below the site, else the icon link of its start page (same scheme and host), optionally the same for the parent domain. ICO, PNG, GIF and JPEG by their first bytes, 256 KB and 45 seconds at most, null when there is none. Used by the Jira destination and the custom uploader. |
 | `ServerSignIn` | The sign-in to the server of a plugin (Jira, Confluence) with `ServerCredentials`: user name with password or API token (Basic), or a personal access token (Bearer). The credentials of the session or the ones in the Windows Credential Manager (`CredentialStore`, target = the url) first, the sign-in window (`ServerSignInWindow`) only when there are none or the server rejects them. `ServerAccountView` shows the account in the plugin settings with *Sign in*, *Test connection* and *Sign out*. |
-| `OAuth2Helper` (`Greenshot.Base/Core/OAuth`) | The OAuth 2 authorization (browser, local listener) and the token refresh, on top of `HttpService`. |
+| `OAuth2Helper` (`BuckShot.Base/Core/OAuth`) | The OAuth 2 authorization (browser, local listener) and the token refresh, on top of `HttpService`. |
 
 ## Using it
 
@@ -34,7 +34,7 @@ Destinations and recipe steps already run on the thread pool; the UI thread can 
 var feed = await HttpService.Current.GetJsonAsync<UpdateFeed>(new Uri("https://getgreenshot.org/update-feed.json"), cancellationToken);
 ```
 
-The content is deserialized with System.Text.Json and the tolerant settings of `GreenshotJson` (comments, trailing commas, any casing, numbers in quotes), so `[JsonPropertyName]` works. Code which reads a lot of JSON can deserialize `HttpResult.Content` with a source generated context, like the Jira and Confluence clients. An HTTP error throws (see [Errors](#errors)).
+The content is deserialized with System.Text.Json and the tolerant settings of `BuckShotJson` (comments, trailing commas, any casing, numbers in quotes), so `[JsonPropertyName]` works. Code which reads a lot of JSON can deserialize `HttpResult.Content` with a source generated context, like the Jira and Confluence clients. An HTTP error throws (see [Errors](#errors)).
 
 ### Any request
 
@@ -97,8 +97,8 @@ request to a server someone else chose needs: see [custom-uploader.md](custom-up
 ### An OAuth 2 service
 
 `OAuth2Helper.CreateOAuth2RequestAsync` authorizes (once, in the browser) or refreshes the token when needed and returns a
-request with the bearer token, or null when the user didn't authorize. Box and Dropbox (`Greenshot.Plugin.Box/Api/BoxUtils.cs`,
-`Greenshot.Plugin.Dropbox/Api/DropboxUtils.cs`) show the whole flow, including storing the refresh token encrypted.
+request with the bearer token, or null when the user didn't authorize. Box and Dropbox (`BuckShot.Plugin.Box/Api/BoxUtils.cs`,
+`BuckShot.Plugin.Dropbox/Api/DropboxUtils.cs`) show the whole flow, including storing the refresh token encrypted.
 A service needs a registered client id; keep it out of the repository (the `*.Credentials.template` files are filled by the build).
 
 ### Errors
@@ -122,7 +122,7 @@ A service needs a registered client id; keep it out of the repository (the `*.Cr
   custom uploader without `ErrorMessage` shows and logs the start (100 characters) of a text error answer, the user needs
   the service's reason. At DEBUG `HttpService` logs the shape of a request and its answer, never a value: content type and
   length, the names of form fields, the name, type and length of a file, the time to the answer.
-- **Secrets are stored encrypted** for the Windows user, never in clear text in greenshot.ini, and never written to an export
+- **Secrets are stored encrypted** for the Windows user, never in clear text in buckshot.ini, and never written to an export
   or a bug report.
 - **Escape what goes into a url** (`Uri.EscapeDataString`) and don't put user text into header values unchecked.
 - **Requests with your own headers or content don't follow redirects.** `HttpService.Current` follows them, and
@@ -134,16 +134,16 @@ A service needs a registered client id; keep it out of the repository (the `*.Cr
 
 ## Proxy, credentials and certificates
 
-- The proxy is the Windows proxy (`WebRequest.DefaultWebProxy`) unless `UseProxy` in `[Core]` of greenshot.ini is false.
+- The proxy is the Windows proxy (`WebRequest.DefaultWebProxy`) unless `UseProxy` in `[Core]` of buckshot.ini is false.
 - The Windows credentials go to the proxy only. A server which asks for Windows authentication doesn't get them.
 - Certificates: the platform validation decides; a certificate it rejects is still accepted when its thumbprint is in
   `AllowedCertificateThumbprints` or the host matches `AllowedUntrustedCertificateHosts` (`*.example.com` patterns) in `[Core]`.
   Both are logged as a warning when they are used.
-- TLS 1.2 and 1.3 only (`GreenshotMain`).
+- TLS 1.2 and 1.3 only (`BuckShotMain`).
 
 ## Testing
 
-`HttpService` takes a handler, so a test answers the requests itself, without network. `Greenshot.Tests/Http/FakeHttpHandler.cs`
+`HttpService` takes a handler, so a test answers the requests itself, without network. `BuckShot.Tests/Http/FakeHttpHandler.cs`
 records what was sent (method, uri, content type, body, user agent):
 
 ```csharp
@@ -156,4 +156,4 @@ Assert.Equal(HttpMethod.Post, Assert.Single(handler.Requests).Method);
 ```
 
 Code which should be testable takes an `HttpService` (or has an internal overload which does, like `ImageDownloader`) and
-uses `HttpService.Current` otherwise. See `Greenshot.Tests/Http` for the tests of the layer itself.
+uses `HttpService.Current` otherwise. See `BuckShot.Tests/Http` for the tests of the layer itself.

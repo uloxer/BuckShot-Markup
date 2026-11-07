@@ -11,13 +11,13 @@ be helpful to understand the context of a message.
 
 ## Primary Language and Structure
 
-- The **leading language is English (en-US)**, located at `src/Greenshot/Languages/greenshot.en-US.ini`
+- The **leading language is English (en-US)**, located at `src/BuckShot/Languages/buckshot.en-US.ini`
   - It is used during development and guaranteed to be up to date
   - A key missing in a translation shows the English text
 - Translation files are **INI language packs** (UTF-8), read by Dapplo.Ini: every key is inside a `[Section]`
   (`[Core]`, `[Editor]`, `[Settings]`, `[SelfService]`, `[Recipe]`), one `key=value` per line, `\n` for a line break
-- Greenshot supports **40 languages** in the main application
-- Plugins have their own language packs `greenshot.{plugin}.{ietf}.ini` with one section named after the plugin
+- BuckShot supports **40 languages** in the main application
+- Plugins have their own language packs `buckshot.{plugin}.{ietf}.ini` with one section named after the plugin
 
 ## Key Documentation Resources
 
@@ -91,11 +91,11 @@ Make sure to deliver high-quality translation by:
    - Checking that no line is outside a section and every line is `key=value`
    - Checking for completeness (no missing keys compared to en-US)
    - Following the review checklists in `TRANSLATION_WORKFLOW.md`
-   - Running the unit tests in `src/Greenshot.Tests/Core/LanguagePackTests.cs`: they check the sections, the format placeholders against English and that every text used in the code exists in en-US
+   - Running the unit tests in `src/BuckShot.Tests/Core/LanguagePackTests.cs`: they check the sections, the format placeholders against English and that every text used in the code exists in en-US
 
 ## Keys and Code
 
-Every key with a fixed name is a property on a language interface (e.g. `src/Greenshot.Base/Languages/IEditorLanguage.cs`, `src/Greenshot.Plugin.Atlassian/Jira/IJiraLanguage.cs`). Adding, renaming or removing a key in en-US therefore needs the matching change in the interface, which is code: point it out to the developer instead of changing it. Translating existing keys needs no code change.
+Every key with a fixed name is a property on a language interface (e.g. `src/BuckShot.Base/Languages/IEditorLanguage.cs`, `src/BuckShot.Plugin.Atlassian/Jira/IJiraLanguage.cs`). Adding, renaming or removing a key in en-US therefore needs the matching change in the interface, which is code: point it out to the developer instead of changing it. Translating existing keys needs no code change.
 
 ## Communication
 
@@ -115,9 +115,9 @@ Before starting translation work:
 
 ## File Locations
 
-- **Main app**: `src/Greenshot/Languages/greenshot.{locale}.ini`
-- **Plugins**: `src/Greenshot.Plugin.{Name}/Languages/greenshot.{plugin}.{locale}.ini`
-- **Installer and website** translations are separate XML files in `src/Greenshot/Languages/installer` and `website`
+- **Main app**: `src/BuckShot/Languages/buckshot.{locale}.ini`
+- **Plugins**: `src/BuckShot.Plugin.{Name}/Languages/buckshot.{plugin}.{locale}.ini`
+- **Installer and website** translations are separate XML files in `src/BuckShot/Languages/installer` and `website`
 - **Documentation**: `docs/vNext/translation/` (see `docs/vNext/translation/README.md` for index)
 - **Tools**: `docs/vNext/translation/TRANSLATION_TOOLS.md` (validation scripts and commands)
   

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>BuckShot.Plugin.Pdf</RootNamespace>
+    <AssemblyName>BuckShot.Plugin.Pdf</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="Languages\buckshot*.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BuckShot.Base\BuckShot.Base.csproj" />
+    <ProjectReference Include="..\BuckShot.Editor\BuckShot.Editor.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="5.6.0" />
+  </ItemGroup>
+</Project>

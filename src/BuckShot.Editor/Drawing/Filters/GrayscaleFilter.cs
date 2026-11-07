@@ -1,0 +1,52 @@
+/*
+ * Greenshot - a free and open source screenshot tool
+ * Copyright (C) 2007-2026 Thomas Braun, Jens Klingen, Robin Krom
+ * 
+ * For more information see: https://getgreenshot.org/
+ * The Greenshot project is hosted on GitHub https://github.com/greenshot/greenshot
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using Dapplo.Windows.Common.Structs;
+using BuckShot.Base.Core;
+using BuckShot.Base.Interfaces.Drawing;
+
+namespace BuckShot.Editor.Drawing.Filters
+{
+    /// <summary>
+    /// GrayscaleFilter makes the image grey
+    /// </summary>
+    [Serializable()]
+    public class GrayscaleFilter : AbstractFilter
+    {
+        public GrayscaleFilter(DrawableContainer parent) : base(parent)
+        {
+        }
+
+        protected override void ApplyFilter(Graphics graphics, Bitmap applyBitmap, NativeRect applyRect, RenderMode renderMode)
+        {
+            // The luminance of BT.709 in linear light, like the grayscale effect and the HDR image
+            using Bitmap gray = ImageHelper.CloneArea(applyBitmap, applyRect, PixelFormat.Format32bppArgb);
+            ImageHelper.ApplyGrayscale(gray);
+            // Mirrored at the edges: when the editor zooms, GDI+ would mix the border pixels with transparency
+            using var attributes = new ImageAttributes();
+            attributes.SetWrapMode(System.Drawing.Drawing2D.WrapMode.TileFlipXY);
+            graphics.DrawImage(gray, applyRect, 0, 0, gray.Width, gray.Height, GraphicsUnit.Pixel, attributes);
+        }
+    }
+}

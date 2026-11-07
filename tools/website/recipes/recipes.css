@@ -1,4 +1,4 @@
-/* The recipe catalog pages; written by tools/website/recipes/build_pages.py in greenshot/greenshot, don't edit it here */
+/* The recipe catalog pages; written by tools/website/recipes/build_pages.py in buckshot/buckshot, don't edit it here */
 .recipes-intro { font-size: 1.1em; line-height: 1.5em; color: #555; max-width: 46em; }
 .recipes-tools { display: flex; flex-wrap: wrap; gap: 0.5em; align-items: center; margin: 1.5em 0 1em; }
 .recipes-tools input[type=search] {

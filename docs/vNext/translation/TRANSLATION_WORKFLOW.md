@@ -1,10 +1,10 @@
 # Translation Workflow Checklist
 
-This document provides step-by-step checklists for common translation tasks in the Greenshot project.
+This document provides step-by-step checklists for common translation tasks in the BuckShot project.
 
 ## Quick Reference
 
-- **Base Language**: English (en-US) - `src/Greenshot/Languages/greenshot.en-US.ini`
+- **Base Language**: English (en-US) - `src/BuckShot/Languages/buckshot.en-US.ini`
 - **Total Languages**: 40 in main app, 20-22 in most plugins
 - **File Format**: INI language packs (`key=value` in `[Section]`s, UTF-8 without BOM)
 - **Missing keys**: show the English text
@@ -19,7 +19,7 @@ When a developer adds a new feature requiring translation:
 
 ### For the Developer (Adding to en-US)
 
-- [ ] Add the new `key=value` line to `src/Greenshot/Languages/greenshot.en-US.ini`, in the right section (`[Core]`, `[Editor]`, `[Settings]`, `[SelfService]`, `[Recipe]`)
+- [ ] Add the new `key=value` line to `src/BuckShot/Languages/buckshot.en-US.ini`, in the right section (`[Core]`, `[Editor]`, `[Settings]`, `[SelfService]`, `[Recipe]`)
 - [ ] Use a clear, descriptive key following existing patterns
   - [ ] Use an existing prefix inside the section where it fits (`contextmenu_`, `clipboard_`, `expert_`, etc.)
   - [ ] Use lowercase with underscores (e.g., `new_feature_title` in `[Editor]`)
@@ -47,7 +47,7 @@ When a developer adds a new feature requiring translation:
 
 ### For Plugin Developers
 
-- [ ] Add to the plugin's en-US language pack (e.g., `greenshot.box.en-US.ini`, section `[Box]`)
+- [ ] Add to the plugin's en-US language pack (e.g., `buckshot.box.en-US.ini`, section `[Box]`)
 - [ ] Add the property to the plugin's language interface (e.g., `IBoxLanguage.cs`), use it as `Texts.Get<IBoxLanguage>().NewText`
 - [ ] For OK and Cancel use `Texts.Core.Ok` / `Texts.Core.Cancel` instead of own keys
 - [ ] New plugin: see "Texts in a Plugin" in [TRANSLATION_GUIDE.md](TRANSLATION_GUIDE.md)
@@ -74,7 +74,7 @@ When new strings appear in the English file:
 
 For each language you're translating:
 
-- [ ] Open the target language pack (e.g., `greenshot.de-DE.ini`)
+- [ ] Open the target language pack (e.g., `buckshot.de-DE.ini`)
 - [ ] Find the section where the new key belongs (same section as in en-US)
   - [ ] Keep the same order as the English file for easier comparison
   - [ ] Group related strings together
@@ -100,11 +100,11 @@ For each language you're translating:
        FNR == 1 { insection = 0 }
        /^\[.+\]$/ { insection = 1; next }
        /^[[:space:]]*$/ || /^[;#]/ { next }
-       !insection || !/=/ { print FILENAME ":" FNR ": " $0 }' src/Greenshot/Languages/greenshot.XX-YY.ini
+       !insection || !/=/ { print FILENAME ":" FNR ": " $0 }' src/BuckShot/Languages/buckshot.XX-YY.ini
   ```
 - [ ] Check for typos and grammatical errors
 - [ ] Verify no keys or section names were changed (only values translated)
-- [ ] Test file in Greenshot if possible (see Testing section)
+- [ ] Test file in BuckShot if possible (see Testing section)
 
 ---
 
@@ -114,7 +114,7 @@ When English strings are modified:
 
 ### Identify Changes
 
-- [ ] Compare old and new versions of `greenshot.en-US.ini`
+- [ ] Compare old and new versions of `buckshot.en-US.ini`
 - [ ] List changed keys (use git diff or comparison tool)
 - [ ] Understand WHY each change was made:
   - [ ] Typo fix → Minor change
@@ -143,7 +143,7 @@ When features are removed and strings are no longer needed:
 
 ### Verification
 
-- [ ] Confirm the key is removed from `greenshot.en-US.ini`
+- [ ] Confirm the key is removed from `buckshot.en-US.ini`
 - [ ] Confirm the property is removed from the language interface
 - [ ] Search codebase to verify the text is truly unused, by property name and, for runtime keys, by key:
   ```bash
@@ -170,11 +170,11 @@ When adding support for a completely new language:
 ### Setup
 
 - [ ] Determine the correct IETF language tag (e.g., `pt-BR`, `zh-CN`)
-- [ ] Create new file: `src/Greenshot/Languages/greenshot.XX-YY.ini`
+- [ ] Create new file: `src/BuckShot/Languages/buckshot.XX-YY.ini`
 
 ### File Creation
 
-- [ ] Copy `greenshot.en-US.ini` as template, or start with only the sections and keys you translate (missing keys show English)
+- [ ] Copy `buckshot.en-US.ini` as template, or start with only the sections and keys you translate (missing keys show English)
 - [ ] Set the language name in the first section:
   ```ini
   [__language__]
@@ -186,20 +186,20 @@ When adding support for a completely new language:
   - [ ] Then settings and dialogs
   - [ ] Finally help text and detailed messages
 - [ ] Use glossary to maintain consistency from the start
-- [ ] Add the language as an installer component in `src/Greenshot-Installer/includes/languages.iss` (copy the lines of an existing language)
+- [ ] Add the language as an installer component in `src/BuckShot-Installer/includes/languages.iss` (copy the lines of an existing language)
 
 ### Plugin Support
 
 - [ ] Decide which plugins to support initially
 - [ ] Create corresponding plugin language packs (no `[__language__]` section):
-  - `greenshot.box.XX-YY.ini`
-  - `greenshot.imgur.XX-YY.ini`
+  - `buckshot.box.XX-YY.ini`
+  - `buckshot.imgur.XX-YY.ini`
   - etc.
 - [ ] Translate plugin strings (9-25 strings each)
 
 ### Testing
 
-- [ ] Build Greenshot with new language, or copy the language packs to `%APPDATA%\Greenshot\Languages`
+- [ ] Build BuckShot with new language, or copy the language packs to `%APPDATA%\BuckShot\Languages`
 - [ ] Verify language appears in language selection with the right name
 - [ ] Check UI for:
   - [ ] Text truncation issues
@@ -248,12 +248,12 @@ Before committing translation work:
 
 ### Testing
 
-- [ ] Build Greenshot (if possible):
+- [ ] Build BuckShot (if possible):
   ```powershell
-  msbuild src/Greenshot.sln /p:Configuration=Release /t:Rebuild
+  msbuild src/BuckShot.sln /p:Configuration=Release /t:Rebuild
   ```
-  Or copy the language pack to `%APPDATA%\Greenshot\Languages` and use an installed Greenshot (remove the file afterwards).
-- [ ] Launch Greenshot
+  Or copy the language pack to `%APPDATA%\BuckShot\Languages` and use an installed BuckShot (remove the file afterwards).
+- [ ] Launch BuckShot
 - [ ] Select your language in settings
 - [ ] Navigate through UI checking translations:
   - [ ] Context menu
@@ -342,7 +342,7 @@ When translating plugin-specific strings:
 
 ### Translation
 
-- [ ] Locate plugin language packs: `src/Greenshot.Plugin.{Name}/Languages/greenshot.{module}.{ietf}.ini`
+- [ ] Locate plugin language packs: `src/BuckShot.Plugin.{Name}/Languages/buckshot.{module}.{ietf}.ini`
 - [ ] Keep the single section named after the plugin (`[Box]`, `[Imgur]`, ...)
 - [ ] Follow same process as main app translation
 - [ ] Keep service-specific terms:
@@ -366,8 +366,8 @@ When translating plugin-specific strings:
 - [ ] Check the key is spelled as in en-US (case, `_` and `-` don't matter)
 - [ ] Check no line before the first section holds keys
 - [ ] Check the value is on one line (a continuation line is not part of the value)
-- [ ] Check the file name: `greenshot.{ietf}.ini` or `greenshot.{module}.{ietf}.ini`
-- [ ] Check for an older file with the same name in `%APPDATA%\Greenshot\Languages` that overrides the key
+- [ ] Check the file name: `buckshot.{ietf}.ini` or `buckshot.{module}.{ietf}.ini`
+- [ ] Check for an older file with the same name in `%APPDATA%\BuckShot\Languages` that overrides the key
 
 ### Issue: Text Truncated in UI
 
@@ -410,29 +410,29 @@ awk '{ sub(/\r$/, "") }
      FNR == 1 { insection = 0 }
      /^\[.+\]$/ { insection = 1; next }
      /^[[:space:]]*$/ || /^[;#]/ { next }
-     !insection || !/=/ { print FILENAME ":" FNR ": " $0 }' src/Greenshot/Languages/greenshot.XX-YY.ini
+     !insection || !/=/ { print FILENAME ":" FNR ": " $0 }' src/BuckShot/Languages/buckshot.XX-YY.ini
 
 # Count keys per section
 awk '/^\[/ { section = $0; next } /^[;#]/ || !/=/ { next } { count[section]++ }
-     END { for (s in count) printf "%-16s %d\n", s, count[s] }' src/Greenshot/Languages/greenshot.XX-YY.ini | sort
+     END { for (s in count) printf "%-16s %d\n", s, count[s] }' src/BuckShot/Languages/buckshot.XX-YY.ini | sort
 
 # Find empty values
-grep -n '^[^;#[][^=]*=[[:space:]]*$' src/Greenshot/Languages/greenshot.XX-YY.ini
+grep -n '^[^;#[][^=]*=[[:space:]]*$' src/BuckShot/Languages/buckshot.XX-YY.ini
 
 # Compare keys between languages ("<" = missing in XX-YY, ">" = not in en-US)
 keys() { awk '/^\[/ { s = $0; next } /^[;#]/ { next } /=/ { print s substr($0, 1, index($0, "=") - 1) }' "$1" | sort; }
-diff <(keys src/Greenshot/Languages/greenshot.en-US.ini) \
-     <(keys src/Greenshot/Languages/greenshot.XX-YY.ini)
+diff <(keys src/BuckShot/Languages/buckshot.en-US.ini) \
+     <(keys src/BuckShot/Languages/buckshot.XX-YY.ini)
 ```
 
-The `diff` compares the exact spelling of keys. `compare_keys.sh` and the validation scripts in `TRANSLATION_TOOLS.md` compare keys the way Greenshot does (case-insensitive, `_` and `-` ignored).
+The `diff` compares the exact spelling of keys. `compare_keys.sh` and the validation scripts in `TRANSLATION_TOOLS.md` compare keys the way BuckShot does (case-insensitive, `_` and `-` ignored).
 
 ### Recommended Approach
 
 1. **Use a good text editor**: Visual Studio Code, Notepad++ or any editor that saves UTF-8 without BOM and doesn't wrap lines when saving
 2. **Turn on INI syntax highlighting**: Sections and keys are easier to see
 3. **Use version control**: Git to track changes and compare versions
-4. **Test frequently**: Copy the language pack to `%APPDATA%\Greenshot\Languages` to see translations in context
+4. **Test frequently**: Copy the language pack to `%APPDATA%\BuckShot\Languages` to see translations in context
 5. **Document decisions**: Explain non-obvious translations in the commit message or pull request
 
 ---

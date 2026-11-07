@@ -1,0 +1,184 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <RootNamespace>BuckShot</RootNamespace>
+    <AssemblyName>BuckShot</AssemblyName>
+    <!-- Windows uses the assembly title as the EXE's FileDescription, including tray settings. -->
+    <AssemblyTitle>BuckShot Markup</AssemblyTitle>
+    <OutputType>WinExe</OutputType>
+    <ApplicationIcon>icons\applicationIcon\icon.ico</ApplicationIcon>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <ApplicationManifest>buckshot.manifest</ApplicationManifest>
+	  <EmbeddedResourceUseDependentUponConvention>false</EmbeddedResourceUseDependentUponConvention>
+	  <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <!-- DebugLight and ReleaseLight build BuckShot Light, see Directory.Build.props -->
+    <Configurations>Debug;Release;DebugLight;ReleaseLight</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>BuckShot.Tests</_Parameter1>
+    </AssemblyAttribute>
+    <!-- The edition, read by BuckShot.Base.Core.EditionInfo -->
+    <AssemblyMetadata Include="BuckShotEdition" Value="$(BuckShotEdition)" />
+  </ItemGroup>
+  <!-- Every edition but Full has its name in the version info, so Explorer's file properties show it -->
+  <PropertyGroup Condition="'$(BuckShotEdition)' != 'Full'">
+    <Product>BuckShot Markup</Product>
+  </PropertyGroup>
+  <!--
+    The full version is a 64-bit exe: COM doesn't give the click on a toast to a BuckShot it started for it when BuckShot.exe is
+    AnyCPU (its PE header says 32-bit, although it runs as a 64-bit process). BuckShot Light has no toasts and stays AnyCPU,
+    so it also runs on 32-bit Windows and natively on ARM64.
+  -->
+  <PropertyGroup Condition="'$(BuckShotEdition)' == 'Full'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- Restore for both, the Release build of BuckShot-Installer builds Light (win-x86, as AnyCPU) with the restore of the full version -->
+    <RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
+  </PropertyGroup>
+  <!--
+    BuckShot Light (/p:BuckShotEdition=Light, or the DebugLight / ReleaseLight configurations): the basics only, for the Light installer
+    (setup-light.iss) and the Light portable version. BUCKSHOT_LIGHT compiles out loading plugins, the AI tools (buckshot-mcp) and the
+    browser extension. It is built next to the full version, in bin\Debug-Light or bin\Release-Light; the Release build of
+    BuckShot-Installer builds it too.
+  -->
+  <PropertyGroup Condition="'$(BuckShotEdition)' == 'Light'">
+    <DefineConstants>$(DefineConstants);BUCKSHOT_LIGHT</DefineConstants>
+    <OutputPath>bin\$(BuckShotBaseConfiguration)-Light\</OutputPath>
+    <IntermediateOutputPath>obj\$(BuckShotBaseConfiguration)-Light\</IntermediateOutputPath>
+  </PropertyGroup>
+  <!-- The code BuckShot Light doesn't have: loading plugins, the AI tools (buckshot-mcp), the browser extension, with their settings tabs,
+       and the toasts (Light informs with the balloons of the tray icon) -->
+  <ItemGroup Condition="'$(BuckShotEdition)' == 'Light'">
+    <Compile Remove="Ipc\BrowserExtension\**\*.cs" />
+    <Compile Remove="Settings\ViewModels\SettingsViewModel.AiTools.cs" />
+    <Compile Remove="Settings\ViewModels\SettingsViewModel.Plugins.cs" />
+    <Compile Remove="Ai\**\*.cs" />
+    <Compile Remove="Plugins\**\*.cs" />
+    <Compile Remove="Notifications\**\*.cs" />
+    <Compile Remove="Native\ToastNotificationService.cs" />
+    <Page Remove="Ai\**\*.xaml" />
+    <Page Remove="Plugins\**\*.xaml" />
+  </ItemGroup>
+  <!--
+    BuckShot Light must not contain that code at all, not only leave it unused: the build fails when one of these types
+    (or members) is in the compiled BuckShot.exe. Names are looked up in the metadata string heap (UTF-8, zero terminated).
+  -->
+  <UsingTask TaskName="CheckLightAssembly" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Assembly ParameterType="System.String" Required="true" />
+      <ForbiddenNames ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Linq" />
+      <Using Namespace="System.Text" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+        byte[] content = File.ReadAllBytes(Assembly);
+        string latin = Encoding.GetEncoding("ISO-8859-1").GetString(content);
+        var found = ForbiddenNames.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(n => n.Trim())
+            .Where(n => latin.Contains("\0" + n + "\0"))
+            .ToList();
+        foreach (var name in found)
+        {
+            Log.LogError("BuckShot Light must not contain " + name + ", it is in " + Assembly);
+        }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+  <Target Name="CheckLightAssembly" AfterTargets="CoreCompile" Condition="'$(BuckShotEdition)' == 'Light'">
+    <CheckLightAssembly Assembly="@(IntermediateAssembly->'%(FullPath)')" ForbiddenNames="PluginHelper;LoadPluginsAsync;AiToolIpcHandler;AiRecipeIpcHandler;AiToolCaller;AiToolClient;AiToolAccess;AiToolCapture;AiWindowRefs;McpServerStatus;RegisterAiToolRecipes;ImportCaptureDecoder;BrowserContextTracker;ExtensionOriginPolicy;HandleImportCaptureAsync;AiToolsSettingsPage;PluginsSettingsPage;AiToolsIpcExtension;AiToolRecipes;BrowserExtensionIpcExtension;BrowserExtensionRecipes;NotificationCaptures;NotificationIcons;NotificationButtons;ToastArguments;ToastNotificationService;ToastActivator;DesktopToasts" />
+  </Target>
+  <PropertyGroup Condition="'$(BuckShotBaseConfiguration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Languages\buckshot*.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Resource Include="icons\applicationIcon\icon.ico" />
+    <Resource Include="..\..\assets\branding\rendered\blueprint-panel.png" Link="Branding\blueprint-panel.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapplo.Windows.AppRestartManager" Version="3.19.3" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.13" />
+    <PackageReference Include="System.CommandLine" Version="3.0.0-preview.1.26104.118" />
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
+    <Reference Include="System.Security" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Images and sounds, loaded with EmbeddedResources (non string .resx entries would need System.Resources.Extensions) -->
+    <EmbeddedResource Include="Resources\Tray\*.png" LogicalName="BuckShot.Shell.TrayMenu.%(Filename)" />
+    <EmbeddedResource Include="sounds\camera.wav" LogicalName="BuckShot.Sounds.camera" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The edition only changes BuckShot.exe, the libraries are the same (and built as Debug or Release for DebugLight and ReleaseLight) -->
+    <ProjectReference Include="..\BuckShot.Base\BuckShot.Base.csproj" UndefineProperties="BuckShotEdition" SetConfiguration="Configuration=$(BuckShotBaseConfiguration)" />
+    <ProjectReference Include="..\BuckShot.Editor\BuckShot.Editor.csproj" UndefineProperties="BuckShotEdition" SetConfiguration="Configuration=$(BuckShotBaseConfiguration)" />
+    <ProjectReference Include="..\BuckShot.BuildTasks\BuckShot.BuildTasks.csproj" ReferenceOutputAssembly="false" ExcludeAssets="all" UndefineProperties="BuckShotEdition" SetConfiguration="Configuration=$(BuckShotBaseConfiguration)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="log4net-release.xml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="5.6.0" />
+    <PackageReference Update="MSBuildTasks" Version="1.5.0.235">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <UsingTask TaskName="EmojiDataTask" TaskFactory="TaskHostFactory" AssemblyFile="..\BuckShot.BuildTasks\bin\$(BuckShotBaseConfiguration)\$(TargetFramework)\BuckShot.BuildTasks.dll" />
+
+  <!-- After ResolveProjectReferences: that builds BuckShot.BuildTasks, in a clean build its dll doesn't exist before (BeforeBuild is too early) -->
+  <Target Name="GenerateEmojiTestTxtFile" AfterTargets="ResolveProjectReferences" Condition="'$(BuildingProject)' == 'true' And '$(DesignTimeBuild)' != 'true'" Inputs="..\BuckShot.Editor\Controls\Emoji\emoji-test.txt" Outputs="$(TargetDir)emojis.xml">
+    <!-- The output directory doesn't exist yet in a clean build (or the first build of BuckShot Light) -->
+    <MakeDir Directories="$(TargetDir)" />
+    <EmojiDataTask EmojiTestTxtFile="..\BuckShot.Editor\Controls\Emoji\emoji-test.txt" OutputFilename="$(TargetDir)emojis.xml" />
+  </Target>
+
+  <PropertyGroup Condition="'$(BuckShotBaseConfiguration)' == 'Debug'">
+    <PostBuildEvent>
+      copy "$(SolutionDir)BuckShot\log4net-debug.xml" "$(TargetDir)log4net.xml" &gt;nul
+    </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(BuckShotBaseConfiguration)' == 'Release'">
+    <PostBuildEvent>
+      copy "$(SolutionDir)BuckShot\log4net-release.xml" "$(TargetDir)log4net.xml" &gt;nul
+    </PostBuildEvent>
+  </PropertyGroup>
+
+  <!--
+    The plugins copy themselves into Plugins\<name> when they are built (PostBuild in Directory.Build.props). A Rebuild cleans and builds
+    project by project, so a clean of this output folder after a plugin was built loses that copy, and the plugin doesn't copy itself
+    again. BuckShot is built after all plugins (solution dependencies), so it copies them once more, the same way: the plugin and its
+    dlls into Plugins\<name> without the dlls BuckShot already has, and its language files into Languages.
+  -->
+  <Target Name="CollectPlugins" AfterTargets="Build" Condition="'$(BuckShotEdition)' == 'Full' And '$(DesignTimeBuild)' != 'true'">
+    <ItemGroup>
+      <_BuckShotPluginProject Include="..\BuckShot.Plugin.*\BuckShot.Plugin.*.csproj" Exclude="..\BuckShot.Plugin.RecipeEditor\BuckShot.Plugin.RecipeEditor.csproj" />
+      <_BuckShotPluginProject Remove="@(_BuckShotPluginProject)" Condition="'$([System.String]::Copy(&quot;;$(BuckShotUndeliveredPlugins);&quot;).Contains(&quot;;%(Filename);&quot;))' == 'true'" />
+      <_BuckShotPluginFile Include="%(_BuckShotPluginProject.RootDir)%(_BuckShotPluginProject.Directory)bin\$(BuckShotBaseConfiguration)\$(TargetFramework)\%(_BuckShotPluginProject.Filename).*;%(_BuckShotPluginProject.RootDir)%(_BuckShotPluginProject.Directory)bin\$(BuckShotBaseConfiguration)\$(TargetFramework)\*.dll">
+        <Plugin>%(_BuckShotPluginProject.Filename)</Plugin>
+      </_BuckShotPluginFile>
+      <_BuckShotPluginFile Remove="@(_BuckShotPluginFile)" Condition="Exists('$(TargetDir)%(Filename)%(Extension)')" />
+      <_BuckShotPluginLanguageFile Include="%(_BuckShotPluginProject.RootDir)%(_BuckShotPluginProject.Directory)bin\$(BuckShotBaseConfiguration)\$(TargetFramework)\Languages\*.ini" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_BuckShotPluginFile)" DestinationFolder="$(TargetDir)Plugins\%(Plugin)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(_BuckShotPluginLanguageFile)" DestinationFolder="$(TargetDir)Languages" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

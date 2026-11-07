@@ -1,6 +1,6 @@
 # Async & Threading Roadmap
 
-Plan to replace the sync/async workarounds in Greenshot (core, pipeline, destinations, plugins) with one clear
+Plan to replace the sync/async workarounds in BuckShot (core, pipeline, destinations, plugins) with one clear
 threading model and async APIs all the way through. **No backwards compatibility for plugins**: plugin and
 destination interfaces are redesigned, and all in-repo destinations and plugins are refactored in the same
 branch. Everything lands as **one PR** (see section 7.0).
@@ -34,7 +34,7 @@ for PR review. Sections 4–5 are the new types. Section 7 is the work plan.
 
 Re-run:
 ```
-grep -rnE "Application\.DoEvents|GetAwaiter\(\)\.GetResult\(\)|\.Result\b|\.Wait\(|async void|Thread\.Sleep|new Thread\(|WaitOne\(|Task\.Factory\.StartNew|ApartmentState\.STA|uiContext\.Send|InvokeOnSta|Task\.Run\(|InvokeRequired|new TaskCompletionSource|new Progress<" --include=*.cs src | grep -v /obj/ | grep -v Greenshot.Tests
+grep -rnE "Application\.DoEvents|GetAwaiter\(\)\.GetResult\(\)|\.Result\b|\.Wait\(|async void|Thread\.Sleep|new Thread\(|WaitOne\(|Task\.Factory\.StartNew|ApartmentState\.STA|uiContext\.Send|InvokeOnSta|Task\.Run\(|InvokeRequired|new TaskCompletionSource|new Progress<" --include=*.cs src | grep -v /obj/ | grep -v BuckShot.Tests
 ```
 (`InvokeRequired`, `new TaskCompletionSource` and `new Progress<` were added. Each one hides a thread assumption,
 see 1.5 and section 3.)
@@ -211,8 +211,8 @@ Semantics (must be identical across implementations, and tested):
 - Exceptions from the delegate propagate to the awaiter. Nothing is swallowed.
 
 Implementations:
-- `WpfUiDispatcher`: the one Greenshot uses, `DispatcherSynchronizationContext.Post` captured at startup (on the thread
-  that later runs the message loop of Greenshot, a `Dispatcher.PushFrame`; not `Application.Run`, a running WPF
+- `WpfUiDispatcher`: the one BuckShot uses, `DispatcherSynchronizationContext.Post` captured at startup (on the thread
+  that later runs the message loop of BuckShot, a `Dispatcher.PushFrame`; not `Application.Run`, a running WPF
   Application shuts down at `WM_QUERYENDSESSION`). The WinForms editor forms live on this thread too,
   `WindowsFormsHost.EnableWindowsFormsInterop` gives them their keyboard handling. Posting to the captured context
   avoids `Control.BeginInvoke`'s "handle not yet created" failure mode during startup and shutdown. After
@@ -304,12 +304,12 @@ public interface IHousekeeping
 {
     void Enqueue(string description, Func<CancellationToken, Task> work, TimeSpan delay = default);
 }
-// Housekeeping.Current: the one of the running Greenshot, null in tests or a second instance
+// Housekeeping.Current: the one of the running BuckShot, null in tests or a second instance
 ```
 - For work nobody waits for, e.g. removing temp files after a while (`ImageIO.RegisterTmpFile` queues the removal
-  after 10 hours). Any part of Greenshot can queue work, plugins too (from `ConfigureServices` on).
+  after 10 hours). Any part of BuckShot can queue work, plugins too (from `ConfigureServices` on).
 - Nothing is saved: what must survive an exit or a crash is found again at the next start. Temp files go to
-  `ImageIO.GetTmpDirectory()` (`%TEMP%\Greenshot\Files`), and every start queues the removal of the files there which
+  `ImageIO.GetTmpDirectory()` (`%TEMP%\BuckShot\Files`), and every start queues the removal of the files there which
   are older than 10 hours (a file still in use at exit, or left by a crash) and of the files of earlier shares.
 - One item after the other on the thread pool, in the order they are due. Nothing runs before the background work
   of the start (plugins, prewarms) is done, so it doesn't compete with the start.
@@ -419,7 +419,7 @@ user returns `null` (= declined).
 
 ### 5.4 Plugins
 ```csharp
-public interface IGreenshotPlugin : IAsyncDisposable
+public interface IBuckShotPlugin : IAsyncDisposable
 {
     string Name { get; }
     void ConfigureServices(IServiceCollection services);         // registration only, sync, no I/O
@@ -431,7 +431,7 @@ public interface IConfigurablePlugin { object CreateSettingsViewModel(IServicePr
 - Host starts plugins **in parallel** with a per-plugin timeout, and the main window doesn't wait for them. A slow
   or failing plugin is logged and disabled, and never blocks startup.
 - Removed: `RegisterConfiguration(IniConfig)`, `RegisterServices(IServiceLocator)`, `bool Start()`, `Shutdown()`,
-  `Configure()`, `CreateConfigurationControl()` (WPF `UIElement`). `IGreenshotHost` goes away. Plugins receive
+  `Configure()`, `CreateConfigurationControl()` (WPF `UIElement`). `IBuckShotHost` goes away. Plugins receive
   services (`ICaptureFlowRunner`, `IUserInteraction`, `IUiDispatcher`, `IStaWorkerFactory`, `IHttpClientFactory`,
   config) through DI.
 
@@ -554,13 +554,13 @@ mid-upload, and `NetworkHelper`'s sync paths are deleted.
 
 ### Phase 3: Plugins lifecycle, UI menus
 - [x] `DestinationMenuBuilder` (tray menu, editor, picker) from descriptors.
-- [x] New `IGreenshotPlugin` lifecycle (parallel start with timeout); remove `IGreenshotHost` and `IServiceLocator`
+- [x] New `IBuckShotPlugin` lifecycle (parallel start with timeout); remove `IBuckShotHost` and `IServiceLocator`
       usage in plugins.
 - [x] ExternalCommand: `Process` + `Exited` event/TCS (net48) → `WaitForExitAsync` (.NET 10); no STA thread.
 - [x] Zxing: `ICaptureAnalyzer` (or interim async step if Phase 4 isn't ready).
 - [x] RecipeEditor: open on UI thread via dispatcher (remove STA thread creation).
 
-Done when: no plugin references WinForms/WPF types through the plugin contract, and `IGreenshotHost` /
+Done when: no plugin references WinForms/WPF types through the plugin contract, and `IBuckShotHost` /
 `IServiceLocator` no longer exist.
 
 ### Phase 4: Analysis (with imaging roadmap step 2)

@@ -1,6 +1,6 @@
 # Architectural Plan: First-Class Recipe Contracts, CLI Querying, and Stderr Error Handling
 
-This document specifies the architectural design for introducing **formal contracts** across Greenshot's capture pipeline, step nodes, and recipes. It defines how steps and recipes disclose what they consume and produce, how the CLI can query arbitrary values directly from the payload without modifying recipes, and how `StderrStep` and custom exit codes are supported.
+This document specifies the architectural design for introducing **formal contracts** across BuckShot's capture pipeline, step nodes, and recipes. It defines how steps and recipes disclose what they consume and produce, how the CLI can query arbitrary values directly from the payload without modifying recipes, and how `StderrStep` and custom exit codes are supported.
 
 ---
 
@@ -15,8 +15,8 @@ This document specifies the architectural design for introducing **formal contra
 ### Key Capabilities Introduced
 * **Formal `StepContract` & `RecipeContract`**: Declarative schemas for every step and recipe specifying expected inputs, produced outputs, parameter types, and visual payload impact.
 * **Dual Declaration Model**: Attribute-based annotations on step classes for clean compile-time definitions, plus a fluent programmatic API for dynamic or plugin-provided steps.
-* **CLI Recipe Introspection (`greenshot --info <recipe>`)**: Rich human-readable or JSON disclosure of a recipe's complete contract and node topology.
-* **Direct Value Querying (`greenshot-cli -r <recipe> --query "${Payload.Width}x${Payload.Height}"` or `--json`)**: Extract arbitrary context or payload values directly from the command line without editing the recipe.
+* **CLI Recipe Introspection (`buckshot --info <recipe>`)**: Rich human-readable or JSON disclosure of a recipe's complete contract and node topology.
+* **Direct Value Querying (`buckshot-cli -r <recipe> --query "${Payload.Width}x${Payload.Height}"` or `--json`)**: Extract arbitrary context or payload values directly from the command line without editing the recipe.
 * **`StderrStep` & Custom Exit Codes**: Dedicated pipeline node to stream messages to stderr in real time and abort execution with a caller-defined exit code (e.g. `2`, `404`).
 * **Recipe Editor Visual Introspection**: Port contracts, variable autocomplete in `${...}` expressions, and compile-time DAG dependency validation.
 
@@ -111,7 +111,7 @@ classDiagram
 ### 2.2 Core Enums & Data Types
 
 ```csharp
-namespace Greenshot.Base.Recipes.Contracts
+namespace BuckShot.Base.Recipes.Contracts
 {
     public enum ContractDataType
     {
@@ -193,7 +193,7 @@ public class ZxingStep : ICaptureStep { ... }
 
 * **Parameters** have one name each; a recipe writes it exactly as declared, the validator reports another casing.
 * **Allowed values** of an `Enum` parameter are either fixed (`AllowedValues = new[] { ... }`) or supplied at runtime by an `IAllowedValuesProvider` (`AllowedValuesProvider = typeof(SaveableFileFormatIds)`), for values that depend on what is registered. The provider is asked every time the values are read, so e.g. file formats registered by a plugin later are allowed too. All `Format` parameters use `SaveableFileFormatIds`: the ids of the formats the file format registry can currently save.
-* **Values with more than one part** (a list, or objects) declare their type: `[StepParameter("Branches", ContractDataType.Object, ValueType = typeof(List<ConditionalBranch>))]`. The validator reads the recipe's value into that type as strictly as the recipe itself (names as declared, no unknown properties, types as declared) and the step gets the typed value (`GetParameter<List<ConditionalBranch>>`). The type has to be in a source generated `JsonSerializerContext` (`[JsonSerializable(typeof(List<ConditionalBranch>))]`): Greenshot.Base has one for the core steps, a plugin gives its own to `IStepRegistry.RegisterJsonTypes` in `RegisterSteps`, before registering its steps. Registering a step whose type is in no context fails with a message naming the parameter. No reflection is needed to read these values, which keeps the way open for trimming and AOT. A list of fixed names declares them as `AllowedValues` (the torn `Edges`: Top, Right, Bottom, Left), the validator checks each item. `Variables` is a `Dictionary<string, object>`: any names, values as written.
+* **Values with more than one part** (a list, or objects) declare their type: `[StepParameter("Branches", ContractDataType.Object, ValueType = typeof(List<ConditionalBranch>))]`. The validator reads the recipe's value into that type as strictly as the recipe itself (names as declared, no unknown properties, types as declared) and the step gets the typed value (`GetParameter<List<ConditionalBranch>>`). The type has to be in a source generated `JsonSerializerContext` (`[JsonSerializable(typeof(List<ConditionalBranch>))]`): BuckShot.Base has one for the core steps, a plugin gives its own to `IStepRegistry.RegisterJsonTypes` in `RegisterSteps`, before registering its steps. Registering a step whose type is in no context fails with a message naming the parameter. No reflection is needed to read these values, which keeps the way open for trimming and AOT. A list of fixed names declares them as `AllowedValues` (the torn `Edges`: Top, Right, Bottom, Left), the validator checks each item. `Variables` is a `Dictionary<string, object>`: any names, values as written.
 * **Annotations** (`Annotations` of the Annotation step) are a list of objects whose properties depend on their `Type`. `AnnotationProperties` declares them for the built-in types (with the common ones for size and position), a plugin gives the properties of its types to `IRecipeDrawableRegistry.RegisterDrawableFactory(type, factory, scaleOptions, properties)` (the QR code plugin does). The validator reports an unknown type, a property the type doesn't have, another casing and a value of another type; the recipe editor writes only the declared properties, in their type. A type registered without properties isn't checked.
 * **Outputs** are `Conditional` when the step does not always set them (only when something was found); `WhenParameter = "SaveDirectory"` marks an output that is always set when the node has that parameter.
 * **Node-specific names**: `{NodeId}` (e.g. `UserChoice.{NodeId}`), `{Parameter:A}` (the variable named by parameter A), and `{ParameterKeys:X}` (every key of the dictionary parameter X, e.g. SetVariable's `Variables`).
@@ -229,7 +229,7 @@ Recipe inputs are the trigger inputs plus required step inputs that no node prod
 * A required parameter is missing, a literal value is not one of the allowed values, a parameter is not read by the step.
 * A node is never executed; a transition or start node refers to a node that does not exist; the flow has a cycle.
 
-`greenshot --info <recipe>` shows the same warnings.
+`buckshot --info <recipe>` shows the same warnings.
 
 ### 3.3 Runtime Checks
 
@@ -243,7 +243,7 @@ Recipe inputs are the trigger inputs plus required step inputs that no node prod
 
 ### 4.1 Pipeline Context Additions
 
-We extend [`CaptureFlowContext`](file:///d:/code/greenshot/src/Greenshot.Base/Recipes/Pipeline/CaptureFlowContext.cs) to provide dedicated stderr streaming and exit code tracking:
+We extend [`CaptureFlowContext`](file:///d:/code/buckshot/src/BuckShot.Base/Recipes/Pipeline/CaptureFlowContext.cs) to provide dedicated stderr streaming and exit code tracking:
 
 ```csharp
 public class CaptureFlowContext : IDisposable
@@ -317,7 +317,7 @@ When `StderrStep` writes:
   "text": "Error: Barcode not detected in file 'sample.png'\n"
 }
 ```
-`greenshot-cli.exe` immediately writes this chunk to standard error. Upon recipe completion, the process terminates with the specified `exitCode`.
+`buckshot-cli.exe` immediately writes this chunk to standard error. Upon recipe completion, the process terminates with the specified `exitCode`.
 
 ---
 
@@ -325,28 +325,28 @@ When `StderrStep` writes:
 
 ### 5.1 Querying Payload / Context Directly (`--query`)
 
-Users often need a specific value from a recipe without modifying its nodes to insert a `StdoutStep`. We introduce `--query "<expression>"` to `greenshot-cli.exe`:
+Users often need a specific value from a recipe without modifying its nodes to insert a `StdoutStep`. We introduce `--query "<expression>"` to `buckshot-cli.exe`:
 
 ```bash
 # Extract image dimensions:
-greenshot-cli.exe -r capture_screen --query "${Payload.Width}x${Payload.Height}"
+buckshot-cli.exe -r capture_screen --query "${Payload.Width}x${Payload.Height}"
 # Output: 1920x1080
 
 # Extract QR code text:
-greenshot-cli.exe -r qr --file invoice.png --query "${Barcode.Text}"
+buckshot-cli.exe -r qr --file invoice.png --query "${Barcode.Text}"
 # Output: https://invoice.example.com/pay/12345
 
 # Query saved destination file path:
-greenshot-cli.exe -r save_window --query "${Destination.Filename}"
-# Output: C:\Users\robin\Pictures\Greenshot\Greenshot_2026-09-27.png
+buckshot-cli.exe -r save_window --query "${Destination.Filename}"
+# Output: C:\Users\robin\Pictures\BuckShot\BuckShot_2026-09-27.png
 ```
 
 ### 5.2 JSON Output (`--json`)
 
-If `--json` is supplied, Greenshot outputs a structured JSON object containing all execution metadata, resolved variables, and payload details:
+If `--json` is supplied, BuckShot outputs a structured JSON object containing all execution metadata, resolved variables, and payload details:
 
 ```bash
-greenshot-cli.exe -r qr --file invoice.png --json
+buckshot-cli.exe -r qr --file invoice.png --json
 ```
 
 Output:
@@ -380,7 +380,7 @@ Output:
 Users can inspect any recipe's full contract directly from the terminal:
 
 ```bash
-greenshot-cli.exe --info qr
+buckshot-cli.exe --info qr
 ```
 
 Sample output:
@@ -417,7 +417,7 @@ Step Pipeline:
 
 Or in JSON format for automated tooling or extensions:
 ```bash
-greenshot-cli.exe --info qr --json
+buckshot-cli.exe --info qr --json
 ```
 
 ---
@@ -454,7 +454,7 @@ flowchart TD
 ```
 
 ### Phase 1: Contract Models & Context Enhancements
-* Create `Greenshot.Base.Recipes.Contracts`:
+* Create `BuckShot.Base.Recipes.Contracts`:
   * `StepContract`, `ParameterContract`, `VariableContract`, `PayloadContract`.
   * Enums: `ContractDataType`, `PayloadRequirement`, `PayloadEffect`.
 * Update `CaptureFlowContext`:
@@ -467,14 +467,14 @@ flowchart TD
 * Decorate all core and plugin steps, with the parameters and variables they actually use.
 
 ### Phase 3: `StderrStep` Implementation
-* Implement `StderrStep` in `src/Greenshot/Recipes/Steps/StderrStep.cs`.
+* Implement `StderrStep` in `src/BuckShot/Recipes/Steps/StderrStep.cs`.
 * Register under `WellKnownStepTypes.Stderr` in `CapturePipeline`.
 * Wire `context.StderrWriter` in `IpcSecurityDispatcher` to emit `{"stream": "stderr", "text": "..."}` frames.
 * Propagate `context.ExitCode` into final IPC reply `exit_code`.
 
 ### Phase 4: CLI Inspection & Value Querying
 * Implement IPC command `DESCRIBE_RECIPE` in `IpcSecurityDispatcher`.
-* Update `cli_launcher.c` / `greenshot-cli.exe`:
+* Update `cli_launcher.c` / `buckshot-cli.exe`:
   * Add `--info <recipe>` / `-i <recipe>`.
   * Add `--query "<expression>"`.
   * Add `--json` flag to dump payload and variables.

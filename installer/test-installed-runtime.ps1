@@ -15,13 +15,13 @@ class InstallationProbe {
             if (Path.GetFileName(core.Location) != "BuckShot.Base.dll" ||
                 Path.GetFileName(editor.Location) != "BuckShot.Editor.dll") throw new Exception("CLR binding failed");
             var app = Assembly.LoadFrom(Path.Combine(root, "BuckShot.exe"));
-            if (app.GetName().Name != "Greenshot") throw new Exception("Legacy application identity changed");
-            var texts = core.GetType("Greenshot.Base.Languages.Texts", true);
+            if (app.GetName().Name != "BuckShot") throw new Exception("Application identity is not BuckShot");
+            var texts = core.GetType("BuckShot.Base.Languages.Texts", true);
             texts.GetMethod("Initialize").Invoke(null, new object[] { new[] { Path.Combine(root, "Languages") } });
             object language = texts.GetProperty("Core").GetValue(null, null);
-            string cancel = (string)core.GetType("Greenshot.Base.Languages.ICoreLanguage").GetProperty("Cancel").GetValue(language, null);
+            string cancel = (string)core.GetType("BuckShot.Base.Languages.ICoreLanguage").GetProperty("Cancel").GetValue(language, null);
             if (string.IsNullOrEmpty(cancel) || cancel.StartsWith("###")) throw new Exception("Language loading failed");
-            var binder = (System.Runtime.Serialization.SerializationBinder)Activator.CreateInstance(editor.GetType("Greenshot.Editor.Helpers.BinaryFormatterHelper", true), true);
+            var binder = (System.Runtime.Serialization.SerializationBinder)Activator.CreateInstance(editor.GetType("BuckShot.Editor.Helpers.BinaryFormatterHelper", true), true);
             var legacyType = binder.BindToType("Greenshot.Base, Version=0.9.0.0, Culture=neutral, PublicKeyToken=null", "Greenshot.Base.Interfaces.Drawing.EditStatus");
             object value = Enum.GetValues(legacyType).GetValue(0);
             using (var stream = new MemoryStream()) {
@@ -35,12 +35,12 @@ class InstallationProbe {
                 var plugin = Assembly.LoadFrom(file);
                 string identity = plugin.GetName().Name;
                 plugin.GetTypes();
-                if (plugin.GetType(identity + "." + identity.Replace("Greenshot.Plugin.", "") + "Plugin") == null)
+                if (plugin.GetType(identity + "." + identity.Replace("BuckShot.Plugin.", "") + "Plugin") == null)
                     throw new Exception("Missing plugin entry: " + file);
                 plugins++;
             }
             if (plugins < 8) throw new Exception("Missing full-install plugins: " + plugins);
-            Console.WriteLine("Verified CLR bindings, preserved legacy identities, editor types, translated text and " + plugins + " plugin entry points.");
+            Console.WriteLine("Verified CLR bindings, native BuckShot identities and legacy type adapter, editor types, translated text and " + plugins + " plugin entry points.");
             return 0;
         } catch (Exception ex) { Console.Error.WriteLine(ex); return 1; }
     }

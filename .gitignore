@@ -211,7 +211,7 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 
-# Greenshot credentials files
+# BuckShot credentials files
 *.credentials.cs
 
 # Rider files
@@ -219,8 +219,8 @@ ModelManifest.xml
 
 # Files compressed during the build
 *.gz
-/installer/Greenshot-*INSTALLER-*.exe
-/installer/Greenshot-*PORTABLE-*.zip
+/installer/BuckShot-*INSTALLER-*.exe
+/installer/BuckShot-*PORTABLE-*.zip
 
 # Dapplo.Ini source generator output (EmitCompilerGeneratedFiles)
 # These go to obj/generated/ now, but guard against stale project-level generated/ dirs
@@ -229,10 +229,10 @@ src/generated/
 # Token-replacement generated credential files
 src/**/*.Credentials.cs
 /bom.json
-src/**/Greenshot-proxy.exe
+src/**/BuckShot-proxy.exe
 # Local build/test runner requests and results (tools/build-runner)
 .build-runner/
-/src/greenshot-proxy/generated-version.h
+/src/buckshot-proxy/generated-version.h
 /installer/BuckShot-Markup*.msix
 /installer/BuckShot-Markup*.msix.sha256
 /installer/BuckShot-Markup*.cer
@@ -240,3 +240,6 @@ src/**/Greenshot-proxy.exe
 /installer/MSIX-INSTALL.md
 
 /installer/payload/
+
+# Preserve ignored pre-rename local build artifacts.
+/src/greenshot-proxy/generated-version.h

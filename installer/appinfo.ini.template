@@ -3,12 +3,12 @@ Type=PortableApps.comFormat
 Version=2.0
 
 [Details]
-Name=Greenshot Portable
-AppID=Greenshot_for_PortableApps
-Publisher=Greenshot
-Homepage=getgreenshot.org
+Name=BuckShot Portable
+AppID=BuckShot_for_PortableApps
+Publisher=BuckShot
+Homepage=getbuckshot.org
 Category=Graphics & Pictures
-Description=Greenshot tool
+Description=BuckShot tool
 Language=Multilingual
 Trademarks=
 InstallType=
@@ -33,4 +33,4 @@ UsesDotNetVersion=3.5
 
 [Control]
 Icons=1
-Start=Greenshot.exe
+Start=BuckShot.exe

@@ -196,7 +196,7 @@ Plus:
 
 #### Key Completeness
 
-Computed from the language packs on 2026-10-03, comparing keys with en-US the way Greenshot does (case-insensitive, `_` and `-` ignored):
+Computed from the language packs on 2026-10-03, comparing keys with en-US the way BuckShot does (case-insensitive, `_` and `-` ignored):
 
 - English reference: 597 keys (Core 106, Editor 142, Settings 116, Recipe 29, SelfService 204)
 - German: 513 keys (86%), the only language with the `[SelfService]` section

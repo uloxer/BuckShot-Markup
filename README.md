@@ -1,6 +1,6 @@
 # BuckShot Markup
 
-Windows screenshot capture and engineering markup, based on Greenshot and GreenShotPlus.
+Windows screenshot capture and engineering markup, based on BuckShot and BuckShotPlus.
 
 Current product version: **0.9.672**. `src/version.json` is the authoritative version source.
 
@@ -14,9 +14,9 @@ The EXE installer is the default Windows package. MSIX builds are optional and d
 - Choose new-document precision, font, colours, transparency and snapping under Settings > Measurements. Saved projects keep their own settings and calibration.
 - Fresh installations copy captures to the clipboard and save directly using the preferred output folder, file name and format. Existing explicit preferences are preserved.
 - Public recipe authoring/import/catalog features are not part of BuckShot Markup. The private built-in capture pipeline remains.
-- Settings and Windows integration are isolated from an existing Greenshot/GreenShotPlus installation.
+- Settings and Windows integration are isolated from an existing BuckShot/BuckShotPlus installation.
 
-See [migration and compatibility audit](docs/buckshot-migration-audit.md) and [editor usage](docs/greenshotplus.md).
+See [migration and compatibility audit](docs/buckshot-migration-audit.md) and [editor usage](docs/buckshotplus.md).
 
 ![BuckShot Markup cyan blueprint identity](assets/branding/rendered/buckshot-128.png)
 

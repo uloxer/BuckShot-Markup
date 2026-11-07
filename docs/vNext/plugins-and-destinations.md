@@ -1,14 +1,14 @@
 # Plugins and destinations: switching them on or off
 
-Users can switch plugins and destinations off in the settings. An administrator can restrict them with `greenshot-fixed.ini`,
+Users can switch plugins and destinations off in the settings. An administrator can restrict them with `buckshot-fixed.ini`,
 which users can't change, and can also stop users from switching anything off themselves. The lines for the file are built in
 the settings, nobody has to type them by hand.
 
 ## In the settings
 
 - **Plugins tab:** each plugin has a check box. The list shows the loaded plugins, the installed plugins which are switched off,
-  and the names the settings mention. A change applies at the next start of Greenshot. Each loaded plugin shows who signed it,
-  in green with a check mark when it is the certificate of Greenshot.exe; see [plugin-loading.md](plugin-loading.md) for the
+  and the names the settings mention. A change applies at the next start of BuckShot. Each loaded plugin shows who signed it,
+  in green with a check mark when it is the certificate of BuckShot.exe; see [plugin-loading.md](plugin-loading.md) for the
   signature check.
 - **Destinations tab:** the *Available* column switches a destination on or off, a destination which is off isn't offered anywhere
   (tray menu, picker, editor, recipes). The change applies when the settings are saved.
@@ -16,7 +16,7 @@ the settings, nobody has to type them by hand.
 When the settings name an output destination which isn't there (e.g. its plugin is switched off), it stays in the settings and a
 capture skips it; when none of them is there, the capture opens in the editor.
 
-## For administrators: greenshot-fixed.ini
+## For administrators: buckshot-fixed.ini
 
 1. Check what you want to allow in the settings.
 2. Click **Block plugins…** on the Plugins tab or **Block destinations…** on the Destinations tab (both open the same window) and choose one of:
@@ -27,9 +27,9 @@ capture skips it; when none of them is there, the capture opens in the editor.
 
    A plugin or destination which isn't installed yet can be added there by its name (see [the known names](#known-names)) with
    **Add plugin** or **Add destination**: it is blocked, or allowed with *Allow only what is checked*.
-3. **Copy** the lines into `greenshot-fixed.ini` next to Greenshot.exe, or **Save as…** when there is no such file yet.
+3. **Copy** the lines into `buckshot-fixed.ini` next to BuckShot.exe, or **Save as…** when there is no such file yet.
 
-Greenshot then shows what the administrator blocked as unchecked and locked. Users can still switch off more, unless the
+BuckShot then shows what the administrator blocked as unchecked and locked. Users can still switch off more, unless the
 administrator turned that off.
 
 ## The values
@@ -38,26 +38,26 @@ All in the `[Core]` section, comma separated, not case sensitive:
 
 | Key | Who | What it does |
 |---|---|---|
-| `BlockedPluginNames` | Administrator | Plugins which aren't loaded. Greenshot checks the name before it loads the file. |
-| `AllowedPluginNames` | Administrator | When set, only these plugins are loaded, every other one is blocked. Set empty in greenshot-fixed.ini, no plugin is loaded. |
-| `ExcludePluginNames` | User | Plugins the user switched off, on top of the blocked ones. Set in greenshot-fixed.ini (also empty), the user can't switch plugins off. |
+| `BlockedPluginNames` | Administrator | Plugins which aren't loaded. BuckShot checks the name before it loads the file. |
+| `AllowedPluginNames` | Administrator | When set, only these plugins are loaded, every other one is blocked. Set empty in buckshot-fixed.ini, no plugin is loaded. |
+| `ExcludePluginNames` | User | Plugins the user switched off, on top of the blocked ones. Set in buckshot-fixed.ini (also empty), the user can't switch plugins off. |
 | `BlockedDestinations` | Administrator | Destinations which aren't available. |
 | `AllowedDestinations` | Administrator | When set, only these destinations are available, every other one is blocked. |
-| `ExcludeDestinations` | User | Destinations the user switched off. Set in greenshot-fixed.ini (also empty), the user can't switch destinations off. |
+| `ExcludeDestinations` | User | Destinations the user switched off. Set in buckshot-fixed.ini (also empty), the user can't switch destinations off. |
 
-The older `IncludePlugins` and `ExcludePlugins` named a plugin by its identifier, e.g. `Box Plugin`. In greenshot-fixed.ini they
-still apply as an administrator restriction; in greenshot.ini Greenshot moves them to `AllowedPluginNames` and `ExcludePluginNames`
-once. An `ExcludeDestinations` list in an existing greenshot-fixed.ini keeps blocking those destinations, and stops users from
+The older `IncludePlugins` and `ExcludePlugins` named a plugin by its identifier, e.g. `Box Plugin`. In buckshot-fixed.ini they
+still apply as an administrator restriction; in buckshot.ini BuckShot moves them to `AllowedPluginNames` and `ExcludePluginNames`
+once. An `ExcludeDestinations` list in an existing buckshot-fixed.ini keeps blocking those destinations, and stops users from
 switching off others.
 
 ## Known names
 
-A plugin's name is the part of its file name after `Greenshot.Plugin.`: `Box` for `Greenshot.Plugin.Box.dll`. A destination of a
+A plugin's name is the part of its file name after `BuckShot.Plugin.`: `Box` for `BuckShot.Plugin.Box.dll`. A destination of a
 plugin is only available while the plugin is loaded, blocking the plugin blocks its destinations.
 
 | Plugin | Destinations |
 |---|---|
-| (Greenshot itself) | `Editor`, `FileNoDialog` (save directly), `FileDialog` (save as), `Clipboard`, `Printer`, `EMail`, `Picker` (ask every time), `DestinationWindow` (ask every time, in a window), `Windows10Share`, `Windows10OCR`, `Viewer` |
+| (BuckShot itself) | `Editor`, `FileNoDialog` (save directly), `FileDialog` (save as), `Clipboard`, `Printer`, `EMail`, `Picker` (ask every time), `DestinationWindow` (ask every time, in a window), `Windows10Share`, `Windows10OCR`, `Viewer` |
 | `Atlassian` | `Jira`, `Confluence` |
 | `Box` | `Box` |
 | `CustomUploader` | `CustomUploader`, and `CustomUploader:<name>` per uploader file |
@@ -79,6 +79,6 @@ with a fixed file name keeps one attachment on the page with every capture as a 
 can have several attachments with the same name, so a capture with a used name is added as another attachment.
 
 **The capture in a Jira comment.** *Insert capture* in the Jira upload window puts `{capture}` at the cursor of the comment.
-Before the comment is sent, Greenshot replaces it with the wiki markup `!name.png|thumbnail!`, so the comment shows the capture
+Before the comment is sent, BuckShot replaces it with the wiki markup `!name.png|thumbnail!`, so the comment shows the capture
 there. Jira shows the first attachment with a name, so when the issue already has a file with the name, the capture is uploaded
 as `name (2).png`.

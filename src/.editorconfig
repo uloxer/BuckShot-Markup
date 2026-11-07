@@ -107,9 +107,9 @@ dotnet_diagnostic.CA2016.severity = error
 dotnet_diagnostic.CA2012.severity = error
 
 # R11: ConfigureAwait(false) in library (non-UI) code
-[Greenshot.Base/Threading/**.cs]
+[BuckShot.Base/Threading/**.cs]
 dotnet_diagnostic.CA2007.severity = error
-[Greenshot.Base/Pipeline/**.cs]
+[BuckShot.Base/Pipeline/**.cs]
 dotnet_diagnostic.CA2007.severity = error
-[Greenshot/Pipeline/**.cs]
+[BuckShot/Pipeline/**.cs]
 dotnet_diagnostic.CA2007.severity = error

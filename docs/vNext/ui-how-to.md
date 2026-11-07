@@ -1,6 +1,6 @@
-# Building UI in Greenshot
+# Building UI in BuckShot
 
-How to add a window, a dialog or a settings page to Greenshot 1.4: where the files go, how texts and settings are bound,
+How to add a window, a dialog or a settings page to BuckShot 1.4: where the files go, how texts and settings are bound,
 and which shared pieces to reuse so every window looks and behaves the same. Where code goes in general is described in
 [code-structure.md](code-structure.md), translations in detail in [translation/README.md](translation/README.md).
 
@@ -9,7 +9,7 @@ and which shared pieces to reuse so every window looks and behaves the same. Whe
 - [Reuse the shared styles](#reuse-the-shared-styles)
 - [Texts and languages](#texts-and-languages)
 - [Accessibility](#accessibility)
-- [Settings and greenshot.ini](#settings-and-greenshotini)
+- [Settings and buckshot.ini](#settings-and-buckshotini)
 - [The settings window](#the-settings-window)
 - [Settings of a plugin](#settings-of-a-plugin)
 - [Images](#images)
@@ -21,21 +21,21 @@ and which shared pieces to reuse so every window looks and behaves the same. Whe
 - **New UI is WPF.** WinForms stays where it is (the editor, older dialogs), but new windows, dialogs and pages are WPF.
 - **`Forms` is only for WinForms.** A WPF window, page or control goes into a `Views` folder of its feature and is named
   `…Window`, `…Page` or `…View`. The class the view binds to is a `…ViewModel` in the `ViewModels` folder next to it, one class per file.
-- **Shared WPF parts are in `Greenshot.Base/Wpf`**: styles, the theme, the title bar, the message box, converters, the hotkey editor,
-  the destination picker. A plugin gets them through its reference to Greenshot.Base.
-- **Optional parts stay out of Greenshot Light.** UI for the AI tools, the browser extension or plugin loading goes into their
-  folders (`Greenshot/Ai`, `Greenshot/Ipc/BrowserExtension`, `Greenshot/Plugins`) or behind `#if !GREENSHOT_LIGHT`.
+- **Shared WPF parts are in `BuckShot.Base/Wpf`**: styles, the theme, the title bar, the message box, converters, the hotkey editor,
+  the destination picker. A plugin gets them through its reference to BuckShot.Base.
+- **Optional parts stay out of BuckShot Light.** UI for the AI tools, the browser extension or plugin loading goes into their
+  folders (`BuckShot/Ai`, `BuckShot/Ipc/BrowserExtension`, `BuckShot/Plugins`) or behind `#if !BUCKSHOT_LIGHT`.
 
 ## A new window
 
-Every Greenshot window uses the same frame: the theme brushes of `ThemeManager`, the shared styles and `ThemedTitleBar` in its first row.
-The Jira upload window (`Greenshot.Plugin.Atlassian/Jira/Views/JiraUploadWindow.xaml`) is a small, complete example:
+Every BuckShot window uses the same frame: the theme brushes of `ThemeManager`, the shared styles and `ThemedTitleBar` in its first row.
+The Jira upload window (`BuckShot.Plugin.Atlassian/Jira/Views/JiraUploadWindow.xaml`) is a small, complete example:
 
 ```xaml
-<Window x:Class="Greenshot.Plugin.Atlassian.Jira.Views.JiraUploadWindow"
+<Window x:Class="BuckShot.Plugin.Atlassian.Jira.Views.JiraUploadWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:wpf="clr-namespace:Greenshot.Base.Wpf;assembly=Greenshot.Base"
+        xmlns:wpf="clr-namespace:BuckShot.Base.Wpf;assembly=BuckShot.Base"
         Title="{wpf:Text Jira.UploadMenuItem}"
         Background="{Binding Source={x:Static wpf:ThemeManager.Instance}, Path=BackgroundBrush}"
         Foreground="{Binding Source={x:Static wpf:ThemeManager.Instance}, Path=ForegroundBrush}"
@@ -43,7 +43,7 @@ The Jira upload window (`Greenshot.Plugin.Atlassian/Jira/Views/JiraUploadWindow.
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Greenshot.Base;component/Wpf/Styles/DialogStyles.xaml"/>
+                <ResourceDictionary Source="/BuckShot.Base;component/Wpf/Styles/DialogStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -72,20 +72,20 @@ The Jira upload window (`Greenshot.Plugin.Atlassian/Jira/Views/JiraUploadWindow.
 
 ## Reuse the shared styles
 
-Don't write local styles for buttons, check boxes or lists: take the ones in `Greenshot.Base/Wpf/Styles`, so every window
+Don't write local styles for buttons, check boxes or lists: take the ones in `BuckShot.Base/Wpf/Styles`, so every window
 looks the same and a change of the design is made in one place. Merge the dictionary you need with its pack URI
-(`/Greenshot.Base;component/Wpf/Styles/<file>.xaml`); these URIs are used by plugins too, don't move or rename the files.
+(`/BuckShot.Base;component/Wpf/Styles/<file>.xaml`); these URIs are used by plugins too, don't move or rename the files.
 
 | File | What it gives you |
 |---|---|
 | `DialogStyles.xaml` | The usual start for a window: merges the shared button, check box, expander and list styles and themes `Label`, `TextBox`, `ComboBox` and the list views by default. |
 | `ButtonStyles.xaml` | `PrimaryButtonStyle` (the main action, e.g. OK), `SecondaryButtonStyle` (the other actions, e.g. Cancel), `WarnButtonStyle`, `ErrorButtonStyle` (strong red, destructive), `LightErrorButtonStyle` (a lighter delete), text-only buttons `PrimaryTextButtonStyle`, `SecondaryTextButtonStyle`, `LinkTextButtonStyle`, `ToolboxButtonStyle`, `PaletteSwatchStyle`, `DefaultRadioButtonStyle`, `FilterChipRadioButtonStyle`, and the caption buttons `TitleBarButtonStyle`, `TitleCloseButtonStyle`. |
 | `ComboBoxStyles.xaml` | `DefaultComboBoxStyle`, the default style of every `ComboBox` in a window which merges it; with `IsEditable="True"` the box takes typing and the list offers values. |
-| `CheckBoxStyles.xaml` | `GreenshotCheckBoxStyle`, also the default style of every `CheckBox` in a window which merges it. |
+| `CheckBoxStyles.xaml` | `BuckShotCheckBoxStyle`, also the default style of every `CheckBox` in a window which merges it. |
 | `ExpanderStyles.xaml` | `ExpanderStyle`: a header with an arrow which turns when the content is shown (settings groups, error details). |
 | `ListViewStyles.xaml` | `ThemeListView`, `ThemeListViewItem`, `ThemeGridViewColumnHeader`; `ThemeListBox` and `ThemeListBoxItem` for a list without columns, e.g. tiles in a `WrapPanel`. |
 | `PillStyles.xaml` | `PillStyle` (an entry shown as a pill), `EditEntryButtonStyle` (its text as a button, e.g. a click changes the entry), `RemoveEntryButtonStyle` (the small x in it), `TakeEntryButtonStyle` (a small + which takes the entry into another list), `AddPillButtonStyle` (the + at the end of the list). |
-| `MenuStyles.xaml` | `GreenshotContextMenuStyle`, `GreenshotMenuItemStyle`, `GreenshotMenuSeparatorStyle`; `ThemedMenu` uses them for the tray menu and the other menus. |
+| `MenuStyles.xaml` | `BuckShotContextMenuStyle`, `BuckShotMenuItemStyle`, `BuckShotMenuSeparatorStyle`; `ThemedMenu` uses them for the tray menu and the other menus. |
 
 ```xaml
 <Button Content="{wpf:Text Core.Ok}" Style="{StaticResource PrimaryButtonStyle}" IsDefault="True"/>
@@ -93,7 +93,7 @@ looks the same and a change of the design is made in one place. Merge the dictio
 ```
 
 For an error with details for whoever has to fix it, a destination or step calls `ShowDialogAsync` with an
-`ErrorDetailsRequest` (title, message, note, details): Greenshot shows the message, the note and an expandable *Details*
+`ErrorDetailsRequest` (title, message, note, details): BuckShot shows the message, the note and an expandable *Details*
 with *Copy details*.
 
 Other parts to reuse instead of building your own: `HotkeyEditorView` and `HotkeyDisplayView` (enter and show a hotkey),
@@ -106,13 +106,13 @@ When a style is missing, add it to the shared file it belongs to, not to your wi
 
 Every text a user sees comes from a language pack, never from a string in the code or the XAML.
 
-- The language packs are INI files: `src/Greenshot/Languages/greenshot.<ietf>.ini` for the core, `Languages/greenshot.<module>.<ietf>.ini`
+- The language packs are INI files: `src/BuckShot/Languages/buckshot.<ietf>.ini` for the core, `Languages/buckshot.<module>.<ietf>.ini`
   in a plugin. English (`en-US`) is the base, other languages fall back to it until they are translated.
 - Each `[Section]` of a pack is a typed interface, loaded with Dapplo.Ini: `ICoreLanguage` `[Core]`, `IEditorLanguage` `[Editor]`,
   `ISettingsLanguage` `[Settings]`, `IRecipeLanguage` `[Recipe]`, `ISelfServiceLanguage` `[SelfService]`, `IWelcomeLanguage` `[Welcome]`,
-  all in `Greenshot.Base/Languages`, and one per plugin (e.g. `IJiraLanguage`). The property is the key without `_` and `-` in PascalCase:
+  all in `BuckShot.Base/Languages`, and one per plugin (e.g. `IJiraLanguage`). The property is the key without `_` and `-` in PascalCase:
   `btn_open_folder` is `BtnOpenFolder`.
-- `Texts` (`Greenshot.Base/Languages/Texts.cs`) is the entry point: `Texts.Settings.Title` in code, `Texts.Get<T>()` for a plugin section,
+- `Texts` (`BuckShot.Base/Languages/Texts.cs`) is the entry point: `Texts.Settings.Title` in code, `Texts.Get<T>()` for a plugin section,
   `Texts.Translate(enumValue)` for an enum (key `Type.Value`), `Texts.Config.GetTranslation(key)` for keys only known at runtime.
 - **In XAML** use `{wpf:Text Section.Property}`, e.g. `Content="{wpf:Text SelfService.BtnOpenFolder}"`. It is a one-way binding to the
   section, which raises `PropertyChanged` for the texts which changed when the language is switched, so an open window updates by itself.
@@ -138,13 +138,13 @@ them are in [accessibility.md](accessibility.md); the short version for a new vi
 
 `AccessibilityXamlTests` checks the first three and that no text in the XAML is literal.
 
-## Settings and greenshot.ini
+## Settings and buckshot.ini
 
-Settings are stored in greenshot.ini with Dapplo.Ini. Each `[Section]` is an interface:
+Settings are stored in buckshot.ini with Dapplo.Ini. Each `[Section]` is an interface:
 
 ```csharp
 [IniSection("Jira")]
-[Description("Greenshot Jira Plugin configuration")]
+[Description("BuckShot Jira Plugin configuration")]
 public interface IJiraConfiguration : IIniSection
 {
     [Description("Base url to Jira system, without anything else")]
@@ -154,28 +154,28 @@ public interface IJiraConfiguration : IIniSection
 }
 ```
 
-- `[Description]` is written into greenshot.ini above the value, `[DefaultValue]` is used when the file has none.
+- `[Description]` is written into buckshot.ini above the value, `[DefaultValue]` is used when the file has none.
   `[Required]` and `[Range]` (System.ComponentModel.DataAnnotations) validate the value.
-- The core sections are in `Greenshot.Base/Core` (`ICoreConfiguration` `[Core]`, `IEditorConfiguration`, ...). Get one with
+- The core sections are in `BuckShot.Base/Core` (`ICoreConfiguration` `[Core]`, `IEditorConfiguration`, ...). Get one with
   `IniConfigRegistry.GetSection<ICoreConfiguration>()`; the sections implement `INotifyPropertyChanged`, so a view can bind to them directly.
-- greenshot.ini is in `%APPDATA%\Greenshot` (the portable Greenshot keeps it next to Greenshot.exe). An administrator can add
-  `greenshot-defaults.ini` (other defaults) and `greenshot-fixed.ini` (values the user can't change) next to Greenshot.exe.
+- buckshot.ini is in `%APPDATA%\BuckShot` (the portable BuckShot keeps it next to BuckShot.exe). An administrator can add
+  `buckshot-defaults.ini` (other defaults) and `buckshot-fixed.ini` (values the user can't change) next to BuckShot.exe.
   A fixed value must show as disabled in the UI, see [The settings window](#the-settings-window).
 - `IniConfigRegistry.Get()?.Save()` writes all sections.
-- **Don't add a setting to the UI for every small option.** A value only a few people change can live in greenshot.ini only.
+- **Don't add a setting to the UI for every small option.** A value only a few people change can live in buckshot.ini only.
 - A new feature which is still tested can be gated with `ICoreConfiguration.IsBetaTester` (Expert tab, *beta-test features*):
   when it is off, the feature isn't registered at all.
 
 ## The settings window
 
-The settings window is `Greenshot/Settings/Views/SettingsWindow.xaml` with `SettingsViewModel` (split into partial files per page, e.g.
+The settings window is `BuckShot/Settings/Views/SettingsWindow.xaml` with `SettingsViewModel` (split into partial files per page, e.g.
 `SettingsViewModel.Notifications.cs`). The view model exposes `CoreConfiguration`, the controls bind to it:
 
 ```xaml
 <CheckBox Content="{wpf:Text Settings.CaptureMousepointer}"
           IsChecked="{Binding CoreConfiguration.CaptureMousepointer, Mode=TwoWay}"/>
 
-<!-- disabled when greenshot-fixed.ini sets the value -->
+<!-- disabled when buckshot-fixed.ini sets the value -->
 <ComboBox IsEnabled="{Binding CoreConfiguration, Converter={StaticResource FixedToEnabledConverter}, ConverterParameter=Language}"/>
 ```
 
@@ -208,11 +208,11 @@ The settings window shows the view (a `UserControl`, e.g. `JiraConfigurationView
 - WPF images are `Resource` items, referenced with pack URIs.
 - WinForms images, icons and sounds are embedded files loaded with `EmbeddedResources`, never put into a .resx with the designer
   (see "Adding images" in the README).
-- Icons are drawn by the Greenshot team, don't replace or redraw them in a UI change.
+- Icons are drawn by the BuckShot team, don't replace or redraw them in a UI change.
 
 ## Threads
 
-- The UI runs on one thread. Background code talks to it only through `IUiDispatcher` (`Greenshot.Base/Threading`).
+- The UI runs on one thread. Background code talks to it only through `IUiDispatcher` (`BuckShot.Base/Threading`).
 - No blocking waits on the UI thread (`Thread.Sleep`, `Task.Wait`, `WaitHandle.WaitOne` and `Application.DoEvents` are banned, see `src/BannedSymbols.txt`), make the work async.
 - Every awaitable is observed (VSTHRD110 is an error): `await` it, or for fire-and-forget e.g. `Dispatcher.InvokeAsync(...).Task.FireAndLog("what it does")`.
 - The rules and the reasons are in [async-threading-roadmap.md](async-threading-roadmap.md).
@@ -221,7 +221,7 @@ The settings window shows the view (a `UserControl`, e.g. `JiraConfigurationView
 
 - [ ] WPF, in a `Views` folder, with a `…ViewModel` in `ViewModels`
 - [ ] `ThemedTitleBar`, theme brushes from `ThemeManager`, no colors in the XAML
-- [ ] Shared styles from `Greenshot.Base/Wpf/Styles`, no local copies
+- [ ] Shared styles from `BuckShot.Base/Wpf/Styles`, no local copies
 - [ ] Every text from a language pack with `{wpf:Text ...}` or `Texts`, the English text added to the en-US pack and the interface
 - [ ] Accessible: keyboard, names, live regions, `{wpf:FontSize}`, checked with Narrator and high contrast (see [accessibility.md](accessibility.md))
 - [ ] Settings in a Dapplo.Ini section with description and default, fixed values disabled in the UI

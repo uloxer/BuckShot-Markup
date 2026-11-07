@@ -1,10 +1,10 @@
-# Capturing with Greenshot 1.3
+# Capturing with BuckShot 1.3
 
-This guide explains how taking a screenshot works in Greenshot 1.3, the current release: the ways to start a capture, the modes you
-can choose from while you select (region, window and text), every key, what Greenshot remembers, and the settings which change how
+This guide explains how taking a screenshot works in BuckShot 1.3, the current release: the ways to start a capture, the modes you
+can choose from while you select (region, window and text), every key, what BuckShot remembers, and the settings which change how
 capturing works.
 
-Greenshot 1.4 is still in development and captures differently, its guide is in [vNext/capture-user-guide.md](vNext/capture-user-guide.md).
+BuckShot 1.4 is still in development and captures differently, its guide is in [vNext/capture-user-guide.md](vNext/capture-user-guide.md).
 
 - [Starting a capture](#starting-a-capture)
 - [The capture screen](#the-capture-screen)
@@ -14,7 +14,7 @@ Greenshot 1.4 is still in development and captures differently, its guide is in 
   - [Text](#text)
 - [The zoomer and the other helpers](#the-zoomer-and-the-other-helpers)
 - [All keys](#all-keys)
-- [What Greenshot remembers](#what-greenshot-remembers)
+- [What BuckShot remembers](#what-buckshot-remembers)
 - [Settings which change capturing](#settings-which-change-capturing)
 - [Good to know](#good-to-know)
 
@@ -29,7 +29,7 @@ Greenshot 1.4 is still in development and captures differently, its guide is in 
 | Capture Internet Explorer | `Shift` + `Ctrl` + `PrintScreen` | Captures the page shown in Internet Explorer, when *Internet Explorer capture* is turned on. |
 | Open image from clipboard | none | Opens the image on the clipboard. |
 
-The same captures are in the menu of the Greenshot icon next to the clock. There, *Capture window* always opens the capture screen
+The same captures are in the menu of the BuckShot icon next to the clock. There, *Capture window* always opens the capture screen
 in the window mode. With more than one monitor, *Capture full screen* has a sub menu: *all* monitors, or one of them.
 *Capture window from list* lists the open windows and captures the one you pick, without the capture screen.
 
@@ -52,7 +52,7 @@ flowchart LR
 
 ## The capture screen
 
-Greenshot takes a picture of all your monitors first, then shows it on top of everything. What you see is a frozen picture:
+BuckShot takes a picture of all your monitors first, then shows it on top of everything. What you see is a frozen picture:
 nothing on the screen changes while you select, so a tooltip or an open menu stays where it was.
 You choose what to capture in this picture, and only that part is used.
 
@@ -60,7 +60,7 @@ On top of the picture you see the **selection** in green, with its width above i
 and the **zoomer**, a round magnifier next to the mouse.
 
 `Esc` closes the capture screen without capturing anything. Releasing the mouse, clicking or pressing `Enter` (depending on the mode)
-captures the selection, and Greenshot sends it to your destinations (the editor, a file, the clipboard, ...).
+captures the selection, and BuckShot sends it to your destinations (the editor, a file, the clipboard, ...).
 
 ## The modes
 
@@ -102,7 +102,7 @@ and press `Enter` again to capture.
 Press `Space` to switch between the region and the window mode. The selection follows the window under the mouse: it slides from
 window to window as you move. Click, or press `Enter`, to capture it.
 
-- Greenshot selects the innermost window under the mouse, e.g. a panel or a toolbar inside a program, when the program is built from
+- BuckShot selects the innermost window under the mouse, e.g. a panel or a toolbar inside a program, when the program is built from
   several windows. Move to the outer edge of a program window to select the whole window.
 - What is captured is the part of the frozen picture: a window lying on top of the selected one is in the capture too, and a part
   outside of the screens is left out. To capture a window on its own, also where it is covered, use *Capture window* without the
@@ -112,7 +112,7 @@ window to window as you move. Click, or press `Enter`, to capture it.
 
 ### Text
 
-Press `T` to capture text. Greenshot reads the text on the screen with the text recognition of Windows, which can take a moment.
+Press `T` to capture text. BuckShot reads the text on the screen with the text recognition of Windows, which can take a moment.
 Then every line of text it found gets a frame.
 
 - **Drag over the text** to select words: the words inside the rectangle are highlighted while you drag. Dragging works like in the
@@ -121,8 +121,8 @@ Then every line of text it found gets a frame.
 
 The text of the selected words is copied to the clipboard. No image is captured in this mode, nothing goes to your destinations.
 
-The text mode needs the Windows 10 plug-in of Greenshot (an option of the installer) and a language with text recognition installed
-in Windows (Time and language, Language and region). Greenshot reads the text in the languages of your Windows profile. Without them,
+The text mode needs the Windows 10 plug-in of BuckShot (an option of the installer) and a language with text recognition installed
+in Windows (Time and language, Language and region). BuckShot reads the text in the languages of your Windows profile. Without them,
 no lines are shown and nothing can be selected; press `Space` to go back to the region mode.
 
 ## The zoomer and the other helpers
@@ -178,9 +178,9 @@ the network.
 | Click (window) | Capture the window |
 | Click on a word (text) | Copy that word |
 
-## What Greenshot remembers
+## What BuckShot remembers
 
-| What | Changed with | Remembered | Setting in greenshot.ini |
+| What | Changed with | Remembered | Setting in buckshot.ini |
 |---|---|---|---|
 | Zoomer shown or hidden | `Z` | yes, also in the settings as *Show magnifier* | `ZoomerEnabled` |
 | The area of your last capture | a capture with the capture screen | yes, for *Capture last region* | `LastCapturedRegion` |
@@ -205,9 +205,9 @@ the network.
 | Capture tab | *Internet Explorer capture* | Turns the Internet Explorer captures on or off. |
 | Expert tab | *Make some optimizations for usage with remote desktop* | No animations and no crosshair lines, also outside of a remote session. In a remote session this happens on its own. |
 
-**Only in greenshot.ini**
+**Only in buckshot.ini**
 
-greenshot.ini is in `%APPDATA%\Greenshot`, the portable Greenshot keeps it next to Greenshot.exe. Change it while Greenshot isn't running.
+buckshot.ini is in `%APPDATA%\BuckShot`, the portable BuckShot keeps it next to BuckShot.exe. Change it while BuckShot isn't running.
 All of these are in the `[Core]` section.
 
 | Setting | Default | What it does |

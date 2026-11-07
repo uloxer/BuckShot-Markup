@@ -5,7 +5,7 @@ param(
     [string]$BuildArtifactsPath,
     [Parameter(Mandatory=$true)]
     [string]$OutputPath,
-    # Greenshot Light, like the light installer: BuildArtifactsPath is its own build (bin\Release-Light, see Greenshot.csproj),
+    # BuckShot Light, like the light installer: BuildArtifactsPath is its own build (bin\Release-Light, see BuckShot.csproj),
     # the basics only: no plugins, no AI tools and no browser extension
     [switch]$Light
 )
@@ -24,14 +24,14 @@ foreach ($file in $SbomFiles) {
         Copy-Item $filePath "$OutputPath" -Force
     }
 }
-# Copy greenshot.exe
-Copy-Item "$BuildArtifactsPath\Greenshot.exe" "$OutputPath" -Force
-# Copy greenshot.exe.config
-Copy-Item "$BuildArtifactsPath\Greenshot.exe.config" "$OutputPath" -Force
-# Copy the command line (greenshot-cli.exe) and greenshot-proxy.exe, which forwards files and URLs to Greenshot; not for Greenshot Light
+# Copy buckshot.exe
+Copy-Item "$BuildArtifactsPath\BuckShot.exe" "$OutputPath" -Force
+# Copy buckshot.exe.config
+Copy-Item "$BuildArtifactsPath\BuckShot.exe.config" "$OutputPath" -Force
+# Copy the command line (buckshot-cli.exe) and buckshot-proxy.exe, which forwards files and URLs to BuckShot; not for BuckShot Light
 if (-not $Light) {
-    Copy-Item "$BuildArtifactsPath\greenshot-cli.exe" "$OutputPath" -Force
-    Copy-Item "$BuildArtifactsPath\greenshot-proxy.exe" "$OutputPath" -Force
+    Copy-Item "$BuildArtifactsPath\buckshot-cli.exe" "$OutputPath" -Force
+    Copy-Item "$BuildArtifactsPath\buckshot-proxy.exe" "$OutputPath" -Force
 }
 
 # Copy all dlls
@@ -41,33 +41,33 @@ Copy-Item "$BuildArtifactsPath\*.dll" "$OutputPath" -Force
 Copy-Item "$BuildArtifactsPath\emojis.xml" "$OutputPath" -Force
 Copy-Item "$BuildArtifactsPath\Twemoji.Mozilla.ttf" "$OutputPath" -Force
 
-# Copy help files, not for Greenshot Light
+# Copy help files, not for BuckShot Light
 if (-not $Light) {
     New-Item -ItemType Directory -Path "$OutputPath\Help" -Force | Out-Null
-    Copy-Item "$RepositoryRootPath\src\Greenshot\Languages\*.html" "$OutputPath\Help" -Force
+    Copy-Item "$RepositoryRootPath\src\BuckShot\Languages\*.html" "$OutputPath\Help" -Force
 }
 
-# Copy the language packs (greenshot.{ietf}.ini), the plugins' packs are added below
+# Copy the language packs (buckshot.{ietf}.ini), the plugins' packs are added below
 New-Item -ItemType Directory -Path "$OutputPath\Languages" -Force | Out-Null
-Copy-Item "$RepositoryRootPath\src\Greenshot\Languages\greenshot.*.ini" "$OutputPath\Languages" -Force
+Copy-Item "$RepositoryRootPath\src\BuckShot\Languages\buckshot.*.ini" "$OutputPath\Languages" -Force
 
 # Create Dummy-INI
-";dummy config, used to make greenshot store the configuration in this directory" | Set-Content "$OutputPath\greenshot.ini" -Encoding UTF8
+";dummy config, used to make buckshot store the configuration in this directory" | Set-Content "$OutputPath\buckshot.ini" -Encoding UTF8
 
 # Create Dummy-defaults-INI
-";In this file you should add your default settings" | Set-Content "$OutputPath\greenshot-defaults.ini" -Encoding UTF8
+";In this file you should add your default settings" | Set-Content "$OutputPath\buckshot-defaults.ini" -Encoding UTF8
 
 # Create Dummy-fixed-INI
-";In this file you should add your fixed settings" | Set-Content "$OutputPath\greenshot-fixed.ini" -Encoding UTF8
+";In this file you should add your fixed settings" | Set-Content "$OutputPath\buckshot-fixed.ini" -Encoding UTF8
 
 # Copy license file
-Copy-Item "$RepositoryRootPath\src\Greenshot-Installer\additional_files\license.txt" "$OutputPath" -Force
+Copy-Item "$RepositoryRootPath\src\BuckShot-Installer\additional_files\license.txt" "$OutputPath" -Force
 
 # Copy readme file
-Copy-Item "$RepositoryRootPath\src\Greenshot-Installer\additional_files\readme.txt" "$OutputPath" -Force
+Copy-Item "$RepositoryRootPath\src\BuckShot-Installer\additional_files\readme.txt" "$OutputPath" -Force
 
 # Copy and rename log config file
-Copy-Item "$RepositoryRootPath\src\Greenshot\log4net-zip.xml" "$OutputPath\log4net.xml" -Force
+Copy-Item "$RepositoryRootPath\src\BuckShot\log4net-zip.xml" "$OutputPath\log4net.xml" -Force
 
 # Copy the plugins: the build output has the installed layout (the plugin directories only contain what the plugin
 # needs in addition to the main directory), so every plugin directory is copied as it is; the files are in checksum.SHA256
@@ -79,7 +79,7 @@ foreach ($pluginDir in $pluginDirs) {
 
     $pluginLanguages = "$RepositoryRootPath\src\$pluginName\Languages"
     if (Test-Path $pluginLanguages) {
-        # greenshot.{module}.{ietf}.ini, next to the core language packs
-        Copy-Item "$pluginLanguages\greenshot.*.ini" "$OutputPath\Languages" -Force
+        # buckshot.{module}.{ietf}.ini, next to the core language packs
+        Copy-Item "$pluginLanguages\buckshot.*.ini" "$OutputPath\Languages" -Force
     }
 }

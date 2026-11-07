@@ -3,7 +3,7 @@
     <Product>BuckShot Markup</Product>
     <Title>BuckShot Markup</Title>
     <Copyright>Copyright © Greenshot 2007-2026</Copyright>
-    <Authors>BuckShot Markup contributors;Greenshot contributors</Authors>
+    <Authors>BuckShot Markup contributors;BuckShot contributors</Authors>
     <Company>BuckShot Markup contributors</Company>
     <PackageIconUrl>https://raw.githubusercontent.com/uloxer/BuckShot-Markup/main/assets/branding/rendered/buckshot-128.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/uloxer/BuckShot-Markup</RepositoryUrl>
@@ -32,25 +32,25 @@
        when a project is built directly (for example, stand alone PowerShell). Keep post-build paths valid. -->
   <PropertyGroup>
     <SolutionDir Condition="'$(SolutionDir)' == ''">$(MSBuildThisFileDirectory)</SolutionDir>
-    <SolutionName Condition="'$(SolutionName)' == ''">Greenshot</SolutionName>
+    <SolutionName Condition="'$(SolutionName)' == ''">BuckShot</SolutionName>
   </PropertyGroup>
 
   <!--
-    The Greenshot edition: Full (the default) or Light, set with /p:GreenshotEdition=Light or with the DebugLight / ReleaseLight
-    configurations of Greenshot.csproj (the "Debug Light" / "Release Light" solution configurations in Visual Studio).
-    GreenshotBaseConfiguration is Debug or Release for those too, use it instead of $(Configuration) in conditions.
+    The BuckShot edition: Full (the default) or Light, set with /p:BuckShotEdition=Light or with the DebugLight / ReleaseLight
+    configurations of BuckShot.csproj (the "Debug Light" / "Release Light" solution configurations in Visual Studio).
+    BuckShotBaseConfiguration is Debug or Release for those too, use it instead of $(Configuration) in conditions.
   -->
   <PropertyGroup>
-    <GreenshotBaseConfiguration>$(Configuration)</GreenshotBaseConfiguration>
-    <GreenshotBaseConfiguration Condition="'$(Configuration)' == ''">Debug</GreenshotBaseConfiguration>
-    <GreenshotBaseConfiguration Condition="'$(Configuration)' == 'DebugLight'">Debug</GreenshotBaseConfiguration>
-    <GreenshotBaseConfiguration Condition="'$(Configuration)' == 'ReleaseLight'">Release</GreenshotBaseConfiguration>
-    <GreenshotEdition Condition="'$(GreenshotEdition)' == '' And $(Configuration.EndsWith('Light'))">Light</GreenshotEdition>
-    <GreenshotEdition Condition="'$(GreenshotEdition)' == ''">Full</GreenshotEdition>
+    <BuckShotBaseConfiguration>$(Configuration)</BuckShotBaseConfiguration>
+    <BuckShotBaseConfiguration Condition="'$(Configuration)' == ''">Debug</BuckShotBaseConfiguration>
+    <BuckShotBaseConfiguration Condition="'$(Configuration)' == 'DebugLight'">Debug</BuckShotBaseConfiguration>
+    <BuckShotBaseConfiguration Condition="'$(Configuration)' == 'ReleaseLight'">Release</BuckShotBaseConfiguration>
+    <BuckShotEdition Condition="'$(BuckShotEdition)' == '' And $(Configuration.EndsWith('Light'))">Light</BuckShotEdition>
+    <BuckShotEdition Condition="'$(BuckShotEdition)' == ''">Full</BuckShotEdition>
   </PropertyGroup>
 
   <!--
-    NuGet audit warnings that don't apply to Greenshot, see "Known vulnerability warnings" in README.md for the reasons.
+    NuGet audit warnings that don't apply to BuckShot, see "Known vulnerability warnings" in README.md for the reasons.
     Remove an entry when the package that caused it is updated.
   -->
   <ItemGroup>
@@ -62,7 +62,7 @@
     <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-wmxv-xphr-5c9g" />
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(GreenshotBaseConfiguration)' != 'Debug' And !$(MSBuildProjectName.Contains('Test')) And !$(MSBuildProjectName.Contains('Demo'))">
+  <PropertyGroup Condition="'$(BuckShotBaseConfiguration)' != 'Debug' And !$(MSBuildProjectName.Contains('Test')) And !$(MSBuildProjectName.Contains('Demo'))">
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -73,7 +73,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(GreenshotBaseConfiguration)' == 'Debug'">
+  <PropertyGroup Condition="'$(BuckShotBaseConfiguration)' == 'Debug'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>True</DebugSymbols>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
@@ -81,13 +81,13 @@
     <Optimize>false</Optimize>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(GreenshotBaseConfiguration)' == 'Release'">
+  <PropertyGroup Condition="'$(BuckShotBaseConfiguration)' == 'Release'">
     <Optimize>true</Optimize>
     <DebugType>embedded</DebugType>
     <DebugSymbols>True</DebugSymbols>
   </PropertyGroup>
 
-  <ItemGroup Condition="!$(MSBuildProjectName.Contains('Tests')) And $(MSBuildProjectName.StartsWith('Greenshot'))">
+  <ItemGroup Condition="!$(MSBuildProjectName.Contains('Tests')) And $(MSBuildProjectName.StartsWith('BuckShot'))">
     <PackageReference Include="Nerdbank.GitVersioning" Version="3.10.94">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -103,10 +103,10 @@
 
   <!-- Async & threading guardrails, see docs/vNext/async-threading-roadmap.md (section 3 and Phase 0).
        Test and build-task projects are excluded: tests may block on tasks, build tasks run inside MSBuild. -->
-  <PropertyGroup Condition="!$(MSBuildProjectName.Contains('Tests')) And $(MSBuildProjectName.StartsWith('Greenshot')) And '$(MSBuildProjectName)' != 'Greenshot.BuildTasks'">
+  <PropertyGroup Condition="!$(MSBuildProjectName.Contains('Tests')) And $(MSBuildProjectName.StartsWith('BuckShot')) And '$(MSBuildProjectName)' != 'BuckShot.BuildTasks'">
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
   </PropertyGroup>
-  <ItemGroup Condition="!$(MSBuildProjectName.Contains('Tests')) And $(MSBuildProjectName.StartsWith('Greenshot')) And '$(MSBuildProjectName)' != 'Greenshot.BuildTasks'">
+  <ItemGroup Condition="!$(MSBuildProjectName.Contains('Tests')) And $(MSBuildProjectName.StartsWith('BuckShot')) And '$(MSBuildProjectName)' != 'BuckShot.BuildTasks'">
     <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="18.12.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -120,7 +120,7 @@
 
   <!-- Exclude the Roslyn-generated *.g.cs files from the normal compilation glob so they are
        not compiled twice (once from the generator output and once from the **/*.cs wildcard). -->
-  <ItemGroup Condition="!$(MSBuildProjectName.Contains('Tests')) And $(MSBuildProjectName.StartsWith('Greenshot'))">
+  <ItemGroup Condition="!$(MSBuildProjectName.Contains('Tests')) And $(MSBuildProjectName.StartsWith('BuckShot'))">
     <Compile Remove="$(CompilerGeneratedFilesOutputPath)/**/*.cs" />
   </ItemGroup>
 
@@ -149,14 +149,14 @@
 
   <!--
     Plugins which aren't delivered yet: only Debug builds put them into Plugins, so installer, portable and release leave them out.
-    Used by the copy below and by Greenshot.csproj, which collects the plugins again after its own build.
+    Used by the copy below and by BuckShot.csproj, which collects the plugins again after its own build.
   -->
   <PropertyGroup>
-    <GreenshotUndeliveredPlugins Condition="'$(GreenshotBaseConfiguration)' != 'Debug'">Greenshot.Plugin.CustomUploader</GreenshotUndeliveredPlugins>
-    <GreenshotUndeliveredPlugins>Greenshot.Plugin.RecipeEditor;$(GreenshotUndeliveredPlugins)</GreenshotUndeliveredPlugins>
+    <BuckShotUndeliveredPlugins Condition="'$(BuckShotBaseConfiguration)' != 'Debug'">BuckShot.Plugin.CustomUploader</BuckShotUndeliveredPlugins>
+    <BuckShotUndeliveredPlugins>BuckShot.Plugin.RecipeEditor;$(BuckShotUndeliveredPlugins)</BuckShotUndeliveredPlugins>
   </PropertyGroup>
 
-  <Target Name="PostBuild" BeforeTargets="PostBuildEvent" Condition="$(MSBuildProjectName.StartsWith('Greenshot.Plugin.')) And '$([System.String]::Copy(&quot;;$(GreenshotUndeliveredPlugins);&quot;).Contains(&quot;;$(MSBuildProjectName);&quot;))' != 'true'">
+  <Target Name="PostBuild" BeforeTargets="PostBuildEvent" Condition="$(MSBuildProjectName.StartsWith('BuckShot.Plugin.')) And '$([System.String]::Copy(&quot;;$(BuckShotUndeliveredPlugins);&quot;).Contains(&quot;;$(MSBuildProjectName);&quot;))' != 'true'">
     <Exec Command="
     IF NOT EXIST &quot;$(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(TargetName)&quot; (&#xD;&#xA;
             mkdir &quot;$(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(TargetName)&quot;&#xD;&#xA;

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://getgreenshot.org/schemas/recipe.schema.json",
   "title": "CaptureRecipe",
-  "description": "Formal written contract and schema for Greenshot DAG-based capture recipes and recipe extensions (\"kind\": \"extension\").",
+  "description": "Formal written contract and schema for BuckShot DAG-based capture recipes and recipe extensions (\"kind\": \"extension\").",
   "type": "object",
   "required": [
     "id",
@@ -20,13 +20,13 @@
       "type": "string",
       "enum": [ "recipe", "extension" ],
       "default": "recipe",
-      "description": "A recipe (with triggers) or an extension: a small flow Greenshot puts into a slot of other recipes (with extends, no triggers)."
+      "description": "A recipe (with triggers) or an extension: a small flow BuckShot puts into a slot of other recipes (with extends, no triggers)."
     },
     "version": {
       "type": "string",
       "pattern": "^[0-9]+(\\.[0-9]+)*$",
       "default": "2.0",
-      "description": "Recipe format version. Greenshot reads 2.x; recipes of an earlier beta (1.x) are not read."
+      "description": "Recipe format version. BuckShot reads 2.x; recipes of an earlier beta (1.x) are not read."
     },
     "id": {
       "type": "string",
@@ -66,7 +66,7 @@
     },
     "translations": {
       "type": "object",
-      "description": "The texts of the file in other languages, by language ('de' or 'de-DE') and then by path. Greenshot uses the exact language, else the language alone, else the texts of the file.",
+      "description": "The texts of the file in other languages, by language ('de' or 'de-DE') and then by path. BuckShot uses the exact language, else the language alone, else the texts of the file.",
       "propertyNames": { "pattern": "^[A-Za-z]{2,3}(-[A-Za-z0-9]{1,8})*$" },
       "additionalProperties": {
         "type": "object",
@@ -78,7 +78,7 @@
     "showInContextMenu": {
       "type": "boolean",
       "default": true,
-      "description": "A recipe without a ContextMenu trigger gets an entry in Greenshot's system tray menu; false leaves it out."
+      "description": "A recipe without a ContextMenu trigger gets an entry in BuckShot's system tray menu; false leaves it out."
     },
     "requires": {
       "type": "array",
@@ -89,7 +89,7 @@
     },
     "triggers": {
       "type": "array",
-      "description": "Optional modular triggers attached to this recipe (e.g. Hotkey, ContextMenu for Greenshot's system tray menu, Clipboard).",
+      "description": "Optional modular triggers attached to this recipe (e.g. Hotkey, ContextMenu for BuckShot's system tray menu, Clipboard).",
       "items": {
         "$ref": "#/definitions/TriggerConfig"
       }
@@ -108,7 +108,7 @@
     },
     "options": {
       "type": "array",
-      "description": "Values the user sets once in Settings > Recipes (switches also in the quick settings), read by nodes with ${option.key}. The values are stored in greenshot.ini, not in the recipe file.",
+      "description": "Values the user sets once in Settings > Recipes (switches also in the quick settings), read by nodes with ${option.key}. The values are stored in buckshot.ini, not in the recipe file.",
       "items": {
         "$ref": "#/definitions/RecipeOption"
       }
@@ -357,7 +357,7 @@
             },
             "ProcessName": {
               "type": "string",
-              "description": "Used by 'Source' step (Window/ActiveWindow): Target process name (e.g. 'notepad', 'Greenshot')."
+              "description": "Used by 'Source' step (Window/ActiveWindow): Target process name (e.g. 'notepad', 'BuckShot')."
             },
             "WindowHandle": {
               "type": [ "string", "integer" ],
@@ -533,7 +533,7 @@
             },
             "FilenamePattern": {
               "type": "string",
-              "description": "Used by 'RecordVideo' step: the file name in OutputDirectory, {yyyyMMdd_HHmmss} is the start time (default 'Greenshot_{yyyyMMdd_HHmmss}.mp4')."
+              "description": "Used by 'RecordVideo' step: the file name in OutputDirectory, {yyyyMMdd_HHmmss} is the start time (default 'BuckShot_{yyyyMMdd_HHmmss}.mp4')."
             },
             "Preset": {
               "type": "string",
@@ -906,7 +906,7 @@
         "id": {
           "type": "string",
           "minLength": 1,
-          "description": "Unique identifier of the required extension or plugin (e.g. 'Greenshot.Plugin.Zxing')."
+          "description": "Unique identifier of the required extension or plugin (e.g. 'BuckShot.Plugin.Zxing')."
         },
         "name": {
           "type": "string",
@@ -967,12 +967,12 @@
             },
             "MenuItemText": {
               "type": "string",
-              "description": "Custom label displayed in the Greenshot system tray context menu (ContextMenu trigger) or the image editor menu (Editor trigger)."
+              "description": "Custom label displayed in the BuckShot system tray context menu (ContextMenu trigger) or the image editor menu (Editor trigger)."
             },
             "Group": {
               "type": "string",
               "default": "Recipes",
-              "description": "Submenu group in the Greenshot system tray context menu (ContextMenu trigger) or image editor menu (Editor trigger). The default or empty 'Recipes' group is shown directly and first; named groups are submenus sorted alphabetically."
+              "description": "Submenu group in the BuckShot system tray context menu (ContextMenu trigger) or image editor menu (Editor trigger). The default or empty 'Recipes' group is shown directly and first; named groups are submenus sorted alphabetically."
             },
             "Order": {
               "type": "integer",
@@ -1000,7 +1000,7 @@
             "AllowBrowserInvocation": {
               "type": "boolean",
               "default": false,
-              "description": "Used by Commandline trigger: allows this recipe to be started from a browser, via a greenshot:// URL or the browser extension. Off by default because any web page can open a greenshot:// URL."
+              "description": "Used by Commandline trigger: allows this recipe to be started from a browser, via a buckshot:// URL or the browser extension. Off by default because any web page can open a buckshot:// URL."
             },
             "Stdout": {
               "type": "string",
@@ -1009,7 +1009,7 @@
             "ToolName": {
               "type": "string",
               "pattern": "^[A-Za-z0-9_-]{1,64}$",
-              "description": "Used by AiTool trigger: the tool name AI tools use (greenshot-mcp)."
+              "description": "Used by AiTool trigger: the tool name AI tools use (buckshot-mcp)."
             },
             "Title": {
               "type": "string",

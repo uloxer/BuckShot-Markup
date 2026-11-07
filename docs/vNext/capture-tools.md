@@ -1,15 +1,15 @@
 # Capture tools and overlays: extending the interactive capture
 
-The interactive capture shows a frozen capture of the whole screen in the `CaptureWindow` (WPF, `src/Greenshot/Capturing/Views`),
+The interactive capture shows a frozen capture of the whole screen in the `CaptureWindow` (WPF, `src/BuckShot/Capturing/Views`),
 or, when the user turned *Freeze the screen while selecting* off, a see-through window over the live screen (see Restrictions).
 What the user can do on it comes from **capture tools**: the region, window and text selections are each one tool class in
-`src/Greenshot/Capturing/Tools`. One tool is active at a time. Next to it, **overlays** can run for as long as the window is open,
+`src/BuckShot/Capturing/Tools`. One tool is active at a time. Next to it, **overlays** can run for as long as the window is open,
 e.g. a color picker which shows the color under the cursor while a region is selected. Plugins can add both.
-This document explains how to write them, in Greenshot itself or in a plugin, and what is possible and what is not,
+This document explains how to write them, in BuckShot itself or in a plugin, and what is possible and what is not,
 with a color picker as the example.
 What the user sees and can do (modes, keys, panels, settings) is described in the user guide [capture-user-guide.md](capture-user-guide.md).
 
-The interfaces are in `Greenshot.Base` (`src/Greenshot.Base/Interfaces/Capture`, namespace `Greenshot.Base.Interfaces.Capture`):
+The interfaces are in `BuckShot.Base` (`src/BuckShot.Base/Interfaces/Capture`, namespace `BuckShot.Base.Interfaces.Capture`):
 `ICaptureTool` with its base class `CaptureTool`, `ICaptureOverlay` with its base class `CaptureOverlay`, `ICaptureToolHost`
 (what the window offers tools and overlays), and `ICaptureToolProvider` / `ICaptureOverlayProvider` (how a plugin adds them).
 
@@ -40,7 +40,7 @@ information or a shortcut to whatever the user is doing, without changing how th
 | Tool | Mode | Key | What it does |
 |---|---|---|---|
 | `RegionCaptureTool` | `Region` | Space toggles | Drag or Enter/Enter for a rectangle, includes the pixel under the cursor |
-| `WindowCaptureTool` | `Window` | Space toggles | The selection animates to the (child) window under the cursor, D for debug info. For beta testers it also follows the UI Automation areas inside a window (e.g. the parts of a browser page), PageUp/PageDown select the larger/smaller area; a turning mark next to the cursor shows when reading the areas takes longer than 200 ms. In `Greenshot.Base` (`Greenshot.Base.Capturing`), a plugin can derive from it, and override `SelectsAreas` to select whole windows only |
+| `WindowCaptureTool` | `Window` | Space toggles | The selection animates to the (child) window under the cursor, D for debug info. For beta testers it also follows the UI Automation areas inside a window (e.g. the parts of a browser page), PageUp/PageDown select the larger/smaller area; a turning mark next to the cursor shows when reading the areas takes longer than 200 ms. In `BuckShot.Base` (`BuckShot.Base.Capturing`), a plugin can derive from it, and override `SelectsAreas` to select whole windows only |
 | `TextCaptureTool` | `Text` | T | Extends the region tool: shows the OCR lines, a click selects a line |
 | `FixedSizeCaptureTool` | `Region` | F | A rectangle of a chosen size follows the cursor, a click or Enter captures it. The cursor holds it at a corner, so the zoomer shows that corner pixel; C goes through the corners and the middle (`FixedCaptureAnchor`, top left by default). Its edges snap to the window under the cursor, the windows it is in and the monitor, unless Alt is held. A panel lists the sizes of `FixedCaptureSizes` and below them the sizes and places of the last region and window captures (`RecentCaptureAreas`, remembered by the region tool, this tool, the window mode and the active window capture); 1-9 and 0 pick one, PageUp/PageDown step through the list; S types a size in two boxes drawn next to the cursor, on the side away from the area (Tab or Enter to the height, Backspace deletes, Enter takes it, S stops; the area takes the typed size at once), it is inserted before the recent entries. An entry with a place (geometry `1280x720+100+200`, `@1920+0` for another monitor, `@notepad.exe` for the content of a program's windows; `FixedCaptureRemembers` decides what recent entries keep) moves the cursor so the area is there (`FixedCaptureMovesCursor`), its places are drawn as dashed outlines (one per window of the program, not when completely covered), and the area snaps onto one when it comes close; a place on a monitor which is gone is used at the same offset on the monitor with the cursor. It starts with the entry of its last capture (`FixedCaptureArea`). Id `FixedSize` for a recipe |
 
@@ -50,15 +50,15 @@ information or a shortcut to whatever the user is doing, without changing how th
    override only what you need. `Host` (the `ICaptureToolHost`) is set in `Attach`, when the window opens.
 2. Give it a `Mode`, the `CaptureMode` the flow sees when your tool made the selection (`FinalMode` of the selection result).
    The window starts with the first tool whose mode the recipe asked for, so a tool with the mode of a built-in tool is never
-   the starting tool. In Greenshot itself a new kind of selection can get its own value at the end of `CaptureMode`
-   (`src/Greenshot.Base/Interfaces/CaptureMode.cs`); a plugin uses an existing value, e.g. `Region` when it accepts a rectangle.
+   the starting tool. In BuckShot itself a new kind of selection can get its own value at the end of `CaptureMode`
+   (`src/BuckShot.Base/Interfaces/CaptureMode.cs`); a plugin uses an existing value, e.g. `Region` when it accepts a rectangle.
    To start with your tool, a recipe sets the `SelectionTool` parameter of its interactive selection step to the tool's `Id`
    (default: the name of its mode, so override it in a plugin tool, e.g. `"ColorPicker"`). Without a tool of that id the mode decides.
 3. Register its keys in `Attach`, see Keys: `Host.RegisterToolKey` for keys which only work while the tool is active (e.g. Enter),
    and optionally `Host.RegisterKey` for a key which switches to the tool (`Host.ActivateTool(this)`), like T for the text tool.
 4. Make the window use it:
-   - **In Greenshot:** put the class in `src/Greenshot/Capturing/Tools` and add it to `CreateTools` in `CaptureWindow.xaml.cs`.
-     Wrap it in `#if !GREENSHOT_LIGHT` if the tool should not be in the Light edition.
+   - **In BuckShot:** put the class in `src/BuckShot/Capturing/Tools` and add it to `CreateTools` in `CaptureWindow.xaml.cs`.
+     Wrap it in `#if !BUCKSHOT_LIGHT` if the tool should not be in the Light edition.
    - **In a plugin:** implement `ICaptureToolProvider` and register it in the plugin's `Initialize`, see below.
 
 ### Tools from a plugin
@@ -85,13 +85,13 @@ The tools of the plugins come after the built-in ones, in the order the plugins 
 Normally the flow crops the frozen capture to the selection (on the live screen it captures the selected area). A tool which implements `ISelectionCaptureTool` takes a new image instead:
 after the window closed, the interactive selection step calls `CaptureSelectionAsync(selection, screenArea, ui, cancellationToken)`
 on a pool thread, and the image it returns replaces the capture (null cancels the flow). This is for a tool which has to change
-the window to capture it. `WindowCaptureSession` (`Greenshot.Base.Capturing`) captures one window over many frames
+the window to capture it. `WindowCaptureSession` (`BuckShot.Base.Capturing`) captures one window over many frames
 with Windows Graphics Capture, without what covers it.
 
 ### Recipes from a plugin
 
 A plugin which brings a tool can bring the recipe which starts with it: register an `IBuiltInRecipeProvider`
-(`Greenshot.Base.Recipes`) in `ConfigureServices` with `services.AddService<IBuiltInRecipeProvider>(...)`. Its recipes are added
+(`BuckShot.Base.Recipes`) in `ConfigureServices` with `services.AddService<IBuiltInRecipeProvider>(...)`. Its recipes are added
 to the built-in recipes when the recipes are loaded after the plugins registered.
 
 ### The life of a tool
@@ -117,9 +117,9 @@ to the built-in recipes when the recipes are loaded after the plugins registered
 | `CursorPosition` | The cursor in capture pixels, already corrected for the fix mode (shift keeps it to one direction). |
 | `GetPixelColor(point)` | The color of a pixel of the frozen capture (a 1x1 copy, cheap enough for every mouse move); on the live screen it is read from the screen. |
 | `GetMonitorBounds()` | The monitor under the cursor, in capture pixels. |
-| `ShowPanel(owner, contentSize, drawContent)`, `HidePanel(owner)` | A panel in Greenshot's style in a free corner, moved (animated) out of the way, see Positioning. |
+| `ShowPanel(owner, contentSize, drawContent)`, `HidePanel(owner)` | A panel in BuckShot's style in a free corner, moved (animated) out of the way, see Positioning. |
 | `ShowPanel(owner, content)` | The same panel with WPF content (a `UserControl`, bindings, a view model), see WPF content and binding. |
-| `ToolStyle` | Greenshot's look: theme colors, font, text, panels and key caps, see Look and feel. |
+| `ToolStyle` | BuckShot's look: theme colors, font, text, panels and key caps, see Look and feel. |
 | `Windows`, `FindWindowUnderCursor(children)` | The visible windows in z-order, the (child) window under the cursor. |
 | `ShowSelection(rect, animate, completed)`, `HideSelection()`, `IsSelectionVisible`, `IsSelectionAnimating`, `Selection`, `SelectionSize` | The one selection rectangle (`Selection` is where it is or goes, `SelectionSize` the size the labels show). Animated with the window selection animation of the XAML; jumps in a remote desktop session. |
 | `ShowLabels(rect, size, fadeIn, debugText)`, `ClearLabels()` | The size rulers at the sides of a rectangle and the size in its middle. |
@@ -136,7 +136,7 @@ to the built-in recipes when the recipes are loaded after the plugins registered
 2. Make the window use it:
    - **In a plugin:** implement `ICaptureOverlayProvider`, which returns new instances for every window that opens, and register it
      in the plugin's `Initialize` with `SimpleServiceProvider.Current.AddService<ICaptureOverlayProvider>(...)`.
-   - **In Greenshot:** add it to `CreateOverlays` in `CaptureWindow.xaml.cs`, like the built-in `HelpOverlay` (F1, a drawn panel)
+   - **In BuckShot:** add it to `CreateOverlays` in `CaptureWindow.xaml.cs`, like the built-in `HelpOverlay` (F1, a drawn panel)
      and `InfoOverlay` (I, a WPF panel bound to a view model: screen resolution, selection, window under the mouse, mouse position),
      and `SelectionPreviewOverlay` (P, a drawn panel with the selected area scaled to fit 320 × 200: enlarged by a whole number
      so pixels stay square and crisp, reduced with high quality scaling; the window passes it the frozen capture (none on the live screen, so no preview there) and calls its `Update`
@@ -175,8 +175,8 @@ public override void Attach(ICaptureToolHost host)
 ```
 
 - **The description is a callback.** It is called every time the text is needed (when the help is shown), not at the
-  registration, so it returns the text in the current language. Greenshot uses its language sections
-  (`Texts.Core.CaptureKey...`, keys `capture_key_...` in `greenshot.en-US.ini`); a plugin uses its own section (`Texts.Get<T>()`).
+  registration, so it returns the text in the current language. BuckShot uses its language sections
+  (`Texts.Core.CaptureKey...`, keys `capture_key_...` in `buckshot.en-US.ini`); a plugin uses its own section (`Texts.Get<T>()`).
 - **Conflicts are errors.** Registering a key which is already used throws a `CaptureKeyConflictException` with both
   bindings (`Requested`, `Existing`). A key registered with `RegisterKey` is always active and conflicts with every other use of
   that key. A key registered with `RegisterToolKey` is only active while its tool is; it conflicts with the always active keys and
@@ -215,12 +215,12 @@ The keys of the window and the built-in tools:
 
 ### Example: the help overlay
 
-The help is a built-in overlay (`src/Greenshot/Capturing/Overlays/HelpOverlay.cs`): F1 shows a panel with the keys which work now,
+The help is a built-in overlay (`src/BuckShot/Capturing/Overlays/HelpOverlay.cs`): F1 shows a panel with the keys which work now,
 the keys of the active tool first, as key caps like the hotkey settings show them. Keys with the same description share a row
 (the four arrow keys, left and right Shift), more than four show as a range (1–9). The key a tool registered to switch to itself
 (e.g. F) isn't shown while that tool is active. Because it reads `Host.KeyBindings`, keys of plugin tools and overlays are in it too,
 and the descriptions are read when the panel is shown, in the current language. When the tool changes, the panel is shown again
-with the keys of the new tool. Whether it is shown is remembered in the configuration (`CaptureHelpVisible` in `greenshot.ini`, on by default),
+with the keys of the new tool. Whether it is shown is remembered in the configuration (`CaptureHelpVisible` in `buckshot.ini`, on by default),
 so it comes back with every capture until F1 hides it. The info overlay does the same with `CaptureInfoVisible`, the selection preview
 with `CaptureSelectionPreviewVisible`.
 
@@ -233,11 +233,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Dapplo.Ini;
-using Greenshot.Base.Core;
-using Greenshot.Base.Interfaces.Capture;
-using Greenshot.Base.Languages;
+using BuckShot.Base.Core;
+using BuckShot.Base.Interfaces.Capture;
+using BuckShot.Base.Languages;
 
-namespace Greenshot.Capturing.Overlays
+namespace BuckShot.Capturing.Overlays
 {
     /// <summary>
     /// F1 shows or hides a panel with the keys which work now: those of the active tool first, then those which are always active.
@@ -375,7 +375,7 @@ where things go. Two ways:
   is at one of the cursor's corners (mostly bottom right), so the opposite corner is usually free.
 - **A panel in a corner**, like a help text: `Host.ShowPanel(this, contentSize, dc => ...)` with drawn content, or
   `Host.ShowPanel(this, content)` with WPF content (see below). The window does the rest:
-  - It draws the panel in Greenshot's style (`ToolStyle.DrawPanel`: theme colors, rounded corners, padding) with your content on it.
+  - It draws the panel in BuckShot's style (`ToolStyle.DrawPanel`: theme colors, rounded corners, padding) with your content on it.
   - It places it in the corner of the monitor under the cursor which is farthest from the cursor and doesn't cover the selection
     or other panels, at least `PanelPlacement.CursorClearance` (40 pixels) from the cursor and `PanelPlacement.Margin`
     (10) from the edge. The zoomer is not avoided: it moves with the cursor and avoids the panels itself.
@@ -399,11 +399,11 @@ The help overlay (see Keys) is an example of a panel: it is drawn with key caps 
 
 A panel can also show WPF content: `Host.ShowPanel(this, content)` with any `FrameworkElement`, usually a `UserControl` whose
 `DataContext` is a view model. The overlay only updates the view model, the bindings update the text, and the window keeps the
-panel in a free corner as above. The built-in info overlay (`src/Greenshot/Capturing/Overlays/InfoOverlay.cs`, the view `Capturing/Views/InfoPanelView.xaml` and its view model `Capturing/ViewModels/InfoPanelViewModel.cs`)
+panel in a free corner as above. The built-in info overlay (`src/BuckShot/Capturing/Overlays/InfoOverlay.cs`, the view `Capturing/Views/InfoPanelView.xaml` and its view model `Capturing/ViewModels/InfoPanelViewModel.cs`)
 works this way. What the window does with the content:
 
-- It puts it in a `Border` in Greenshot's style (`ToolStyle.CreatePanel`): theme background and border, rounded corners, padding,
-  and Greenshot's font, size and foreground inherited by the content.
+- It puts it in a `Border` in BuckShot's style (`ToolStyle.CreatePanel`): theme background and border, rounded corners, padding,
+  and BuckShot's font, size and foreground inherited by the content.
 - The theme brushes are resources of that border, use them with `{DynamicResource CaptureTool.MutedForeground}` etc., see Look and feel.
 - The content is in device independent units like any other XAML, the border scales it for the monitor.
 - When the content changes size (a longer text), the panel is measured again; only the panel is laid out, not the capture.
@@ -417,7 +417,7 @@ Example: the cursor position and the color under it.
 `CoordinatesPanel.xaml`:
 
 ```xml
-<UserControl x:Class="Greenshot.Plugin.Coordinates.CoordinatesPanel"
+<UserControl x:Class="BuckShot.Plugin.Coordinates.CoordinatesPanel"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!-- Font, size and foreground come from the panel, the other theme brushes are resources of it -->
@@ -440,7 +440,7 @@ Example: the cursor position and the color under it.
 ```csharp
 using System.Windows.Controls;
 
-namespace Greenshot.Plugin.Coordinates
+namespace BuckShot.Plugin.Coordinates
 {
     public partial class CoordinatesPanel : UserControl
     {
@@ -459,9 +459,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
-using Greenshot.Base.Interfaces.Capture;
+using BuckShot.Base.Interfaces.Capture;
 
-namespace Greenshot.Plugin.Coordinates
+namespace BuckShot.Plugin.Coordinates
 {
     /// <summary>
     /// What the panel shows, the bindings of CoordinatesPanel.xaml update it
@@ -559,13 +559,13 @@ panel only when the cursor comes close. This example was compiled against the cu
 
 ## Look and feel
 
-`Host.ToolStyle` (`CaptureToolStyle`) gives tools and overlays the look of Greenshot's WPF UI, if they want it:
+`Host.ToolStyle` (`CaptureToolStyle`) gives tools and overlays the look of BuckShot's WPF UI, if they want it:
 
 | Member | What |
 |---|---|
-| `PanelBackground`, `PanelBorder`, `Foreground`, `MutedForeground`, `Accent`, `KeyCapBackground`, `KeyCapBorder` | Frozen brushes of the current theme (`ThemeManager.Instance.CurrentPalette`), light or dark like the rest of Greenshot. |
+| `PanelBackground`, `PanelBorder`, `Foreground`, `MutedForeground`, `Accent`, `KeyCapBackground`, `KeyCapBorder` | Frozen brushes of the current theme (`ThemeManager.Instance.CurrentPalette`), light or dark like the rest of BuckShot. |
 | `IsDarkTheme` | True for the dark theme. |
-| `FontFamily`, `CreateText(text, points, brush, bold)` | Greenshot's UI font (Segoe UI); the size in points is scaled to pixels for the monitor. |
+| `FontFamily`, `CreateText(text, points, brush, bold)` | BuckShot's UI font (Segoe UI); the size in points is scaled to pixels for the monitor. |
 | `Scale(units)` | Converts a size in device independent units (as in XAML) to pixels, for margins and gaps. |
 | `PanelPadding`, `PanelCornerRadius`, `DrawPanel(dc, rect)` | The panel as `ShowPanel` draws it, also for your own drawings (e.g. a small label). |
 | `CreatePanel(content)` | The `Border` which `ShowPanel(owner, content)` puts around WPF content. |
@@ -588,9 +588,9 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Greenshot.Base.Interfaces.Capture;
+using BuckShot.Base.Interfaces.Capture;
 
-namespace Greenshot.Plugin.ColorPicker
+namespace BuckShot.Plugin.ColorPicker
 {
     /// <summary>
     /// Shows the color under the cursor next to it, whatever tool is active. C copies it as #RRGGBB to the clipboard and closes the window,
@@ -657,7 +657,7 @@ namespace Greenshot.Plugin.ColorPicker
             border.Freeze();
             drawingContext.DrawRectangle(new SolidColorBrush(_color), border, swatch);
 
-            // The value on a small panel in Greenshot's style
+            // The value on a small panel in BuckShot's style
             var text = style.CreateText(ToHex(_color), 9);
             double padding = style.Scale(3);
             var textPanel = new Rect(swatch.X, swatch.Y - text.Height - 2 * padding - 2, text.Width + 2 * padding, text.Height + 2 * padding);
@@ -700,7 +700,7 @@ Points to note:
   so no destination runs.
 - **Placement:** the swatch is drawn above left of the cursor, where the zoomer usually isn't. The zoomer avoids the selection and the
   panels shown with `ShowPanel`, not what is drawn elsewhere.
-- **Keys:** C and H are free; if a later Greenshot version or an earlier plugin takes one of them, `RegisterKey` throws and the
+- **Keys:** C and H are free; if a later BuckShot version or an earlier plugin takes one of them, `RegisterKey` throws and the
   error is logged (the overlay keeps the keys it registered before). Check `Host.KeyBindings` first to pick another key instead.
 - **As a tool instead:** derive from `CaptureTool`, register a key which switches to it and copy the color in `OnMouseUp`. Then it is a mode the
   user switches to, and a click picks the color, but it can't show the color during a region selection.
@@ -714,7 +714,7 @@ Points to note:
 - Changing the capture details before accepting, e.g. the text tool sets the capture mode, the window tool the title.
 - A fixed size rectangle: `ShowSelection` with a rectangle of that size at the cursor in `OnMouseMove`, `Accept` it in `OnMouseUp`.
 - Unit tests without a screen: implement `ICaptureToolHost` with a fake and call the tool's methods, see
-  `src/Greenshot.Tests/Forms/RegionCaptureToolTests.cs`. They need WPF, so they run on Windows only.
+  `src/BuckShot.Tests/Forms/RegionCaptureToolTests.cs`. They need WPF, so they run on Windows only.
 
 ## Restrictions
 
@@ -747,5 +747,5 @@ Points to note:
   breaks the interactive capture. Errors in key handlers and in `Attach` are logged. Errors in `ICaptureToolProvider.CreateTools` and `ICaptureOverlayProvider.CreateOverlays` are logged and
   that provider is skipped; errors in an overlay's handlers are logged.
 - **Overlays never get mouse buttons,** and only the keys they registered: they can't change how the selection works.
-- **Plugin API:** the interfaces in `Greenshot.Base.Interfaces.Capture` are now used by plugins, so changing them breaks plugins.
+- **Plugin API:** the interfaces in `BuckShot.Base.Interfaces.Capture` are now used by plugins, so changing them breaks plugins.
   Add members to `CaptureTool` (with an empty implementation) rather than to `ICaptureTool` where possible.

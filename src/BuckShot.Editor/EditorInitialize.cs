@@ -1,0 +1,82 @@
+﻿/*
+ * Greenshot - a free and open source screenshot tool
+ * Copyright (C) 2007-2026 Thomas Braun, Jens Klingen, Robin Krom
+ * 
+ * For more information see: https://getgreenshot.org/
+ * The Greenshot project is hosted on GitHub https://github.com/greenshot/greenshot
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+using Dapplo.Ini.Converters;
+using System.Linq;
+using BuckShot.Base.Core;
+using BuckShot.Base.Core.FileFormat;
+using BuckShot.Base.Interfaces;
+using BuckShot.Editor.Configuration;
+using BuckShot.Editor.FileFormatHandlers;
+
+namespace BuckShot.Editor
+{
+    public static class EditorInitialize
+    {
+        /// <summary>
+        /// Register the value converters the editor configuration needs, this must happen before buckshot.ini is loaded,
+        /// otherwise e.g. the last used field values can't be read.
+        /// </summary>
+        public static void RegisterValueConverters()
+        {
+            ValueConverterRegistry.Register(new BuckShotEditorObjectValueConverter());
+        }
+
+        public static void Initialize()
+        {
+            // Registering again is harmless, this keeps hosts which only call Initialize (tests) working
+            RegisterValueConverters();
+
+            SimpleServiceProvider.Current.AddService<IFileFormatHandler>(
+                    // Saves gif, png, jpg etc., loads what WIC can't (tga, pbm, webp without the Store codec)
+                    new ImageSharpFileFormatHandler(),
+                    // BuckShot format
+                    new BuckShotFileFormatHandler(),
+                    // For .svg support
+                    new SvgFileFormatHandler(),
+                    // For clipboard support
+                    new DibFileFormatHandler(),
+                    // .ico
+                    new IconFileFormatHandler(),
+                    // EMF & WMF
+                    new MetaFileFormatHandler(),
+                    // JPEG XR and everything else WIC can decode
+                    new WicFileFormatHandler()
+                );
+
+            // Writing and reading HDR files (JPEG XR of an HDR capture), registered once: they are looked up with GetInstance
+            if (SimpleServiceProvider.Current.GetAllInstances<IHdrImageEncoder>().Count == 0)
+            {
+                SimpleServiceProvider.Current.AddService<IHdrImageEncoder>(new WicHdrImageEncoder());
+            }
+            if (SimpleServiceProvider.Current.GetAllInstances<IHdrImageDecoder>().Count == 0)
+            {
+                SimpleServiceProvider.Current.AddService<IHdrImageDecoder>(new WicHdrImageDecoder());
+            }
+
+            IFileFormatRegistry registry = SimpleServiceProvider.Current.GetInstance<IFileFormatRegistry>();
+            foreach (var handler in SimpleServiceProvider.Current.GetAllInstances<IFileFormatHandler>().OfType<AbstractFileFormatHandler>())
+            {
+                handler.RegisterFileFormats(registry);
+            }
+        }
+    }
+}

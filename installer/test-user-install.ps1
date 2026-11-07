@@ -18,14 +18,14 @@ $upstreamConfig = Join-Path $env:APPDATA 'Greenshot/greenshot.ini'
 $upstreamConfigExisted = Test-Path -LiteralPath $upstreamConfig
 if (-not $upstreamConfigExisted) {
     [void][IO.Directory]::CreateDirectory((Split-Path $upstreamConfig -Parent))
-    [IO.File]::WriteAllText($upstreamConfig, '; Greenshot coexistence probe: must remain untouched')
+    [IO.File]::WriteAllText($upstreamConfig, '; BuckShot coexistence probe: must remain untouched')
 }
 $upstreamHash = (Get-FileHash -LiteralPath $upstreamConfig -Algorithm SHA256).Hash
 $upstreamRegistration = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Greenshot_is1'
 $upstreamRegistrationExisted = Test-Path $upstreamRegistration
 if (-not $upstreamRegistrationExisted) {
     [void](New-Item -Path $upstreamRegistration -Force)
-    [void](New-ItemProperty -Path $upstreamRegistration -Name DisplayName -Value 'Greenshot coexistence probe' -PropertyType String)
+    [void](New-ItemProperty -Path $upstreamRegistration -Name DisplayName -Value 'BuckShot coexistence probe' -PropertyType String)
 }
 $upstreamDisplayName = (Get-ItemProperty $upstreamRegistration).DisplayName
 # Sentinel Classes defaults must be restored, without touching separate ProgIDs or UserChoice.
@@ -34,8 +34,8 @@ foreach ($extension in @('buckshot', 'greenshot')) {
     $key = "HKCU:\Software\Classes\.$extension"
     if (Test-Path $key) { throw "Runner already has $extension association; refusing to change it" }
     [void](New-Item -Path $key -Force)
-    Set-Item -Path $key -Value 'Greenshot.CoexistenceProbe'
-    $associationDefaults[$extension] = 'Greenshot.CoexistenceProbe'
+    Set-Item -Path $key -Value 'BuckShot.CoexistenceProbe'
+    $associationDefaults[$extension] = 'BuckShot.CoexistenceProbe'
 }
 if ($PreviousInstallerPath) {
     $previous = (Resolve-Path -LiteralPath $PreviousInstallerPath).Path
@@ -111,11 +111,11 @@ finally {
 }
 if (Test-Path $userKey) { throw 'Uninstaller left the uninstall registration behind' }
 if (Test-Path -LiteralPath (Join-Path $installDir 'BuckShot.exe')) { throw 'Uninstaller left the application behind' }
-if (-not (Test-Path -LiteralPath $upstreamConfig) -or (Get-FileHash -LiteralPath $upstreamConfig -Algorithm SHA256).Hash -ne $upstreamHash) { throw 'BuckShot modified Greenshot configuration' }
-if (-not (Test-Path $upstreamRegistration) -or (Get-ItemProperty $upstreamRegistration).DisplayName -ne $upstreamDisplayName) { throw 'BuckShot modified Greenshot registration' }
+if (-not (Test-Path -LiteralPath $upstreamConfig) -or (Get-FileHash -LiteralPath $upstreamConfig -Algorithm SHA256).Hash -ne $upstreamHash) { throw 'BuckShot modified BuckShot configuration' }
+if (-not (Test-Path $upstreamRegistration) -or (Get-ItemProperty $upstreamRegistration).DisplayName -ne $upstreamDisplayName) { throw 'BuckShot modified BuckShot registration' }
 if (-not $upstreamConfigExisted) { Remove-Item -LiteralPath $upstreamConfig }
 if (-not $upstreamRegistrationExisted) { Remove-Item -LiteralPath $upstreamRegistration }
-Write-Host 'Verified Greenshot coexistence and independent BuckShot identity.'
+Write-Host 'Verified BuckShot coexistence and independent BuckShot identity.'
 foreach ($extension in @('buckshot', 'greenshot')) {
     $key = "HKCU:\Software\Classes\.$extension"
     if ((Get-Item $key).GetValue('') -ne $associationDefaults[$extension]) { throw "Uninstall did not restore .$extension default" }

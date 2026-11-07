@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="Languages\buckshot*.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Images\Dropbox.gif" LogicalName="BuckShot.Plugin.Dropbox.Dropbox.gif" />
+    <!-- Loaded with EmbeddedResources.GetImage(typeof(DropboxPlugin), "Dropbox") -->
+    <EmbeddedResource Include="Images\Dropbox.png" LogicalName="BuckShot.Plugin.Dropbox.DropboxPlugin.Dropbox" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BuckShot.Base\BuckShot.Base.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="5.6.0" />
+  </ItemGroup>
+</Project>

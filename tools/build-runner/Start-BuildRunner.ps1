@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-    Local build/test runner for Greenshot, driven by request files.
+    Local build/test runner for BuckShot, driven by request files.
 
 .DESCRIPTION
     Watches <repo>\.build-runner\requests for *.json request files and executes a FIXED set of actions:
-      build   - MSBuild (from Visual Studio / Build Tools) of src\Greenshot.sln, including the C++ proxy projects
-      test    - dotnet test of src\Greenshot.Tests (no build), optional test filter
+      build   - MSBuild (from Visual Studio / Build Tools) of src\BuckShot.sln, including the C++ proxy projects
+      test    - dotnet test of src\BuckShot.Tests (no build), optional test filter
       verify  - build, then test
     Nothing else can be executed: the request only selects an action, a configuration and an optional,
     validated test filter. Output goes to <repo>\.build-runner\results\<id>.log and a summary to <id>.json.
@@ -36,9 +36,9 @@ $RunnerDir = Join-Path $RepoRoot '.build-runner'
 $RequestDir = Join-Path $RunnerDir 'requests'
 $ResultDir = Join-Path $RunnerDir 'results'
 $CancelFile = Join-Path $RunnerDir 'cancel'
-$Solution = Join-Path $RepoRoot 'src\Greenshot.sln'
-$BuildTasksProject = Join-Path $RepoRoot 'src\Greenshot.BuildTasks\Greenshot.BuildTasks.csproj'
-$TestProject = Join-Path $RepoRoot 'src\Greenshot.Tests\Greenshot.Tests.csproj'
+$Solution = Join-Path $RepoRoot 'src\BuckShot.sln'
+$BuildTasksProject = Join-Path $RepoRoot 'src\BuckShot.BuildTasks\BuckShot.BuildTasks.csproj'
+$TestProject = Join-Path $RepoRoot 'src\BuckShot.Tests\BuckShot.Tests.csproj'
 
 New-Item -ItemType Directory -Force -Path $RequestDir, $ResultDir | Out-Null
 
@@ -118,7 +118,7 @@ function Invoke-Request {
 
     if ($action -in @('build', 'verify')) {
         if (-not $MSBuild) { throw 'MSBuild (Visual Studio or Build Tools with C++ workload) not found; needed for the C++ proxy projects.' }
-        # The build tasks are built on their own first: projects in the solution load Greenshot.BuildTasks.dll from its bin
+        # The build tasks are built on their own first: projects in the solution load BuckShot.BuildTasks.dll from its bin
         # folder, so building it within the same (parallel) build can collide with its own copy step (file in use).
         $summary.build_exit_code = Invoke-Step -Name 'buildtasks' -Exe $MSBuild -Log $log -Arguments @(
             "`"$BuildTasksProject`"", '/restore', "/p:Configuration=$configuration", '/nodeReuse:false', '/nologo', '/v:minimal', '/clp:Summary;ErrorsOnly;WarningsOnly')
@@ -146,9 +146,9 @@ function Invoke-Request {
     return $summary
 }
 
-Write-Host "Greenshot build runner watching $RequestDir (MSBuild: $MSBuild, dotnet: $Dotnet). Ctrl+C to stop."
-if (Get-Process -Name Greenshot -ErrorAction SilentlyContinue) {
-    Write-Warning 'Greenshot is running: builds may fail on locked files and pipe tests may clash with it.'
+Write-Host "BuckShot build runner watching $RequestDir (MSBuild: $MSBuild, dotnet: $Dotnet). Ctrl+C to stop."
+if (Get-Process -Name BuckShot -ErrorAction SilentlyContinue) {
+    Write-Warning 'BuckShot is running: builds may fail on locked files and pipe tests may clash with it.'
 }
 
 $ScriptPath = $PSCommandPath

@@ -49,8 +49,8 @@ try {
     Copy-Item (Join-Path $PayloadPath 'log4net.xml'), (Join-Path $PayloadPath 'checksum.SHA256') $stage
     $languages = Join-Path $stage 'Languages'; [void][IO.Directory]::CreateDirectory($languages)
     if (Test-Path (Join-Path $PayloadPath 'Languages')) { Copy-Item (Join-Path $PayloadPath 'Languages/*.ini') $languages -Force }
-    Copy-Item (Join-Path $repository 'src/Greenshot-Installer/additional_files/license.txt') $stage
-    Copy-Item (Join-Path $repository 'src/Greenshot-Installer/additional_files/buckshot-readme.txt') (Join-Path $stage 'readme.txt')
+    Copy-Item (Join-Path $repository 'src/BuckShot-Installer/additional_files/license.txt') $stage
+    Copy-Item (Join-Path $repository 'src/BuckShot-Installer/additional_files/buckshot-readme.txt') (Join-Path $stage 'readme.txt')
     if (Test-Path (Join-Path $stage 'Plugins/BuckShot.Plugin.RecipeEditor')) { throw 'Recipe Editor must not be packaged.' }
     [xml]$manifest = Get-Content (Join-Path $PSScriptRoot 'msix/AppxManifest.xml') -Raw
     $manifest.Package.Identity.Version = "$version.0"
