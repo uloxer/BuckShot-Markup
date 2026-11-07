@@ -12,6 +12,9 @@ namespace Greenshot.Editor.Drawing
         private readonly Dictionary<DrawableContainer, Rectangle> _elementVisualSnapshots = new Dictionary<DrawableContainer, Rectangle>();
         private readonly Dictionary<Guid, Rectangle> _groupVisualSnapshots = new Dictionary<Guid, Rectangle>();
 
+        internal bool TracksElementVisual(DrawableContainer shape) =>
+            _elementVisualSnapshots.ContainsKey(shape) || ReferenceEquals(RotationHandleOwner, shape);
+
         private Rectangle ElementVisualBounds(DrawableContainer shape)
         {
             var bounds = (Rectangle)ToSurfaceCoordinates(shape.DrawingBounds);

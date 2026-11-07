@@ -219,6 +219,38 @@ namespace Greenshot.Tests.Editor
                     editor.DrawToBitmap(bitmap, new Rectangle(Point.Empty, bitmap.Size));
                     bitmap.Save(Path.Combine(folder, (tab == first ? "rectangle" : "text") + "-" + width + ".png"), ImageFormat.Png);
                 }
+                editor.SelectTab(second);
+                editor.Width = 1250;
+                foreach (int percent in new[] { 100, 150, 200 })
+                {
+                    // Simulate toolbar image sizing only; the runner's monitor DPI and fonts are unchanged.
+                    int pixels = 16 * percent / 100;
+                    toolbar.ImageScalingSize = new Size(pixels, pixels);
+                    toolbar.PerformLayout(); Application.DoEvents();
+                    foreach (var swatch in toolbar.Items.OfType<ToolStripButton>().Where(button => button.Tag is Color && button.Available))
+                        Assert.Equal(new Size(pixels, pixels), swatch.Image.Size);
+                    using var bitmap = new Bitmap(editor.Width, editor.Height);
+                    editor.DrawToBitmap(bitmap, new Rectangle(Point.Empty, bitmap.Size));
+                    bitmap.Save(Path.Combine(folder, $"text-simulated-swatch-size-{percent}.png"), ImageFormat.Png);
+                }
+                File.WriteAllText(Path.Combine(folder, "sizing-evidence.txt"),
+                    $"100/150/200 percent images simulate 16/24/32 pixel toolbar swatch sizing. Monitor DPI remains {toolbar.DeviceDpi}; fonts and other controls retain that actual DPI.");
+                editor.Width = 620; Application.DoEvents();
+                Assert.True(toolbar.OverflowButton.Visible);
+                toolbar.OverflowButton.ShowDropDown(); Application.DoEvents();
+                try
+                {
+                    var overflow = toolbar.OverflowButton.DropDown;
+                    Assert.True(overflow.Visible);
+                    Assert.Contains(toolbar.Items.Cast<ToolStripItem>(), item => item.Available && item.Placement == ToolStripItemPlacement.Overflow);
+                    using var popup = new Bitmap(overflow.Width, overflow.Height);
+                    overflow.DrawToBitmap(popup, new Rectangle(Point.Empty, popup.Size));
+                    popup.Save(Path.Combine(folder, "text-open-overflow-dropdown.png"), ImageFormat.Png);
+                    using var bitmap = new Bitmap(editor.Width, editor.Height);
+                    editor.DrawToBitmap(bitmap, new Rectangle(Point.Empty, bitmap.Size));
+                    bitmap.Save(Path.Combine(folder, "text-open-overflow-editor.png"), ImageFormat.Png);
+                }
+                finally { toolbar.OverflowButton.HideDropDown(); }
                 var target = toolbar.Items.OfType<ToolStripDropDownButton>().Single(button => button.ToolTipText == "Quick colour target");
                 ((ToolStripMenuItem)target.DropDownItems[1]).PerformClick();
                 editor.SelectTab(first);

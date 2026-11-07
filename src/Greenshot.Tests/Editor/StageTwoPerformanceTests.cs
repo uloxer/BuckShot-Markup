@@ -125,6 +125,17 @@ namespace Greenshot.Tests.Editor
         [InlineData(3, 2)]
         [InlineData(2, 3)]
         public void RetainedVisualDirtyRegionsMatchFullRenderAcrossRotationResizeUndoAndGroupMove(int numerator, int denominator)
+            => ExerciseRetainedVisuals(numerator, denominator, false);
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(3, 2)]
+        [InlineData(2, 3)]
+        [InlineData(4, 1)]
+        public void SquareQuarterTurnUndoRepaintsIdentityRotationHandleAndStem(int numerator, int denominator)
+            => ExerciseRetainedVisuals(numerator, denominator, true);
+
+        private static void ExerciseRetainedVisuals(int numerator, int denominator, bool square)
         {
             DimensionFormatTests.Sta(() =>
             {
@@ -134,9 +145,9 @@ namespace Greenshot.Tests.Editor
                 using var form = new Form { Size = new Size(1100, 800) };
                 form.Controls.Add(surface); form.Show(); Application.DoEvents();
                 surface.ZoomFactor = new Fraction((uint)numerator, (uint)denominator);
-                var box = new RectangleContainer(surface) { Left = 160, Top = 170, Width = 90, Height = 55 };
+                var box = new RectangleContainer(surface) { Left = 160, Top = 170, Width = 90, Height = square ? 90 : 55 };
                 box.SetFieldValue(FieldType.FILL_COLOR, Color.Red); box.SetFieldValue(FieldType.SHADOW, true);
-                surface.AddElement(box, false); surface.SelectElement(box); box.SetDimensionVisible(0, true);
+                surface.AddElement(box, false); surface.SelectElement(box); if (!square) box.SetDimensionVisible(0, true);
                 using var content = new Bitmap(45, 30);
                 using (var graphics = Graphics.FromImage(content)) graphics.Clear(Color.Green);
                 var image = new ImageContainer(surface) { Image = content, Left = 330, Top = 200, Width = 45, Height = 30 };
@@ -146,8 +157,12 @@ namespace Greenshot.Tests.Editor
                 surface.DrawToBitmap(incremental, new Rectangle(Point.Empty, incremental.Size));
                 var dirty = new List<Rectangle>();
                 surface.Invalidated += (s, e) => dirty.Add(e.InvalidRect);
-                void Compare(Action mutation, bool bounded = false)
+                string folder = System.IO.Path.Combine(Environment.GetEnvironmentVariable("GITHUB_WORKSPACE") ?? System.IO.Path.GetTempPath(), "TestResults", "stage2-render");
+                System.IO.Directory.CreateDirectory(folder);
+                string scenario = $"{(square ? "square" : "scene")}-{numerator}-{denominator}";
+                void Compare(string phase, Action mutation, bool bounded = false)
                 {
+                    using var before = new Bitmap(incremental);
                     dirty.Clear(); mutation();
                     Assert.NotEmpty(dirty);
                     if (bounded) Assert.DoesNotContain(dirty, rectangle => rectangle.Contains(surface.ClientRectangle));
@@ -171,28 +186,41 @@ namespace Greenshot.Tests.Editor
                     var area = new Rectangle(Point.Empty, full.Size);
                     var expected = full.LockBits(area, System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                     var actual = incremental.LockBits(area, System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    int mismatch = -1;
+                    int stride = expected.Stride;
                     try
                     {
                         var expectedBytes = new byte[Math.Abs(expected.Stride) * full.Height];
                         var actualBytes = new byte[Math.Abs(actual.Stride) * full.Height];
                         System.Runtime.InteropServices.Marshal.Copy(expected.Scan0, expectedBytes, 0, expectedBytes.Length);
                         System.Runtime.InteropServices.Marshal.Copy(actual.Scan0, actualBytes, 0, actualBytes.Length);
-                        Assert.True(expectedBytes.SequenceEqual(actualBytes), "Incremental repaint must exactly match a complete render.");
+                        for (int i = 0; i < expectedBytes.Length; i++)
+                            if (expectedBytes[i] != actualBytes[i]) { mismatch = i; break; }
                     }
                     finally { full.UnlockBits(expected); incremental.UnlockBits(actual); }
+                    if (mismatch >= 0)
+                    {
+                        string prefix = System.IO.Path.Combine(folder, scenario + "-" + phase);
+                        int y = mismatch / Math.Abs(stride), x = (mismatch % Math.Abs(stride)) / 4;
+                        before.Save(prefix + "-before.png");
+                        incremental.Save(prefix + "-patched.png");
+                        full.Save(prefix + "-full.png");
+                        string evidence = $"Phase: {phase}; first mismatch ({x}, {y}); expected {full.GetPixel(x, y).ToArgb():X8}; actual {incremental.GetPixel(x, y).ToArgb():X8}; dirty: {string.Join("; ", dirty)}";
+                        System.IO.File.WriteAllText(prefix + "-diagnostic.txt", evidence);
+                        Assert.Fail(evidence);
+                    }
                 }
-                Compare(() => surface.RotateSelectedObjects(17), bounded: true);
-                Compare(() => { box.Invalidate(); box.Width += 13; box.Invalidate(); }, bounded: true);
-                Compare(() => surface.Undo());
-                Compare(() => surface.Redo());
-                Compare(() => { surface.SelectElement(image); surface.GroupSelectedElements(); });
-                Compare(() => surface.RotateSelectedObjects(12));
-                Compare(() => surface.SelectedElements.MoveBy(13, -9));
-                Compare(() => surface.Undo());
+                Compare("rotate", () => surface.RotateSelectedObjects(square ? 90 : 17), bounded: true);
+                if (!square) Compare("resize", () => { box.Invalidate(); box.Width += 13; box.Invalidate(); }, bounded: true);
+                Compare("undo", () => surface.Undo());
+                Compare("redo", () => surface.Redo());
+                if (square) { incremental.Save(System.IO.Path.Combine(folder, scenario + ".png")); return; }
+                Compare("group", () => { surface.SelectElement(image); surface.GroupSelectedElements(); });
+                Compare("group-rotate", () => surface.RotateSelectedObjects(12));
+                Compare("group-move", () => surface.SelectedElements.MoveBy(13, -9));
+                Compare("group-undo", () => surface.Undo());
                 Assert.Same(ownedImage, image.Image);
-                string folder = System.IO.Path.Combine(Environment.GetEnvironmentVariable("GITHUB_WORKSPACE") ?? System.IO.Path.GetTempPath(), "TestResults", "stage2-render");
-                System.IO.Directory.CreateDirectory(folder);
-                incremental.Save(System.IO.Path.Combine(folder, $"scene-{numerator}-{denominator}.png"));
+                incremental.Save(System.IO.Path.Combine(folder, scenario + ".png"));
             });
         }
     }
