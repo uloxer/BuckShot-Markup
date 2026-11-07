@@ -1869,19 +1869,19 @@ namespace BuckShot.Editor.Forms
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ImageEditorFormFormClosing);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ImageEditorFormKeyDown);
 			this.Resize += new System.EventHandler(this.ImageEditorFormResize);
-			this.topToolStripContainer.BottomToolStripPanel.ResumeLayout(true);
-			this.topToolStripContainer.ContentPanel.ResumeLayout(true);
-			this.topToolStripContainer.LeftToolStripPanel.ResumeLayout(true);
-			this.topToolStripContainer.TopToolStripPanel.ResumeLayout(true);
-			this.topToolStripContainer.ResumeLayout(true);
-			this.statusStrip1.ResumeLayout(true);
-			this.tableLayoutPanel1.ResumeLayout(true);
-			this.toolsToolStrip.ResumeLayout(true);
+			this.topToolStripContainer.BottomToolStripPanel.ResumeLayout(false);
+			this.topToolStripContainer.ContentPanel.ResumeLayout(false);
+			this.topToolStripContainer.LeftToolStripPanel.ResumeLayout(false);
+			this.topToolStripContainer.TopToolStripPanel.ResumeLayout(false);
+			this.topToolStripContainer.ResumeLayout(false);
+			this.statusStrip1.ResumeLayout(false);
+			this.tableLayoutPanel1.ResumeLayout(false);
+			this.toolsToolStrip.ResumeLayout(false);
 			this.zoomMenuStrip.ResumeLayout(false);
-			this.menuStrip1.ResumeLayout(true);
-			this.destinationsToolStrip.ResumeLayout(true);
-			this.propertiesToolStrip.ResumeLayout(true);
-			this.fileSavedStatusContextMenu.ResumeLayout(true);
+			this.menuStrip1.ResumeLayout(false);
+			this.destinationsToolStrip.ResumeLayout(false);
+			this.propertiesToolStrip.ResumeLayout(false);
+			this.fileSavedStatusContextMenu.ResumeLayout(false);
 			this.ResumeLayout(false);
 		}
 

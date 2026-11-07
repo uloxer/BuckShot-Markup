@@ -98,7 +98,7 @@ namespace BuckShot.Tests.Core
         [Fact]
         public void Xmp_HasTheDetails()
         {
-            var metadata = new ExportImageMetadata { Software = "Greenshot test", CaptureTime = Captured, Author = "Jürgen", Copyright = "(c) Test" };
+            var metadata = new ExportImageMetadata { Software = "BuckShot test", CaptureTime = Captured, Author = "Jürgen", Copyright = "(c) Test" };
             var document = XDocument.Parse(System.Text.Encoding.UTF8.GetString(metadata.ToXmpPacket()));
             XNamespace xmp = "http://ns.adobe.com/xap/1.0/", dc = "http://purl.org/dc/elements/1.1/";
             Assert.Equal("BuckShot test", document.Descendants(xmp + "CreatorTool").Single().Value);
@@ -114,7 +114,7 @@ namespace BuckShot.Tests.Core
         [Fact]
         public void Png_WithDetails_HasExifAndXmp()
         {
-            var metadata = new ExportImageMetadata { Software = "Greenshot test", CaptureTime = Captured, Author = "Test Author", Copyright = "(c) Test" };
+            var metadata = new ExportImageMetadata { Software = "BuckShot test", CaptureTime = Captured, Author = "Test Author", Copyright = "(c) Test" };
             using var image = SaveAndLoadPng(metadata);
             var exif = image.Metadata.ExifProfile;
             Assert.NotNull(exif);

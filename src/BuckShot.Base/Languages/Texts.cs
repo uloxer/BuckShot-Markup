@@ -43,7 +43,7 @@ namespace BuckShot.Base.Languages
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Texts));
         private static readonly object InitializeLock = new object();
-        private static string BaseName = "greenshot";
+        private static string BaseName = "buckshot";
         private const string BaseLanguage = "en-US";
         private static LanguageConfig _config;
         private static bool _initializing;

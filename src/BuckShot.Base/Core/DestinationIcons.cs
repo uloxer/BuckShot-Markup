@@ -35,7 +35,7 @@ namespace BuckShot.Base.Core
     /// <summary>
     /// Icon keys of destination descriptors and their resolution through the registered <see cref="IIconProvider"/>s.
     /// Built in keys: "resource:Name" (BuckShot resources), "exe:index:path" (icon of an executable), "stock:Id" (an icon of Windows, e.g.
-    /// the one for an error, see <see cref="StockIconId"/>), "greenshot" (the application icon).
+    /// the one for an error, see <see cref="StockIconId"/>), "buckshot" (the application icon).
     /// </summary>
     public static class DestinationIcons
     {

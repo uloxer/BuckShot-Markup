@@ -461,6 +461,7 @@ if (!IsDisposed && !Disposing && IsHandleCreated)
             ApplyImages();
             InitializeMeasurements();
             RefreshBuckShotIcons();
+            timing.Mark("Icons");
             Disposed += (s, e) => DisposeBuckShotIcons();
             BuckShot.Base.Wpf.WpfThemeHelper.ThemeChanged += BuckShotThemeChanged;
             CreateHdrLabel();
@@ -518,6 +519,12 @@ if (!IsDisposed && !Disposing && IsHandleCreated)
             Disposed += (s, e) => RemoveFromOpenWindows();
 
             timing.Mark("Events");
+            }
+            finally
+            {
+                ResumeStartupLayout(startupLayout);
+            }
+            timing.Mark("Layout");
             if (useStoredPlacement)
             {
                 // Make sure the editor is placed on the same location as the last editor was on close

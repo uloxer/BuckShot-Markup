@@ -125,7 +125,7 @@ namespace BuckShot.Tests.Editor
             payload.Position=payload.Length; MeasurementMetadata.Write(payload,MeasurementState.Pixels,true);
             payload.Position=3; Assert.Equal(DimensionStyle.Default,DimensionMetadata.Read(payload,0,payload.Length)); Assert.Equal(3,payload.Position);
             using var project=new MemoryStream(); s.Image.Save(project,ImageFormat.Png); payload.Position=0; payload.CopyTo(project);
-            using(var writer=new BinaryWriter(project,Encoding.UTF8,true)){writer.Write(payload.Length); writer.Write(Encoding.ASCII.GetBytes("BuckShot01.00"));}
+            using(var writer=new BinaryWriter(project,Encoding.UTF8,true)){writer.Write(payload.Length); writer.Write(Encoding.ASCII.GetBytes("Greenshot01.00"));}
             project.Position=0; using var loaded=(Surface)new BuckShotFileFormatHandler().LoadSurface(project);
             Assert.Single(loaded.Elements); Assert.Equal(DimensionStyle.Default,loaded.DimensionStyle);
         }
