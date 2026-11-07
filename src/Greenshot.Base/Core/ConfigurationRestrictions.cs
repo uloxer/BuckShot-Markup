@@ -72,6 +72,9 @@ namespace Greenshot.Base.Core
         public static string PluginNameFromFile(string pluginFile)
         {
             var fileName = Path.GetFileNameWithoutExtension(pluginFile) ?? string.Empty;
+            const string buckshotPrefix = "BuckShot.Plugin.";
+            if (fileName.StartsWith(buckshotPrefix, StringComparison.OrdinalIgnoreCase))
+                return fileName.Substring(buckshotPrefix.Length);
             return fileName.StartsWith(PluginFilePrefix, StringComparison.OrdinalIgnoreCase) ? fileName.Substring(PluginFilePrefix.Length) : fileName;
         }
 

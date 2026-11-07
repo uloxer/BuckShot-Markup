@@ -21,6 +21,8 @@ foreach ($directory in Get-ChildItem -LiteralPath $payload -Recurse -Directory |
         Rename-Item -LiteralPath $directory.FullName -NewName ($directory.Name -ireplace '^greenshot', 'BuckShot')
     }
 }
+# Remove duplicate shared assemblies before emitting bindings, so every mapped path ships.
+& (Join-Path $repository 'src/Greenshot-Installer/scripts/prune-plugin-files.ps1') -OutputDir $payload
 $configPath = Join-Path $payload 'BuckShot.exe.config'
 [xml]$config = Get-Content -LiteralPath $configPath -Raw
 $namespace = 'urn:schemas-microsoft-com:asm.v1'

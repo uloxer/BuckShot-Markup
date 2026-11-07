@@ -21,6 +21,15 @@ class InstallationProbe {
             object language = texts.GetProperty("Core").GetValue(null, null);
             string cancel = (string)core.GetType("Greenshot.Base.Languages.ICoreLanguage").GetProperty("Cancel").GetValue(language, null);
             if (string.IsNullOrEmpty(cancel) || cancel.StartsWith("###")) throw new Exception("Language loading failed");
+            var binder = (System.Runtime.Serialization.SerializationBinder)Activator.CreateInstance(editor.GetType("Greenshot.Editor.Helpers.BinaryFormatterHelper", true), true);
+            var legacyType = binder.BindToType("Greenshot.Editor, Version=0.9.672.0, Culture=neutral, PublicKeyToken=null", "Greenshot.Editor.Drawing.Fields.FieldType");
+            object value = Enum.GetValues(legacyType).GetValue(0);
+            using (var stream = new MemoryStream()) {
+                var formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter { Binder = binder };
+                formatter.Serialize(stream, value);
+                stream.Position = 0;
+                if (!value.Equals(formatter.Deserialize(stream))) throw new Exception("Legacy project binder roundtrip failed");
+            }
             int plugins = 0;
             foreach (string file in Directory.GetFiles(Path.Combine(root, "Plugins"), "BuckShot.Plugin.*.dll", SearchOption.AllDirectories)) {
                 var plugin = Assembly.LoadFrom(file);

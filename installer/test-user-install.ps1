@@ -43,6 +43,12 @@ if ($PreviousInstallerPath) {
     if ($upgrade.ExitCode -ne 0) { throw 'Previous release installation failed' }
     if (-not (Test-Path (Join-Path $installDir 'Greenshot.exe'))) { throw 'Previous release branding fixture missing' }
     [IO.File]::WriteAllText((Join-Path $installDir 'upgrade-user-data.txt'), 'preserve user files')
+    $settingsPath = Join-Path $env:APPDATA 'BuckShot-Markup/buckshot-markup.ini'
+    [void][IO.Directory]::CreateDirectory((Split-Path $settingsPath -Parent))
+    if (-not (Test-Path -LiteralPath $settingsPath)) { [IO.File]::WriteAllText($settingsPath, "[Core]
+Language=en-US
+") }
+    $settingsHash = (Get-FileHash -LiteralPath $settingsPath -Algorithm SHA256).Hash
     Write-Host 'Installed 0.9.672 to exercise a real in-place upgrade.'
 }
 $process = Start-Process -FilePath $installer -ArgumentList '/CURRENTUSER /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /TASKS="" /TYPE=full' -WindowStyle Hidden -Wait -PassThru
@@ -74,6 +80,7 @@ try {
     $shortcut = Join-Path ([Environment]::GetFolderPath('Programs')) 'BuckShot Markup/BuckShot Markup.lnk'
     if ($shell.CreateShortcut($shortcut).TargetPath -ine (Join-Path $actualDir 'BuckShot.exe')) { throw 'Shortcut does not target BuckShot.exe' }
     if ($PreviousInstallerPath -and (Get-Content (Join-Path $actualDir 'upgrade-user-data.txt') -Raw) -ne 'preserve user files') { throw 'Upgrade removed user data' }
+    if ($PreviousInstallerPath -and (Get-FileHash -LiteralPath $settingsPath -Algorithm SHA256).Hash -ne $settingsHash) { throw 'Upgrade modified existing settings' }
     & (Join-Path $PSScriptRoot 'test-installed-runtime.ps1') -InstallDirectory $actualDir
     $sourceVersion = (Get-Content -LiteralPath (Join-Path $PSScriptRoot '../src/version.json') -Raw | ConvertFrom-Json).version
     if ($ExpectedVersion -and $ExpectedVersion -ne $sourceVersion) { throw 'Requested and source versions differ' }

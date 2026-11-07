@@ -51,6 +51,8 @@ namespace Greenshot.Tests.Core
         [Theory]
         [InlineData(@"C:\Program Files\Greenshot\Plugins\Greenshot.Plugin.Box\Greenshot.Plugin.Box.dll", "Box")]
         [InlineData("Greenshot.Plugin.ExternalCommand.dll", "ExternalCommand")]
+        [InlineData(@"C:\BuckShot\Plugins\BuckShot.Plugin.Box\BuckShot.Plugin.Box.dll", "Box")]
+        [InlineData("buckshot.plugin.Stamps.dll", "Stamps")]
         public void PluginNameFromFile_IsThePartAfterThePrefix(string file, string expected)
         {
             Assert.Equal(expected, ConfigurationRestrictions.PluginNameFromFile(file));
