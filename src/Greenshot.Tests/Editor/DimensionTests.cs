@@ -91,7 +91,7 @@ namespace Greenshot.Tests.Editor
             var center=Assert.Single(DimensionLayout.Labels(line)).Center;
             line.MakeBoundsChangeUndoable(false); line.MoveBy(17,23);
             Assert.Equal(center.X+17,Assert.Single(DimensionLayout.Labels(line)).Center.X); s.Undo(); Assert.Equal(center,Assert.Single(DimensionLayout.Labels(line)).Center);
-            Assert.DoesNotContain("0 px",DimensionLayout.FormatLength(.0000001,MeasurementState.Pixels));
+            Assert.DoesNotContain("0 px",DimensionLayout.FormatLength(.0000001,MeasurementState.Pixels,DimensionFormat.Automatic));
         }
 
         [Fact]
@@ -138,7 +138,7 @@ namespace Greenshot.Tests.Editor
             var list=DrawableContainerClipboard.Deserialize(DrawableContainerClipboard.Serialize(new DrawableContainerList{line}));
             var pasted=Assert.IsType<LineContainer>(Assert.Single(list)); target.AddElement(pasted,false);
             target.SetMeasurements(MeasurementState.Calibrate(100,5,MeasurementUnit.Feet));
-            target.SetDimensionStyle(new DimensionStyle("Arial",24,FontStyle.Bold,Color.Red));
+            target.SetDimensionStyle(new DimensionStyle("Arial",24,FontStyle.Bold,Color.Red,DimensionFormat.Automatic));
             Assert.Equal("5 ft",Assert.Single(DimensionLayout.Labels(pasted)).Text);
             Assert.True(Assert.Single(DimensionLayout.Labels(pasted)).Height>Assert.Single(DimensionLayout.Labels(line)).Height);
             pasted.SetDimensionVisible(0,false); Assert.True(line.IsDimensionVisible(0));
