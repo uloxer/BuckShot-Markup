@@ -39,7 +39,7 @@ namespace Greenshot.Tests.Editor
             var editor = new EditorConfigurationImpl(); editor.ResetToDefaults();
             Assert.Equal("Ctrl + Shift + S", core.RegionHotkey);
             Assert.Equal("Ctrl + Shift + C", core.ClipboardHotkey);
-            Assert.Equal(new[] { "FileWithDialog", "Clipboard" }, core.OutputDestinations);
+            Assert.Equal(new[] { new FileWithDialogDestination().Designation, new ClipboardDestination().Designation }, core.OutputDestinations);
             Assert.Equal(WellKnownFileFormats.Buckshot, core.OutputFileFormat);
             var style = MeasurementDefaults.Create(editor);
             Assert.Equal(DimensionFormatMode.DecimalPlaces, style.Format.Mode);
@@ -106,7 +106,7 @@ namespace Greenshot.Tests.Editor
             DimensionFormatTests.Sta(() =>
             {
                 using var surface = new Surface(new Bitmap(80, 60));
-                using var dialog = new SaveImageFileDialog(surface.CaptureDetails);
+                var dialog = new SaveImageFileDialog(surface.CaptureDetails);
                 dialog.Extension = ".buckshot";
                 dialog.FileName = "editable.BUCKSHOT"; Assert.Equal("editable.BUCKSHOT", dialog.FileNameWithExtension);
                 dialog.FileName = "legacy.GREENSHOT"; Assert.Equal("legacy.GREENSHOT", dialog.FileNameWithExtension);
