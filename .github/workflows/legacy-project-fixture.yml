@@ -1,0 +1,22 @@
+name: Capture pre-rename project fixture
+on: workflow_dispatch
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download published pre-rename installer
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download buckshot-markup-v0.9.673 -R uloxer/BuckShot-Markup -p BuckShot-Markup-Setup.exe --dir installer/legacy-fixture-input
+      - name: Capture real legacy project and clipboard bytes
+        shell: pwsh
+        run: ./installer/capture-legacy-project.ps1 -InstallerPath installer/legacy-fixture-input/BuckShot-Markup-Setup.exe -OutputDirectory TestResults/legacy-project
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pre-rename-project-fixture
+          path: TestResults/legacy-project/*
+          if-no-files-found: error
