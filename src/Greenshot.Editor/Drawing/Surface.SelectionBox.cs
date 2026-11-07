@@ -142,8 +142,7 @@ namespace Greenshot.Editor.Drawing
             if (!TryGetRotationHandle(out var handle)) return;
             float radius = 12 * RotationScreenScale;
             var owner = RotationHandleOwner;
-            var bounds = owner.ModelBounds;
-            var top = owner.ModelToImage(new PointF(bounds.Left + bounds.Width / 2f, bounds.Top));
+            var top = RotationHandleAnchor(owner);
             var dirty = RectangleF.Union(new RectangleF(handle.X - radius, handle.Y - radius, radius * 2, radius * 2),
                 new RectangleF(top.X - radius, top.Y - radius, radius * 2, radius * 2));
             InvalidateSelectionBox(Rectangle.Ceiling(dirty));

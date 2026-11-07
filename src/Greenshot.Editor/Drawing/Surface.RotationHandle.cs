@@ -18,13 +18,25 @@ namespace Greenshot.Editor.Drawing
         private DrawableContainer RotationHandleOwner => selectedElements.Count == 1 &&
             selectedElements[0] is DrawableContainer shape && _elements.Contains(shape) && shape.GroupId == Guid.Empty && SupportsObjectRotation(shape) ? shape : null;
 
+        private PointF RotationHandleModelAnchor(DrawableContainer owner)
+        {
+            if (owner is LineContainer)
+                return new PointF(owner.Left + owner.Width / 2f, owner.Top + owner.Height / 2f);
+            var bounds = owner.ModelBounds;
+            return new PointF(bounds.Left + bounds.Width / 2f, bounds.Top);
+        }
+
+        private PointF RotationHandleAnchor(DrawableContainer owner) => owner.ModelToImage(RotationHandleModelAnchor(owner));
+
         internal bool TryGetRotationHandle(out PointF point)
         {
             var owner = RotationHandleOwner;
             if (owner == null) { point = PointF.Empty; return false; }
-            var bounds = owner.ModelBounds;
-            var top = owner.ModelToImage(new PointF(bounds.Left + bounds.Width / 2f, bounds.Top));
-            var above = owner.ModelToImage(new PointF(bounds.Left + bounds.Width / 2f, bounds.Top - 1));
+            var anchor = RotationHandleModelAnchor(owner);
+            var top = owner.ModelToImage(anchor);
+            var direction = owner is LineContainer && (owner.Width != 0 || owner.Height != 0)
+                ? new PointF(owner.Height, -owner.Width) : new PointF(0, -1);
+            var above = owner.ModelToImage(new PointF(anchor.X + direction.X, anchor.Y + direction.Y));
             double dx = above.X - top.X, dy = above.Y - top.Y, length = Math.Sqrt(dx * dx + dy * dy);
             point = new PointF(top.X + (float)(dx / length * 44 * RotationScreenScale), top.Y + (float)(dy / length * 44 * RotationScreenScale));
             if (Image != null)
@@ -109,8 +121,7 @@ namespace Greenshot.Editor.Drawing
         private void PaintRotationHandle(Graphics graphics)
         {
             if (!TryGetRotationHandle(out var point)) return;
-            var owner = RotationHandleOwner; var bounds = owner.ModelBounds;
-            var top = owner.ModelToImage(new PointF(bounds.Left + bounds.Width / 2f, bounds.Top));
+            var top = RotationHandleAnchor(RotationHandleOwner);
             var saved = graphics.Save();
             graphics.ScaleTransform(_zoomFactor, _zoomFactor);
             float scale = RotationScreenScale, radius = 7 * scale;

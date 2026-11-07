@@ -25,6 +25,36 @@ namespace Greenshot.Tests.Editor
     public class ObjectRotationTests
     {
         public ObjectRotationTests() => TestEnvironment.EnsureInitialized();
+
+        [Theory]
+        [InlineData(300, -140)]
+        [InlineData(300, 0)]
+        [InlineData(300, 140)]
+        [InlineData(0, 160)]
+        public void LineRotationStemStartsOnLineMidpointAndExtendsPerpendicularly(int width, int height)
+        {
+            Sta(() =>
+            {
+                using var surface = new Surface(new Bitmap(1000, 1000));
+                var line = new LineContainer(surface) { Left = 350, Top = 400, Width = width, Height = height };
+                surface.AddElement(line, false); surface.SelectElement(line);
+                foreach (double angle in new[] { 0d, 37d })
+                {
+                    if (angle != 0) line.RotateObject(angle, 500, 500);
+                    var a = line.ModelToImage(new PointF(line.Left, line.Top));
+                    var b = line.ModelToImage(new PointF(line.Left + line.Width, line.Top + line.Height));
+                    var anchor = (PointF)typeof(Surface).GetMethod("RotationHandleAnchor", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(surface, new object[] { line });
+                    Assert.InRange(Math.Abs(anchor.X - (a.X + b.X) / 2), 0, .001);
+                    Assert.InRange(Math.Abs(anchor.Y - (a.Y + b.Y) / 2), 0, .001);
+                    Assert.True(surface.TryGetRotationHandle(out var handle));
+                    double dx = handle.X - anchor.X, dy = handle.Y - anchor.Y;
+                    Assert.InRange(Math.Sqrt(dx * dx + dy * dy), 43.99, 44.01);
+                    double dot = (dx * (b.X - a.X) + dy * (b.Y - a.Y)) / Math.Sqrt(width * width + height * height);
+                    Assert.InRange(Math.Abs(dot), 0, .001);
+                }
+            });
+        }
+
         private static RectangleContainer Box(Surface s, int x = 60, int y = 90)
         {
             var shape = new RectangleContainer(s) { Left = x, Top = y, Width = 80, Height = 20 };

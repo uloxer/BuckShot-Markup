@@ -28,8 +28,7 @@ namespace Greenshot.Editor.Drawing
             }
             if (ReferenceEquals(RotationHandleOwner, shape) && TryGetRotationHandle(out var handle))
             {
-                var model = shape.ModelBounds;
-                var top = shape.ModelToImage(new PointF(model.Left + model.Width / 2f, model.Top));
+                var top = RotationHandleAnchor(shape);
                 float zoom = (float)(double)_zoomFactor;
                 float radius = 12 * CurrentDpi / 96f;
                 var stem = RectangleF.FromLTRB(Math.Min(top.X, handle.X) * zoom - radius,
