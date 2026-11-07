@@ -157,7 +157,7 @@ namespace Greenshot.Tests.Editor
             using var rendered = (Bitmap)surface.GetImageForExport(); int fill = 0;
             for (int y = 0; y < rendered.Height; y++) for (int x = 0; x < rendered.Width; x++)
                 if (rendered.GetPixel(x,y).ToArgb() == Color.Magenta.ToArgb()) { fill++; Assert.True(label.Bounds.Contains(x,y)); Assert.True(line.DrawingBounds.Contains(x,y)); }
-            Assert.True(fill > 50); surface.Undo(); Assert.Equal(0, surface.DimensionStyle.BackgroundColor.A);
+            Assert.True(fill > 50); surface.Undo(); Assert.Equal(Color.White.ToArgb(), surface.DimensionStyle.BackgroundColor.ToArgb());
             surface.Redo(); Assert.Equal(Color.Magenta, surface.DimensionStyle.BackgroundColor);
         }
         [Fact]
@@ -217,6 +217,7 @@ namespace Greenshot.Tests.Editor
                 Field<ComboBox>(panel, "_edgeFormat").SelectedIndex = 3; Field<NumericUpDown>(panel, "_edgeDigits").Value = 5;
                 Assert.Equal(5, line.GetDimensionFormat(0).Digits);
                 Field<ComboBox>(panel, "_edgeFormat").SelectedIndex = 0; Assert.Null(line.GetDimensionFormat(0));
+                Field<CheckBox>(panel, "_dimensionTransparent").Checked = true;
                 Field<CheckBox>(panel, "_dimensionTransparent").Checked = false; Assert.Equal(Color.White.ToArgb(), line.GetDimensionBackground(0).Value.ToArgb());
                 line.SetDimensionBackground(0, Color.LightYellow);
                 Field<CheckBox>(panel, "_dimensionTransparent").Checked = true;

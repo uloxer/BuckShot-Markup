@@ -76,6 +76,7 @@ namespace Greenshot.Editor.Controls
             _geometryCategory = AddCategory("Object geometry", _properties, origin);
             InitializeDimensionControls();
             AddCategory("Units and calibration", _units, _status, ButtonRow(calibrate, _clear));
+            _sections.MinimumSize = new Size((int)(250 * DeviceDpi / 96f), 0);
             _body.Controls.Add(_sections);
             Controls.Add(_body);
             Controls.Add(_toggle);
@@ -111,7 +112,12 @@ namespace Greenshot.Editor.Controls
         {
             int row = stack.RowCount++; stack.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             control.Dock = DockStyle.Top; control.Margin = new Padding(0, 3, 0, 3);
-            if (control is Label label) label.MaximumSize = Size.Empty;
+            if (control is Label label)
+            {
+                void FitLabel() => label.MaximumSize = new Size(Math.Max(1, stack.ClientSize.Width - stack.Padding.Horizontal), 0);
+                stack.SizeChanged += (sender, args) => FitLabel();
+                FitLabel();
+            }
             stack.Controls.Add(control, 0, row);
         }
 
@@ -149,7 +155,7 @@ namespace Greenshot.Editor.Controls
 
         private void ConfigureGrid(DataGridView grid)
         {
-            grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             grid.DefaultCellStyle.Padding = new Padding(3, 4, 3, 4);
             grid.RowTemplate.MinimumHeight = 25;

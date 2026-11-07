@@ -37,7 +37,7 @@ namespace Greenshot.Destinations
         public override string Designation => nameof(WellKnownDestinations.FileDialog);
 
         public override DestinationDescriptor Descriptor => new DestinationDescriptor(
-            Texts.Settings.DestinationFileas, 0, DestinationIcons.Resource("Save.Image"), "Ctrl+Shift+S");
+            Texts.Settings.DestinationFileas, 0, DestinationIcons.Resource("Save.Image"), "Ctrl+Alt+S");
 
         public override async Task<ExportResult> ExportAsync(ExportRequest request, CancellationToken cancellationToken)
         {

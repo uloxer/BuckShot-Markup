@@ -24,3 +24,54 @@ begin
   WizardForm.LicenseMemo.Lines.Add('Upstream icon credits: Yusuke Kamiyamane and the Greenshot contributors.');
   WizardForm.LicenseMemo.Lines.Add('BuckShot Markup is distributed under the GNU General Public License, version 3 or later, without warranty. The complete licence above and retained component notices apply.');
 end;
+
+// Keep the previous Classes defaults across upgrades; never modify Explorer UserChoice.
+function AssociationRoot(): Integer;
+begin
+  if IsAdminInstallMode then Result := HKLM else Result := HKCU;
+end;
+procedure RegisterProjectAssociation(Extension: String);
+var Root: Integer; Previous: String; BackupKey, ExtensionKey: String;
+begin
+  Root := AssociationRoot();
+  BackupKey := 'Software\BuckShot-Markup\Associations\' + Extension;
+  ExtensionKey := 'Software\Classes\.' + Extension;
+  if not RegKeyExists(Root, BackupKey) then begin
+    if RegQueryStringValue(Root, ExtensionKey, '', Previous) then begin
+      RegWriteStringValue(Root, BackupKey, 'PreviousDefault', Previous);
+      RegWriteDWordValue(Root, BackupKey, 'HadDefault', 1);
+    end else RegWriteDWordValue(Root, BackupKey, 'HadDefault', 0);
+  end;
+  RegWriteStringValue(Root, ExtensionKey, '', 'BuckShotMarkup.Project');
+end;
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if CurStep = ssPostInstall then begin
+    RegisterProjectAssociation('buckshot');
+    RegisterProjectAssociation('greenshot');
+  end;
+end;
+procedure RestoreProjectAssociation(Extension: String);
+var Root: Integer; Current, Previous, BackupKey, ExtensionKey: String; HadDefault: Cardinal;
+begin
+  Root := AssociationRoot();
+  BackupKey := 'Software\BuckShot-Markup\Associations\' + Extension;
+  ExtensionKey := 'Software\Classes\.' + Extension;
+  if RegQueryStringValue(Root, ExtensionKey, '', Current) and (Current = 'BuckShotMarkup.Project') then begin
+    if RegQueryDWordValue(Root, BackupKey, 'HadDefault', HadDefault) then begin
+      if (HadDefault = 1) and RegQueryStringValue(Root, BackupKey, 'PreviousDefault', Previous) then
+        RegWriteStringValue(Root, ExtensionKey, '', Previous)
+      else RegDeleteValue(Root, ExtensionKey, '');
+    end;
+  end;
+  RegDeleteKeyIncludingSubkeys(Root, BackupKey);
+  RegDeleteKeyIfEmpty(Root, 'Software\BuckShot-Markup\Associations');
+  RegDeleteKeyIfEmpty(Root, 'Software\BuckShot-Markup');
+end;
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+begin
+  if CurUninstallStep = usUninstall then begin
+    RestoreProjectAssociation('buckshot');
+    RestoreProjectAssociation('greenshot');
+  end;
+end;

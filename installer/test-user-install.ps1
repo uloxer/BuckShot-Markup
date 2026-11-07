@@ -27,11 +27,27 @@ if (-not $upstreamRegistrationExisted) {
     [void](New-ItemProperty -Path $upstreamRegistration -Name DisplayName -Value 'Greenshot coexistence probe' -PropertyType String)
 }
 $upstreamDisplayName = (Get-ItemProperty $upstreamRegistration).DisplayName
+# Sentinel Classes defaults must be restored, without touching separate ProgIDs or UserChoice.
+$associationDefaults = @{}
+foreach ($extension in @('buckshot', 'greenshot')) {
+    $key = "HKCU:\Software\Classes\.$extension"
+    if (Test-Path $key) { throw "Runner already has $extension association; refusing to change it" }
+    [void](New-Item -Path $key -Force)
+    Set-Item -Path $key -Value 'Greenshot.CoexistenceProbe'
+    $associationDefaults[$extension] = 'Greenshot.CoexistenceProbe'
+}
 $process = Start-Process -FilePath $installer -ArgumentList '/CURRENTUSER /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /TASKS="" /TYPE=full' -WindowStyle Hidden -Wait -PassThru
 if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
 try {
     if (-not (Test-Path $userKey)) { throw 'Per-user uninstall registration is missing' }
     if (Test-Path $machineKey) { throw 'Installer unexpectedly registered a machine-wide installation' }
+    foreach ($extension in @('buckshot', 'greenshot')) {
+        $key = "HKCU:\Software\Classes\.$extension"
+        if ((Get-Item $key).GetValue('') -ne 'BuckShotMarkup.Project') { throw "Missing default for .$extension" }
+        if (-not (Get-Item "$key\OpenWithProgids").GetValueNames().Contains('BuckShotMarkup.Project')) { throw "Missing OpenWith for .$extension" }
+    }
+    $command = (Get-Item 'HKCU:\Software\Classes\BuckShotMarkup.Project\shell\open\command').GetValue('')
+    if ($command -notlike '*greenshot-proxy.exe*--file*%1*') { throw "Unexpected project open command: $command" }
     $registration = Get-ItemProperty $userKey
     if ($registration.DisplayName -ne 'BuckShot Markup') { throw "Unexpected product name: $($registration.DisplayName)" }
     if ($ExpectedVersion -and $registration.DisplayVersion -ne $ExpectedVersion) {
@@ -58,6 +74,9 @@ try {
     Push-Location $actualDir
     try { & (Join-Path $PSScriptRoot 'validate-installation.ps1') -WarningAction Stop }
     finally { Pop-Location }
+    # A choice changed after installation must survive uninstall.
+    Set-Item -Path 'HKCU:\Software\Classes\.buckshot' -Value 'UserOverride.CoexistenceProbe'
+    $associationDefaults['buckshot'] = 'UserOverride.CoexistenceProbe'
     Write-Host "Verified per-user installation in $actualDir with no HKLM uninstall entry."
 }
 finally {
@@ -74,4 +93,9 @@ if (-not (Test-Path $upstreamRegistration) -or (Get-ItemProperty $upstreamRegist
 if (-not $upstreamConfigExisted) { Remove-Item -LiteralPath $upstreamConfig }
 if (-not $upstreamRegistrationExisted) { Remove-Item -LiteralPath $upstreamRegistration }
 Write-Host 'Verified Greenshot coexistence and independent BuckShot identity.'
-Write-Host 'Verified per-user uninstall.'
+foreach ($extension in @('buckshot', 'greenshot')) {
+    $key = "HKCU:\Software\Classes\.$extension"
+    if ((Get-Item $key).GetValue('') -ne $associationDefaults[$extension]) { throw "Uninstall did not restore .$extension default" }
+    Remove-Item -LiteralPath $key -Recurse
+}
+Write-Host 'Verified per-user uninstall and restoration of both Classes defaults (Windows UserChoice unchanged).'

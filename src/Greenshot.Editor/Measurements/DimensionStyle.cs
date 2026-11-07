@@ -5,7 +5,7 @@ namespace Greenshot.Editor.Measurements
 {
     public sealed class DimensionStyle : IEquatable<DimensionStyle>
     {
-        public static DimensionStyle Default { get; } = new DimensionStyle(FontFamily.GenericSansSerif.Name, 11, FontStyle.Regular, Color.Black);
+        public static DimensionStyle Default { get; } = new DimensionStyle(FontFamily.GenericSansSerif.Name, 11, FontStyle.Regular, Color.Black, new DimensionFormat(DimensionFormatMode.DecimalPlaces, 1), System.Drawing.Color.White);
         public string Family { get; }
         public float Size { get; }
         public FontStyle FontStyle { get; }
@@ -17,7 +17,7 @@ namespace Greenshot.Editor.Measurements
             if (string.IsNullOrWhiteSpace(family) || family.Length > 128 || float.IsNaN(size) || size < 1 || size > 144 || ((int)style & ~15) != 0)
                 throw new ArgumentException("Invalid dimension font.");
             Family = family; Size = size; FontStyle = style; Color = color;
-            Format = format ?? DimensionFormat.Automatic; BackgroundColor = backgroundColor ?? System.Drawing.Color.Transparent;
+            Format = format ?? Default.Format; BackgroundColor = backgroundColor ?? System.Drawing.Color.White;
         }
         public DimensionStyle WithFormat(DimensionFormat format) => new DimensionStyle(Family, Size, FontStyle, Color, format, BackgroundColor);
         public DimensionStyle WithBackground(Color color) => new DimensionStyle(Family, Size, FontStyle, Color, Format,

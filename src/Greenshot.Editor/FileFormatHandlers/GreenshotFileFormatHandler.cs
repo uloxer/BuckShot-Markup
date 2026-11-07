@@ -38,7 +38,7 @@ namespace Greenshot.Editor.FileFormatHandlers
     public class GreenshotFileFormatHandler : AbstractFileFormatHandler, IFileFormatHandler
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(GreenshotFileFormatHandler));
-        private readonly IReadOnlyCollection<string> _ourExtensions = new [] { ".greenshot" };
+        private readonly IReadOnlyCollection<string> _ourExtensions = new [] { ".buckshot", ".greenshot" };
         public GreenshotFileFormatHandler()
         {
             SupportedExtensions[FileFormatHandlerActions.LoadDrawableFromStream] = _ourExtensions;

@@ -77,6 +77,8 @@ namespace Greenshot.Tests.Editor
         public void CalibrationStyleAndMovementRefreshDerivedLabelsWithUndo()
         {
             using var s=new Surface(new Bitmap(500,300)); using var other=new Surface();
+            s.SetDimensionStyle(s.DimensionStyle.WithFormat(DimensionFormat.Automatic));
+            other.SetDimensionStyle(other.DimensionStyle.WithFormat(DimensionFormat.Automatic));
             var line=Add(s,new LineContainer(s){Left=100,Top=100,Width=100,Height=0}); Show(line);
             Assert.Equal("100 px",Assert.Single(DimensionLayout.Labels(line)).Text);
             s.SetMeasurements(MeasurementState.Calibrate(100,2,MeasurementUnit.Metres));

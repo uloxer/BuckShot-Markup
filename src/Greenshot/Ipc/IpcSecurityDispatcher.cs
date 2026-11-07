@@ -89,7 +89,7 @@ namespace Greenshot.Ipc
 
         private static readonly HashSet<string> FallbackAllowedImageExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tiff", ".tif", ".ico", ".greenshot", ".webp"
+            ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tiff", ".tif", ".ico", ".greenshot", ".buckshot", ".webp"
         };
 
         /// <summary>

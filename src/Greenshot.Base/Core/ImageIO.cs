@@ -119,7 +119,7 @@ namespace Greenshot.Base.Core
         {
             bool useMemoryStream = false;
             MemoryStream memoryStream = null;
-            if (WellKnownFileFormats.IsEqualFormat(WellKnownFileFormats.Greenshot, outputSettings.Format) && surface == null)
+            if (WellKnownFileFormats.IsProjectFormat(outputSettings.Format) && surface == null)
             {
                 throw new ArgumentException("Surface needs to be set when using OutputFormat .greenshot");
             }
@@ -164,12 +164,12 @@ namespace Greenshot.Base.Core
         /// <returns>true if the image must be disposed</returns>
         public static bool CreateImageFromSurface(ISurface surface, SurfaceOutputSettings outputSettings, out Image imageToSave)
         {
-            if (WellKnownFileFormats.IsEqualFormat(WellKnownFileFormats.Greenshot, outputSettings.Format) || outputSettings.SaveBackgroundOnly)
+            if (WellKnownFileFormats.IsProjectFormat(outputSettings.Format) || outputSettings.SaveBackgroundOnly)
             {
                 // We save the image of the surface, this should not be disposed
                 imageToSave = surface.Image;
                 // The following block of modifications should be skipped when saving the greenshot format, no effects or otherwise!
-                if (WellKnownFileFormats.IsEqualFormat(WellKnownFileFormats.Greenshot, outputSettings.Format))
+                if (WellKnownFileFormats.IsProjectFormat(outputSettings.Format))
                 {
                     return false;
                 }
@@ -356,7 +356,7 @@ namespace Greenshot.Base.Core
             SurfaceOutputSettings outputSettings, bool copyPathToClipboard, SynchronizationContext uiContext = null)
         {
             // Check before the file is created, otherwise an empty file is left behind
-            if (WellKnownFileFormats.IsEqualFormat(WellKnownFileFormats.Greenshot, outputSettings.Format))
+            if (WellKnownFileFormats.IsProjectFormat(outputSettings.Format))
             {
                 throw new NotSupportedException($"The greenshot format needs the surface, use {nameof(Save)} instead.");
             }

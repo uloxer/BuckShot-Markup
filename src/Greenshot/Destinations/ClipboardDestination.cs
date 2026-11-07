@@ -38,7 +38,7 @@ namespace Greenshot.Destinations
         public override string Designation => nameof(WellKnownDestinations.Clipboard);
 
         public override DestinationDescriptor Descriptor => new DestinationDescriptor(
-            Texts.Settings.DestinationClipboard, 2, DestinationIcons.Resource("Clipboard.Image"), "Ctrl+Shift+C");
+            Texts.Settings.DestinationClipboard, 2, DestinationIcons.Resource("Clipboard.Image"), "Ctrl+Alt+C");
 
         public override async Task<ExportResult> ExportAsync(ExportRequest request, CancellationToken cancellationToken)
         {

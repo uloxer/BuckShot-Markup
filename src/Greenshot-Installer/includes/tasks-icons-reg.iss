@@ -11,6 +11,7 @@ Name: {group}\Licence; Filename: {app}\license.txt; WorkingDir: {app}
 [Registry]
 Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueType: string; ValueName: "BuckShot-Markup"; ValueData: """{app}\Greenshot.exe"" --autostart"; Tasks: startup; Flags: uninsdeletevalue
 Root: HKA; Subkey: Software\Classes\.greenshot\OpenWithProgids; ValueType: string; ValueName: "BuckShotMarkup.Project"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKA; Subkey: Software\Classes\.buckshot\OpenWithProgids; ValueType: string; ValueName: "BuckShotMarkup.Project"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty
 Root: HKA; Subkey: Software\Classes\BuckShotMarkup.Project; ValueType: string; ValueName: ""; ValueData: "BuckShot Markup project"; Flags: uninsdeletekey
 Root: HKA; Subkey: Software\Classes\BuckShotMarkup.Project\DefaultIcon; ValueType: string; ValueData: """{app}\Greenshot.exe"",0"
 Root: HKA; Subkey: Software\Classes\BuckShotMarkup.Project\shell\open\command; ValueType: string; ValueData: """{app}\greenshot-proxy.exe"" --file ""%1"""

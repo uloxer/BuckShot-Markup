@@ -45,7 +45,7 @@ namespace Greenshot.Base.Core
         bool IsBetaTester { get; set; }
 
         [Description("Hotkey for starting the region capture")]
-        [DefaultValue("PrintScreen")]
+        [DefaultValue("Ctrl + Shift + S")]
         string RegionHotkey { get; set; }
 
         [Description("Hotkey for starting the window capture")]
@@ -61,6 +61,7 @@ namespace Greenshot.Base.Core
         string LastregionHotkey { get; set; }
 
         [Description("Hotkey for opening the clipboard contents into the editor")]
+        [DefaultValue("Ctrl + Shift + C")]
         string ClipboardHotkey { get; set; }
 
         [Description("Was the welcome window shown? Greenshot shows it once, at its first start")]
@@ -68,7 +69,7 @@ namespace Greenshot.Base.Core
 
         [DataMember(Name = "Destinations")]
         [Description("Which destinations? Possible options (more might be added by plugins) are: Editor, FileDefault, FileWithDialog, Clipboard, Printer, EMail, Picker, DestinationWindow")]
-        [DefaultValue("Clipboard,FileDefault")]
+        [DefaultValue("FileWithDialog,Clipboard")]
         List<string> OutputDestinations { get; set; }
 
         [Description("Specify which formats we copy on the clipboard? Options are: PNG, HTML, HTMLDATAURL and DIB")]
@@ -137,7 +138,7 @@ namespace Greenshot.Base.Core
         string OutputFileFilenamePattern { get; set; }
 
         [Description("Default file type for writing screenshots.")]
-        [DefaultValue(WellKnownFileFormats.Png)]
+        [DefaultValue(WellKnownFileFormats.Buckshot)]
         string OutputFileFormat { get; set; }
 
         [Description("If set to true, than the colors of the output file are reduced to 256 (8-bit) colors")]

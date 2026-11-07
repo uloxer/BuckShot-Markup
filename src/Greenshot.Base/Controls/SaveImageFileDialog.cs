@@ -172,7 +172,7 @@ namespace Greenshot.Base.Controls
                 string fn = _saveFileDialog.FileName;
                 if (_filterOptions.Length == 0) return fn;
                 // if the filename contains a valid extension, which is the same like the selected filter item's extension, the filename is okay
-                if (_filterOptions[_saveFileDialog.FilterIndex - 1].Extensions.Any(extension => fn.EndsWith("." + extension, StringComparison.OrdinalIgnoreCase))) return fn;
+                if (_filterOptions.Any(option => option.Extensions.Any(extension => fn.EndsWith("." + extension, StringComparison.OrdinalIgnoreCase)))) return fn;
                 // otherwise we just add the selected filter item's extension
                 return fn + "." + _filterOptions[_saveFileDialog.FilterIndex - 1].PreferredExtension;
             }

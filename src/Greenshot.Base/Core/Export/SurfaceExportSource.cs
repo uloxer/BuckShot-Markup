@@ -174,7 +174,7 @@ namespace Greenshot.Base.Core.Export
             try
             {
                 ThrowIfDisposed();
-                bool greenshotFormat = WellKnownFileFormats.IsEqualFormat(WellKnownFileFormats.Greenshot, settings.Format);
+                bool greenshotFormat = WellKnownFileFormats.IsProjectFormat(settings.Format);
                 if (!greenshotFormat && !settings.IncludePrivateMetadata && await KeepPrivateMetadataLockedAsync(cancellationToken).ConfigureAwait(false))
                 {
                     settings.IncludePrivateMetadata = true;

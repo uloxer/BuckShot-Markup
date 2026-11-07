@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Greenshot.Editor.Measurements;
 
@@ -9,11 +10,11 @@ namespace Greenshot.Editor.Controls
     {
         private readonly ComboBox _documentFormat = new ComboBox { Width = 174, DropDownStyle = ComboBoxStyle.DropDownList, AccessibleName = "Document dimension format" };
         private readonly NumericUpDown _documentDigits = new NumericUpDown { Width = 36, Minimum = 0, Maximum = 10, AccessibleName = "Document dimension digits" };
-        private readonly Button _applyDimensionFormat = new Button { Text = "Apply to all dimensions", Width = 214, AccessibleName = "Apply to all dimensions" };
+        private readonly Button _applyDimensionFormat = new Button { Text = "Apply to all dimensions", AutoSize = true, Width = 214, AccessibleName = "Apply to all dimensions" };
         private readonly ComboBox _edgeFormat = new ComboBox { Width = 174, DropDownStyle = ComboBoxStyle.DropDownList, AccessibleName = "Selected edge dimension format" };
         private readonly NumericUpDown _edgeDigits = new NumericUpDown { Width = 36, Minimum = 0, Maximum = 10, AccessibleName = "Selected edge dimension digits" };
         private readonly CheckBox _dimensionTransparent = new CheckBox { Text = "Transparent background", AutoSize = true, AccessibleName = "Transparent dimension background" };
-        private readonly Button _dimensionBackground = new Button { Text = "Background colour…", Width = 214, AccessibleName = "Dimension background colour" };
+        private readonly Button _dimensionBackground = new Button { Text = "Background colour…", AutoSize = true, Width = 214, AccessibleName = "Dimension background colour" };
         private readonly CheckBox _inheritDimensionBackground = new CheckBox { Text = "Use document background", AutoSize = true };
         private readonly Label _backgroundScope = new Label { AutoSize = true };
         private readonly Label _edgePrecisionLabel = new Label { Text = "Selected edge", AutoSize = true };
@@ -21,7 +22,7 @@ namespace Greenshot.Editor.Controls
         private int SelectedDimensionEdge => _dimensionEdges.CurrentRow?.Tag is int index ? index : -1;
         private bool HasSelectedDimension => _selected != null && SelectedDimensionEdge >= 0;
         private Color CurrentDimensionBackground => (HasSelectedDimension ? _selected.GetDimensionBackground(SelectedDimensionEdge) : null)
-            ?? _dimensionDocument?.DimensionStyle.BackgroundColor ?? Color.Transparent;
+            ?? _dimensionDocument?.DimensionStyle.BackgroundColor ?? Color.White;
         private void SetCurrentDimensionBackground(Color color)
         {
             if (HasSelectedDimension) _selected.SetDimensionBackground(SelectedDimensionEdge, color);
@@ -39,7 +40,19 @@ namespace Greenshot.Editor.Controls
                 row.RowStyles.Add(new RowStyle(SizeType.AutoSize));
                 row.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
                 row.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 64 * DeviceDpi / 96f));
-                first.Dock = second.Dock = DockStyle.Fill;
+                first.Dock = second.Dock = DockStyle.Top;
+                void FitControls()
+                {
+                    first.MinimumSize = new Size(0, first.PreferredSize.Height);
+                    second.MinimumSize = new Size(0, second.PreferredSize.Height);
+                    int textWidth = first is ComboBox combo ? combo.Items.Cast<object>()
+                        .Select(item => TextRenderer.MeasureText(item.ToString(), combo.Font).Width).DefaultIfEmpty(0).Max() : first.PreferredSize.Width;
+                    row.MinimumSize = new Size(textWidth + SystemInformation.VerticalScrollBarWidth + 12 + (int)row.ColumnStyles[1].Width,
+                        Math.Max(first.PreferredSize.Height, second.PreferredSize.Height));
+                }
+                first.FontChanged += (sender, args) => FitControls();
+                second.FontChanged += (sender, args) => FitControls();
+                FitControls();
                 first.Margin = new Padding(0, 0, 6, 0); second.Margin = Padding.Empty;
                 row.Controls.Add(first, 0, 0); row.Controls.Add(second, 1, 0); return row;
             }

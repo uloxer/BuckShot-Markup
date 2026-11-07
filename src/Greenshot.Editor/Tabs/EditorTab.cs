@@ -195,7 +195,8 @@ namespace Greenshot.Editor.Tabs
 
             try
             {
-                ImageIO.Save(Surface, filePath, true, new SurfaceOutputSettings(WellKnownFileFormats.Greenshot), false);
+                ImageIO.Save(Surface, filePath, true, new SurfaceOutputSettings(WellKnownFileFormats.IsProjectFormat(ImageIO.FormatForFilename(filePath))
+                    ? ImageIO.FormatForFilename(filePath) : WellKnownFileFormats.Greenshot), false);
                 // Make sure the user isn't asked to save
                 Surface.Modified = false;
                 Window.CloseTab(this);

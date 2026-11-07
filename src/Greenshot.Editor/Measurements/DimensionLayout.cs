@@ -70,7 +70,7 @@ namespace Greenshot.Editor.Measurements
         }
         internal static string FormatLength(double pixels, MeasurementState state, DimensionFormat format = null)
         {
-            string number = (format ?? DimensionFormat.Automatic).Format(state.Convert(pixels));
+            string number = (format ?? DimensionStyle.Default.Format).Format(state.Convert(pixels));
             return number == "Out of range" ? number : number + " " + MeasurementState.Symbol(state.Unit);
         }
         private static StringFormat TextFormat() => new StringFormat(StringFormat.GenericTypographic)

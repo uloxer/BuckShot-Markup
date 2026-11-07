@@ -37,8 +37,13 @@ public static class WellKnownFileFormats
     public const string Png = "png";
     public const string Tiff = "tiff";
     public const string Jxr = "jxr";
+    public const string Buckshot = "buckshot";
     public const string Greenshot = "greenshot";
     public const string Ico = "ico";
+
+    public static bool IsProjectFormat(string format) =>
+        string.Equals(format, Buckshot, StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(format, Greenshot, StringComparison.OrdinalIgnoreCase);
 
     public static bool IsEqualFormat(string wellKnownFileFormat, string compareFormat)
     {
@@ -60,6 +65,7 @@ public static class WellKnownFileFormats
                string.Equals(format, Tiff, StringComparison.OrdinalIgnoreCase) ||
                string.Equals(format, Jxr, StringComparison.OrdinalIgnoreCase) ||
                string.Equals(format, Greenshot, StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(format, Buckshot, StringComparison.OrdinalIgnoreCase) ||
                string.Equals(format, Ico, StringComparison.OrdinalIgnoreCase);
     }
 }

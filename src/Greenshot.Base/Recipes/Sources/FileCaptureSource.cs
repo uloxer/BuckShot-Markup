@@ -104,7 +104,7 @@ namespace Greenshot.Base.Recipes.Sources
 
             try
             {
-                if (WellKnownFileFormats.IsEqualFormat(WellKnownFileFormats.Greenshot, extension.TrimStart('.')))
+                if (WellKnownFileFormats.IsProjectFormat(extension.TrimStart('.')))
                 {
                     using FileStream fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
                     try

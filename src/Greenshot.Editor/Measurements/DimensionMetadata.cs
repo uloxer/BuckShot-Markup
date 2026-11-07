@@ -43,7 +43,7 @@ namespace Greenshot.Editor.Measurements
                 int familyLength = data.ReadUInt16();
                 if (familyLength < 1 || familyLength > 512 || familyLength > body.Length - body.Position - 12) return DimensionStyle.Default;
                 string family = new UTF8Encoding(false, true).GetString(data.ReadBytes(familyLength));
-                var style = new DimensionStyle(family, data.ReadSingle(), (FontStyle)data.ReadInt32(), Color.FromArgb(data.ReadInt32()));
+                var style = new DimensionStyle(family, data.ReadSingle(), (FontStyle)data.ReadInt32(), Color.FromArgb(data.ReadInt32()), DimensionFormat.Automatic, Color.Transparent);
                 // A malformed extension must never discard a valid base font/colour or the independent calibration trailer.
                 if (body.Length - body.Position != 20) return style;
                 if (Encoding.ASCII.GetString(data.ReadBytes(8)) != "GSPFMT01" || data.ReadInt32() != 1) return style;

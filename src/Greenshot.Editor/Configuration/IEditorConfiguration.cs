@@ -37,9 +37,9 @@ namespace Greenshot.Editor.Configuration
     [Description("Greenshot editor configuration")]
     public interface IEditorConfiguration : IIniSection, IAfterLoad
     {
-        [DefaultValue("Automatic")]
+        [DefaultValue("DecimalPlaces")]
         Greenshot.Editor.Measurements.DimensionFormatMode MeasurementPrecisionMode { get; set; }
-        [DefaultValue(2)]
+        [DefaultValue(1)]
         [Range(0, 10)]
         int MeasurementPrecisionDigits { get; set; }
         [DefaultValue("Arial")]
@@ -53,7 +53,7 @@ namespace Greenshot.Editor.Configuration
         Color MeasurementFontColor { get; set; }
         [DefaultValue("White")]
         Color MeasurementBackgroundColor { get; set; }
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         bool MeasurementBackgroundTransparent { get; set; }
 
         [DefaultValue(false)]
