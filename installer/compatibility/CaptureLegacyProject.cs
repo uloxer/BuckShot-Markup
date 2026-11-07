@@ -30,7 +30,7 @@ class CaptureLegacyProject
             box.SetFieldValue(FieldType.SHADOW, false);
             surface.AddElement(box, false);
             var polygon = new PolygonContainer(surface);
-            polygon.SetVertices(new[] { new Point(100, 30), new Point(150, 30), new Point(100, 90) });
+            typeof(PolygonContainer).GetMethod("SetVertices", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(polygon, new object[] { new[] { new Point(100, 30), new Point(150, 30), new Point(100, 90) } });
             surface.AddElement(polygon, false);
             surface.SelectElement(box);
             surface.SelectElement(polygon);
