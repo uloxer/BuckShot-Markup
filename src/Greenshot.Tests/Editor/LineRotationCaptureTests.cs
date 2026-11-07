@@ -42,7 +42,7 @@ namespace Greenshot.Tests.Editor
         {
             DimensionFormatTests.Sta(() =>
             {
-                Assert.Equal("0.9.670", ProductIdentity.Version);
+                Assert.Equal(ProductIdentity.Name, Greenshot.Base.Core.EditionInfo.ProductName);
                 using var background = new Bitmap(720, 560);
                 using (var graphics = Graphics.FromImage(background)) graphics.Clear(Color.White);
                 using var surface = new Surface((Bitmap)background.Clone());
@@ -89,7 +89,7 @@ namespace Greenshot.Tests.Editor
                         File.WriteAllText(Path.Combine(folder, name + ".txt"), string.Join(Environment.NewLine, new[]
                         {
                             "Automated rendering of the actual WinForms ImageEditorForm on the Windows CI runner.",
-                            "QA-only branch based on released 0.9.670; production code unchanged. Not a physical-desktop screenshot or the local installed app.",
+                            "Automated editor capture of the current build. Not a physical-desktop screenshot or the local installed app.",
                             "Product version: " + ProductIdentity.Version,
                             "Source commit: " + Environment.GetEnvironmentVariable("GITHUB_SHA"),
                             "Actual control DPI: " + editor.DeviceDpi,
