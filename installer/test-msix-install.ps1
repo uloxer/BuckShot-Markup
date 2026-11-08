@@ -16,6 +16,12 @@ try {
     $installed = Get-AppxPackage -Name $name
     if (-not $installed -or $installed.Version -ne "$ExpectedVersion.0") { throw 'Per-user package registration/version is wrong.' }
     if ($installed.Publisher -ne 'CN=BuckShot Markup Development') { throw 'Unexpected MSIX publisher.' }
+    $packageManifest = Get-AppxPackageManifest -Package $installed.PackageFullName
+    $fileTypes = @($packageManifest.SelectNodes("//*[local-name()='SupportedFileTypes']/*[local-name()='FileType']") | ForEach-Object { $_.InnerText })
+    foreach ($extension in @('.buckshot', '.greenshot')) {
+        if ($fileTypes -notcontains $extension) { throw "Missing packaged project association: $extension" }
+    }
+    if (Get-ChildItem -LiteralPath $installed.InstallLocation -Recurse | Where-Object { $_.Name -imatch 'greenshot' }) { throw 'Installed MSIX contains obsolete Greenshot filenames.' }
     if (Test-Path (Join-Path $installed.InstallLocation 'Plugins/BuckShot.Plugin.RecipeEditor')) { throw 'Recipe Editor must not be packaged.' }
     foreach ($file in @('BuckShot.exe', 'buckshot-cli.exe', 'buckshot-proxy.exe')) {
         $info = [Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $installed.InstallLocation $file))
@@ -57,7 +63,7 @@ public static class BuckShotMsixActivation {
     $privateData = Join-Path $env:LOCALAPPDATA ('Packages/' + $installed.PackageFamilyName)
     $privateConfig = @(Get-ChildItem $privateData -Filter buckshot-markup.ini -Recurse -File -ErrorAction SilentlyContinue)
     if (-not (Test-Path $defaultConfig) -and -not $privateConfig.Count) { throw 'Packaged app did not save default configuration to writable AppData.' }
-    Write-Host "Verified signed per-user MSIX $($installed.PackageFullName), package activation, CLI and writable settings."
+    Write-Host "Verified signed per-user MSIX $($installed.PackageFullName), both project associations, payload branding, package activation, CLI and writable settings."
 }
 finally {
     if ($appProcess -and -not $appProcess.HasExited) { Stop-Process -Id $appProcess.Id -Force }

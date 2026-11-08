@@ -6,7 +6,7 @@ This MSIX uses the development identity `BuckShotMarkup.Preview` and publisher `
 
 ## Install the development MSIX
 
-Download `BuckShot-Markup.msix`, its `.sha256`, `BuckShot-Markup-Development.cer` and its `.sha256` from the private release. Check the hashes against the release before trusting the certificate:
+Download `BuckShot-Markup.msix`, its `.sha256`, `BuckShot-Markup-Development.cer` and its `.sha256` from the release. Check the hashes against the release before trusting the certificate:
 
 ```powershell
 Get-FileHash .\BuckShot-Markup.msix -Algorithm SHA256
@@ -25,7 +25,7 @@ Then install for yourself from an ordinary Windows PowerShell window:
 Add-AppxPackage -Path .\BuckShot-Markup.msix
 ```
 
-Launch BuckShot Markup from Start. Windows offers it under Open with for `.greenshot` projects without replacing an existing default. The packaged startup task is disabled initially; use Windows Settings → Apps → Startup to enable it. The desktop app's legacy registry-based startup option does not control this packaged task.
+Launch BuckShot Markup from Start. Windows offers it under Open with for `.buckshot` and legacy `.greenshot` projects without replacing an existing default. The packaged startup task is disabled initially; use Windows Settings → Apps → Startup to enable it. The desktop app's legacy registry-based startup option does not control this packaged task.
 
 The packaged command-line entry point is `buckshot-markup-cli.exe` (for example, `buckshot-markup-cli.exe --version`). It uses Windows' app execution alias; do not launch helper EXEs directly from the protected WindowsApps installation folder.
 

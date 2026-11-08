@@ -28,7 +28,7 @@
         </uap5:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap3:FileTypeAssociation Name="buckshot-markup" Parameters="--file &quot;%1&quot;">
-            <uap:SupportedFileTypes><uap:FileType>.greenshot</uap:FileType></uap:SupportedFileTypes>
+            <uap:SupportedFileTypes><uap:FileType>.buckshot</uap:FileType><uap:FileType>.greenshot</uap:FileType></uap:SupportedFileTypes>
           </uap3:FileTypeAssociation>
         </uap:Extension>
         <desktop:Extension Category="windows.startupTask" Executable="BuckShot.exe" EntryPoint="Windows.FullTrustApplication">

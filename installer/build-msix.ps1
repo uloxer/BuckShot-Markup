@@ -51,6 +51,10 @@ try {
     if (Test-Path (Join-Path $PayloadPath 'Languages')) { Copy-Item (Join-Path $PayloadPath 'Languages/*.ini') $languages -Force }
     Copy-Item (Join-Path $repository 'src/BuckShot-Installer/additional_files/license.txt') $stage
     Copy-Item (Join-Path $repository 'src/BuckShot-Installer/additional_files/buckshot-readme.txt') (Join-Path $stage 'readme.txt')
+    if (Get-ChildItem -LiteralPath $stage -Recurse | Where-Object { $_.Name -imatch 'greenshot' }) { throw 'MSIX payload contains obsolete Greenshot filenames.' }
+    foreach ($required in @('BuckShot.exe.config', 'BuckShot.Base.dll', 'BuckShot.Editor.dll', 'Languages/buckshot.en-US.ini')) {
+        if (-not (Test-Path -LiteralPath (Join-Path $stage $required))) { throw "Required MSIX runtime file missing: $required" }
+    }
     if (Test-Path (Join-Path $stage 'Plugins/BuckShot.Plugin.RecipeEditor')) { throw 'Recipe Editor must not be packaged.' }
     [xml]$manifest = Get-Content (Join-Path $PSScriptRoot 'msix/AppxManifest.xml') -Raw
     $manifest.Package.Identity.Version = "$version.0"
