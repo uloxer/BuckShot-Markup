@@ -10,6 +10,8 @@ if (Get-AppxPackage -Name $name) { throw 'An existing package must not be replac
 $PackagePath = (Resolve-Path -LiteralPath $PackagePath).Path
 $certificate = Import-Certificate -FilePath $CertificatePath -CertStoreLocation Cert:\LocalMachine\TrustedPeople
 $installed = $null; $appProcess = $null
+$defaultConfig = Join-Path $env:APPDATA 'BuckShot-Markup/buckshot-markup.ini'
+$previousConfig = $null
 try {
     if ((Get-AuthenticodeSignature -FilePath $PackagePath).Status -ne 'Valid') { throw 'MSIX signature verification failed.' }
     Add-AppxPackage -Path $PackagePath
@@ -47,8 +49,12 @@ public static class BuckShotMsixActivation {
   }
 }
 '@
-    $defaultConfig = Join-Path $env:APPDATA 'BuckShot-Markup/buckshot-markup.ini'
-    if (Test-Path $defaultConfig) { throw 'A clean runner with no existing BuckShot configuration is required.' }
+    # Earlier EXE upgrade checks intentionally retain their settings. Isolate this
+    # fresh-package activation on the disposable runner and restore those exact bytes.
+    if (Test-Path -LiteralPath $defaultConfig) {
+        $previousConfig = [IO.File]::ReadAllBytes($defaultConfig)
+        Remove-Item -LiteralPath $defaultConfig
+    }
     $appId = $installed.PackageFamilyName + '!App'
     $appProcessId = [BuckShotMsixActivation]::Launch($appId, '')
     Start-Sleep -Seconds 5
@@ -68,6 +74,7 @@ public static class BuckShotMsixActivation {
 finally {
     if ($appProcess -and -not $appProcess.HasExited) { Stop-Process -Id $appProcess.Id -Force }
     if ($installed) { Remove-AppxPackage -Package $installed.PackageFullName }
+    if ($null -ne $previousConfig) { [IO.File]::WriteAllBytes($defaultConfig, $previousConfig) }
     Remove-Item "Cert:\LocalMachine\TrustedPeople\$($certificate.Thumbprint)"
 }
 if (Get-AppxPackage -Name $name) { throw 'MSIX uninstall left the package registered.' }
