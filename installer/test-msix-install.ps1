@@ -1,11 +1,14 @@
 <# Installs and launches only on a disposable CI runner; never changes a developer's certificate trust. #>
 param([string]$PackagePath = (Join-Path $PSScriptRoot 'BuckShot-Markup.msix'),
       [string]$CertificatePath = (Join-Path $PSScriptRoot 'BuckShot-Markup-Development.cer'),
-      [string]$ExpectedVersion)
+      [string]$ExpectedVersion,
+      [string]$ExpectedName = 'BuckShotMarkup.Preview',
+      [string]$ExpectedPublisher = 'CN=BuckShot Markup Development',
+      [string]$ExpectedFamilyName = '')
 $ErrorActionPreference = 'Stop'
 if ($env:GITHUB_ACTIONS -ne 'true') { throw 'MSIX installation and certificate trust tests require a disposable CI runner.' }
 if (-not $ExpectedVersion) { $ExpectedVersion = (Get-Content (Join-Path $PSScriptRoot '../src/version.json') -Raw | ConvertFrom-Json).version }
-$name = 'BuckShotMarkup.Preview'
+$name = $ExpectedName
 if (Get-AppxPackage -Name $name) { throw 'An existing package must not be replaced by this test.' }
 $PackagePath = (Resolve-Path -LiteralPath $PackagePath).Path
 $certificate = Import-Certificate -FilePath $CertificatePath -CertStoreLocation Cert:\LocalMachine\TrustedPeople
@@ -17,7 +20,8 @@ try {
     Add-AppxPackage -Path $PackagePath
     $installed = Get-AppxPackage -Name $name
     if (-not $installed -or $installed.Version -ne "$ExpectedVersion.0") { throw 'Per-user package registration/version is wrong.' }
-    if ($installed.Publisher -ne 'CN=BuckShot Markup Development') { throw 'Unexpected MSIX publisher.' }
+    if ($installed.Publisher -ne $ExpectedPublisher) { throw 'Unexpected MSIX publisher.' }
+    if ($ExpectedFamilyName -and $installed.PackageFamilyName -ne $ExpectedFamilyName) { throw "Unexpected MSIX package family name: $($installed.PackageFamilyName)" }
     $packageManifest = Get-AppxPackageManifest -Package $installed.PackageFullName
     $fileTypes = @($packageManifest.SelectNodes("//*[local-name()='SupportedFileTypes']/*[local-name()='FileType']") | ForEach-Object { $_.InnerText })
     foreach ($extension in @('.buckshot', '.greenshot')) {

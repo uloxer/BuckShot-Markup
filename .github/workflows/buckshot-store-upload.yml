@@ -1,0 +1,31 @@
+name: BuckShot Store upload package
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  store-package:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download validated 0.9.674 runtime package
+        shell: powershell
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download buckshot-markup-v0.9.674 -R uloxer/BuckShot-Markup -p BuckShot-Markup.msix -p BuckShot-Markup.msix.sha256 --dir source-package
+          if ($LASTEXITCODE) { throw 'Release download failed.' }
+      - name: Prepare unsigned Store upload and validate exact Store identity
+        shell: powershell
+        run: ./installer/prepare-store-upload.ps1 -SourcePackagePath ./source-package/BuckShot-Markup.msix -OutputDirectory ./store-upload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BuckShot-Markup-Store-Upload
+          path: |
+            store-upload/BuckShot-Markup-Store.msix
+            store-upload/BuckShot-Markup-Store.msix.sha256
+            store-upload/STORE-UPLOAD.md
+          if-no-files-found: error

@@ -3,7 +3,8 @@ param(
     [string]$PayloadPath = (Join-Path $PSScriptRoot 'payload'),
     [string]$OutputDirectory = $PSScriptRoot,
     [string]$CertificateThumbprint,
-    [switch]$CreateDevelopmentCertificate
+    [switch]$CreateDevelopmentCertificate,
+    [switch]$StoreUpload
 )
 $ErrorActionPreference = 'Stop'
 function Find-SdkTool([string]$Name) {
@@ -58,6 +59,12 @@ try {
     if (Test-Path (Join-Path $stage 'Plugins/BuckShot.Plugin.RecipeEditor')) { throw 'Recipe Editor must not be packaged.' }
     [xml]$manifest = Get-Content (Join-Path $PSScriptRoot 'msix/AppxManifest.xml') -Raw
     $manifest.Package.Identity.Version = "$version.0"
+    if ($StoreUpload) {
+        if ($CreateDevelopmentCertificate -or $CertificateThumbprint) { throw 'Store upload packages must remain unsigned.' }
+        $manifest.Package.Identity.Name = 'ULoXer.BuckShotMarkup'
+        $manifest.Package.Identity.Publisher = 'CN=39BB6DBD-CEE0-4BD3-A6D6-E8B3D7061493'
+        $manifest.Package.Properties.PublisherDisplayName = 'ULoXer'
+    }
     $manifest.Save((Join-Path $stage 'AppxManifest.xml'))
     Add-Type -AssemblyName System.Drawing
     $assets = Join-Path $stage 'Assets'; [void][IO.Directory]::CreateDirectory($assets)
@@ -74,8 +81,16 @@ try {
         }
     }
     finally { $source.Dispose() }
-    $package = Join-Path $OutputDirectory 'BuckShot-Markup.msix'
+    $packageName = if ($StoreUpload) { 'BuckShot-Markup-Store.msix' } else { 'BuckShot-Markup.msix' }
+    $package = Join-Path $OutputDirectory $packageName
     Invoke-Checked $makeAppx @('pack', '/d', $stage, '/p', $package, '/o')
+    if ($StoreUpload) {
+        $hash = (Get-FileHash -LiteralPath $package -Algorithm SHA256).Hash.ToLowerInvariant()
+        "$hash  $packageName" | Set-Content -LiteralPath "$package.sha256" -Encoding ascii
+        Copy-Item (Join-Path $repository 'docs/store-upload.md') (Join-Path $OutputDirectory 'STORE-UPLOAD.md') -Force
+        Write-Host "Built unsigned Store upload $package ($version.0). Microsoft signs accepted Store submissions."
+        return
+    }
     if ($CreateDevelopmentCertificate) {
         if ($env:GITHUB_ACTIONS -ne 'true') { throw 'Automatic development certificates are restricted to disposable CI runners.' }
         $createdCertificate = New-SelfSignedCertificate -Type Custom -Subject $manifest.Package.Identity.Publisher `
