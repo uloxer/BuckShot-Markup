@@ -14,5 +14,8 @@
     "width": 1460,
     "height": 960
   },
-  "schemaRows": 453
+  "schemaRows": 453,
+  "showcaseCount": 5,
+  "calibration": "MeasurementState.Calibrate(270,1000,Millimetres); 0.0037037037037037 metres/pixel; conversion asserted",
+  "grouping": "Shared nonempty GroupId asserted; SnapGesture produced active target and endpoint (820,220); editor renders guide"
 }

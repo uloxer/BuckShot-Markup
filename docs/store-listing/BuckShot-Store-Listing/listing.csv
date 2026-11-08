@@ -1,9 +1,11 @@
 "Field","ID","Type (Type)","default","en-us"
-"Description","2","Text","","BuckShot Markup helps you explain what matters in a screenshot, drawing or image. Capture part of your screen, open an image or start from the clipboard, then add clear annotations and measurements.
+"Description","2","Text","","BuckShot Markup turns screenshots, drawings and images into clear visual instructions. Capture part of your screen, open a file or start from the clipboard, then point out what matters with editable annotations.
 
-Mark up layouts and technical details with lines, arrows, rectangles, polygons and text. Show edge dimensions, inspect object geometry and calibrate an image to a known distance when you need measurements in real-world units.
+Add arrows, text, shapes and highlights to explain a detail or flag an item for review. Blur or pixelate selected areas before sharing. Keep the original context visible so your notes are easy to follow.
 
-Move, rotate and group annotations to keep a busy drawing organised. Adjust colours, line styles and dimension labels, and use undo and redo as you work.
+Measure layouts and technical details with edge dimensions and object geometry. Set a known reference distance to display measurements in millimetres, centimetres, metres, inches or feet. Calibration belongs to the image, so annotations use a consistent scale.
+
+Rotate objects without losing their editable geometry. Group related shapes and labels, and use point and through snapping to line up your markup. Adjust colours, line styles and dimension labels, with undo and redo as you refine the result.
 
 Save an editable BuckShot project to continue later, or export an annotated image to share in a document, message or report.
 
@@ -13,15 +15,15 @@ Built for Windows desktop workflows: quick screenshot notes, workshop layouts, d
 "ShortTitle","5","Text","","BuckShot Markup"
 "SortTitle","6","Text","",""
 "VoiceTitle","7","Text","",""
-"ShortDescription","8","Text","","Turn screenshots and images into clear visual notes. Add dimensions, mark up details and keep your annotations editable."
+"ShortDescription","8","Text","","Explain screenshots and drawings with clear annotations, calibrated dimensions and editable visual notes. Highlight details, rotate objects and keep related markup together."
 "DevStudio","9","Text","","ULoXer"
 "CopyrightTrademarkInformation","12","Text","",""
 "AdditionalLicenseTerms","13","Text","",""
 "DesktopScreenshot1","100","Relative path (or URL to file in Partner Center)","BuckShot-Store-Listing/images/BuckShot-Store-Screenshot-Measurements.png",""
 "DesktopScreenshot2","101","Relative path (or URL to file in Partner Center)","BuckShot-Store-Listing/images/BuckShot-Store-Screenshot-Rotation.png",""
-"DesktopScreenshot3","102","Relative path (or URL to file in Partner Center)","",""
-"DesktopScreenshot4","103","Relative path (or URL to file in Partner Center)","",""
-"DesktopScreenshot5","104","Relative path (or URL to file in Partner Center)","",""
+"DesktopScreenshot3","102","Relative path (or URL to file in Partner Center)","BuckShot-Store-Listing/images/BuckShot-Store-Screenshot-Annotate.png",""
+"DesktopScreenshot4","103","Relative path (or URL to file in Partner Center)","BuckShot-Store-Listing/images/BuckShot-Store-Screenshot-Calibrated.png",""
+"DesktopScreenshot5","104","Relative path (or URL to file in Partner Center)","BuckShot-Store-Listing/images/BuckShot-Store-Screenshot-GroupSnapping.png",""
 "DesktopScreenshot6","105","Relative path (or URL to file in Partner Center)","",""
 "DesktopScreenshot7","106","Relative path (or URL to file in Partner Center)","",""
 "DesktopScreenshot8","107","Relative path (or URL to file in Partner Center)","",""
@@ -49,9 +51,9 @@ Built for Windows desktop workflows: quick screenshot notes, workshop layouts, d
 "DesktopScreenshot30","129","Relative path (or URL to file in Partner Center)","",""
 "DesktopScreenshotCaption1","150","Text","","Inspect shape geometry and show edge dimensions on an annotated workshop layout."
 "DesktopScreenshotCaption2","151","Text","","Rotate editable annotations while keeping dimension labels and geometry visible."
-"DesktopScreenshotCaption3","152","Text","",""
-"DesktopScreenshotCaption4","153","Text","",""
-"DesktopScreenshotCaption5","154","Text","",""
+"DesktopScreenshotCaption3","152","Text","","Explain a sample checklist with an arrow, text, highlight and pixelated detail."
+"DesktopScreenshotCaption4","153","Text","","Calibrate a known 1000 mm reference and read real-world dimensions across the drawing."
+"DesktopScreenshotCaption5","154","Text","","Keep a shape and label grouped, with real point and through snapping guides for alignment."
 "DesktopScreenshotCaption6","155","Text","",""
 "DesktopScreenshotCaption7","156","Text","",""
 "DesktopScreenshotCaption8","157","Text","",""
@@ -312,10 +314,10 @@ Built for Windows desktop workflows: quick screenshot notes, workshop layouts, d
 "OptionalPromo1000x800","612","Relative path (or URL to file in Partner Center)","",""
 "OptionalPromo414x180","613","Relative path (or URL to file in Partner Center)","",""
 "Feature1","700","Text","","Capture screenshots or open images from files and the clipboard"
-"Feature2","701","Text","","Annotate with lines, arrows, shapes, polygons and text"
+"Feature2","701","Text","","Add arrows, shapes, polygons, text, highlights and blur or pixelation"
 "Feature3","702","Text","","Show edge dimensions and inspect object geometry"
 "Feature4","703","Text","","Calibrate a known distance for real-world measurements"
-"Feature5","704","Text","","Rotate, move and group editable annotations"
+"Feature5","704","Text","","Rotate and group annotations, with point and through snapping"
 "Feature6","705","Text","","Adjust colours, line styles and dimension labels"
 "Feature7","706","Text","","Save editable projects or export annotated images"
 "Feature8","707","Text","","Undo and redo changes while refining your markup"

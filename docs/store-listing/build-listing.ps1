@@ -7,14 +7,16 @@ if ((@($rows[0].PSObject.Properties.Name) -join '|') -ne ($headers -join '|')) {
 $copy=@{
  Title='BuckShot Markup'
  ShortTitle='BuckShot Markup'
- ShortDescription='Turn screenshots and images into clear visual notes. Add dimensions, mark up details and keep your annotations editable.'
+ ShortDescription='Explain screenshots and drawings with clear annotations, calibrated dimensions and editable visual notes. Highlight details, rotate objects and keep related markup together.'
  DevStudio='ULoXer'
  Description=@'
-BuckShot Markup helps you explain what matters in a screenshot, drawing or image. Capture part of your screen, open an image or start from the clipboard, then add clear annotations and measurements.
+BuckShot Markup turns screenshots, drawings and images into clear visual instructions. Capture part of your screen, open a file or start from the clipboard, then point out what matters with editable annotations.
 
-Mark up layouts and technical details with lines, arrows, rectangles, polygons and text. Show edge dimensions, inspect object geometry and calibrate an image to a known distance when you need measurements in real-world units.
+Add arrows, text, shapes and highlights to explain a detail or flag an item for review. Blur or pixelate selected areas before sharing. Keep the original context visible so your notes are easy to follow.
 
-Move, rotate and group annotations to keep a busy drawing organised. Adjust colours, line styles and dimension labels, and use undo and redo as you work.
+Measure layouts and technical details with edge dimensions and object geometry. Set a known reference distance to display measurements in millimetres, centimetres, metres, inches or feet. Calibration belongs to the image, so annotations use a consistent scale.
+
+Rotate objects without losing their editable geometry. Group related shapes and labels, and use point and through snapping to line up your markup. Adjust colours, line styles and dimension labels, with undo and redo as you refine the result.
 
 Save an editable BuckShot project to continue later, or export an annotated image to share in a document, message or report.
 
@@ -22,10 +24,10 @@ Built for Windows desktop workflows: quick screenshot notes, workshop layouts, d
 '@
  ReleaseNotes='Version 0.9.674 improves editor startup, updates BuckShot branding throughout the application and retains support for existing editable projects.'
  Feature1='Capture screenshots or open images from files and the clipboard'
- Feature2='Annotate with lines, arrows, shapes, polygons and text'
+ Feature2='Add arrows, shapes, polygons, text, highlights and blur or pixelation'
  Feature3='Show edge dimensions and inspect object geometry'
  Feature4='Calibrate a known distance for real-world measurements'
- Feature5='Rotate, move and group editable annotations'
+ Feature5='Rotate and group annotations, with point and through snapping'
  Feature6='Adjust colours, line styles and dimension labels'
  Feature7='Save editable projects or export annotated images'
  Feature8='Undo and redo changes while refining your markup'
@@ -38,10 +40,16 @@ Built for Windows desktop workflows: quick screenshot notes, workshop layouts, d
  SearchTerm7='screen capture'
  DesktopScreenshotCaption1='Inspect shape geometry and show edge dimensions on an annotated workshop layout.'
  DesktopScreenshotCaption2='Rotate editable annotations while keeping dimension labels and geometry visible.'
+ DesktopScreenshotCaption3='Explain a sample checklist with an arrow, text, highlight and pixelated detail.'
+ DesktopScreenshotCaption4='Calibrate a known 1000 mm reference and read real-world dimensions across the drawing.'
+ DesktopScreenshotCaption5='Keep a shape and label grouped, with real point and through snapping guides for alignment.'
 }
 $images=@{
  DesktopScreenshot1='BuckShot-Store-Screenshot-Measurements.png'
  DesktopScreenshot2='BuckShot-Store-Screenshot-Rotation.png'
+ DesktopScreenshot3='BuckShot-Store-Screenshot-Annotate.png'
+ DesktopScreenshot4='BuckShot-Store-Screenshot-Calibrated.png'
+ DesktopScreenshot5='BuckShot-Store-Screenshot-GroupSnapping.png'
  StoreLogo300x300='BuckShot-Store-Logo-300.png'
  StoreLogo720x1080='BuckShot-Store-Logo-720x1080.png'
 }
@@ -86,4 +94,4 @@ foreach($file in Get-ChildItem (Join-Path $folder 'images') -Filter '*.png'){
 foreach($row in $rows){if($row.'Type (Type)' -like 'Relative path*'){$row.default='';$row.'en-us'=''}}
 $rows|Export-Csv -LiteralPath (Join-Path $root 'BuckShot-Store-AndroidImport.csv') -NoTypeInformation -Encoding utf8
 if(@(Get-ChildItem -LiteralPath $folder -Filter '*.csv' -Recurse).Count -ne 1){throw 'Import folder must contain exactly one CSV.'}
-Write-Host "Verified $($roundtrip.Count) rows; Field/ID/Type metadata unchanged; text limits and four image paths valid."
+Write-Host "Verified $($roundtrip.Count) rows; Field/ID/Type metadata unchanged; text limits and $($images.Count) image paths valid."

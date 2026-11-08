@@ -16,6 +16,7 @@ using BuckShot.Editor.Controls;
 using BuckShot.Editor.Drawing;
 using BuckShot.Editor.Drawing.Fields;
 using BuckShot.Editor.Forms;
+using BuckShot.Editor.Measurements;
 
 class CaptureListing
 {
@@ -27,6 +28,7 @@ class CaptureListing
     static T Field<T>(object owner, string name) { return (T)owner.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).GetValue(owner); }
     [STAThread] static void Main(string[] args)
     {
+        bool expandedOnly = args.Length > 2;
         Directory.CreateDirectory(args[0]);
         Application.EnableVisualStyles();
         IniConfigHelper.EnsureInitialized();
@@ -80,14 +82,29 @@ class CaptureListing
                 surface.AddElement(line, false); Dimension(line, 0);
                 surface.SelectElement(boundary);
                 editor.Show(); Application.DoEvents(); surface.ZoomFactor = new Fraction(9, 10); editor.Refresh();
-                Capture(editor, args[0], "BuckShot-Store-Screenshot-Measurements.png");
+                if (!expandedOnly) Capture(editor, args[0], "BuckShot-Store-Screenshot-Measurements.png");
                 surface.DeselectAllElements(); surface.SelectElement(line);
                 surface.RotateSelectedObjects(-25);
                 Application.DoEvents(); editor.Refresh();
-                Capture(editor, args[0], "BuckShot-Store-Screenshot-Rotation.png");
+                if (!expandedOnly) Capture(editor, args[0], "BuckShot-Store-Screenshot-Rotation.png");
+                surface.RotateSelectedObjects(25);
+                using (var g = Graphics.FromImage(surface.Image))
+                using (var font = new Font("Segoe UI", 15))
+                {
+                    g.FillRectangle(Brushes.White, 65, 535, 790, 55);
+                    g.DrawString("Known reference: bench width = 1000 mm", font, Brushes.SlateGray, 90, 550);
+                }
+                surface.SetMeasurements(MeasurementState.Calibrate(270, 1000, MeasurementUnit.Millimetres));
+                if (!surface.Measurements.IsCalibrated || Math.Abs(surface.Measurements.Convert(270) - 1000) > 0.001)
+                    throw new Exception("Real calibration did not convert the known reference correctly.");
+                Capture(editor, args[0], "BuckShot-Store-Screenshot-Calibrated.png");
+                Console.WriteLine("Calibration metadata: " + surface.Measurements.MetresPerPixel + " metres/pixel; 270 px = " + surface.Measurements.Convert(270) + " mm.");
                 surface.Modified = false; editor.Hide();
             }
         }
+        CaptureAnnotations(args[0]);
+        CaptureGroup(args[0]);
+        if (expandedOnly) return;
         var mark = Svg.SvgDocument.Open(Path.Combine(args[1], "buckshot-mark.svg"));
         using (var tile = new Bitmap(300, 300))
         using (var g = Graphics.FromImage(tile))
@@ -110,6 +127,90 @@ class CaptureListing
             poster.Save(Path.Combine(args[0], "BuckShot-Store-Logo-720x1080.png"), ImageFormat.Png);
         }
         Console.WriteLine("Captured real editor images and vector-derived logos.");
+    }
+    static void Style(DrawableContainer shape, Color colour, int width)
+    {
+        shape.SetFieldValue(FieldType.LINE_COLOR, colour);
+        shape.SetFieldValue(FieldType.LINE_THICKNESS, width);
+        shape.SetFieldValue(FieldType.SHADOW, false);
+    }
+    static TextContainer Label(Surface surface, string text, int x, int y, int width, Color colour)
+    {
+        var label = new TextContainer(surface) { Left=x, Top=y, Width=width, Height=48, Text=text };
+        Style(label, colour, 0); label.SetFieldValue(FieldType.FONT_SIZE, 17f);
+        label.SetFieldValue(FieldType.FILL_COLOR, Color.Transparent);
+        surface.AddElement(label, false); return label;
+    }
+    static ImageEditorForm Open(Surface surface, bool measurements)
+    {
+        var editor = new ImageEditorForm(surface, true, false);
+        editor.StartPosition=FormStartPosition.Manual; editor.Location=new Point(20,20); editor.Size=new Size(1460,960);
+        var panel=Field<object>(editor,"_measurementPanel");
+        panel.GetType().GetMethod("SetExpanded").Invoke(panel,new object[]{measurements});
+        editor.Show(); Application.DoEvents(); surface.ZoomFactor=new Fraction(9,10); return editor;
+    }
+    static void CaptureAnnotations(string folder)
+    {
+        using(var image=new Bitmap(900,610))
+        {
+            using(var g=Graphics.FromImage(image))
+            using(var heading=new Font("Segoe UI",26,FontStyle.Bold))
+            using(var font=new Font("Segoe UI",18))
+            using(var pen=new Pen(Color.LightGray))
+            {
+                g.Clear(Color.White);g.DrawString("SITE REVIEW CHECKLIST",heading,Brushes.DarkSlateGray,60,45);
+                g.DrawString("Sample document for annotation",font,Brushes.SlateGray,60,100);
+                g.FillRectangle(Brushes.WhiteSmoke,60,165,770,48);
+                g.DrawString("ITEM",font,Brushes.SlateGray,80,175);g.DrawString("STATUS",font,Brushes.SlateGray,570,175);
+                string[] items={"Access route","Bench clearance","Lighting position","Storage labels"};
+                string[] states={"Confirmed","Check on site","Confirmed","Update drawing"};
+                for(int i=0;i<4;i++){int y=230+i*62;g.DrawString(items[i],font,Brushes.DarkSlateGray,80,y);g.DrawString(states[i],font,Brushes.DarkSlateGray,570,y);g.DrawLine(pen,60,y+45,830,y+45);}
+                g.DrawString("Sample code: AB12-CD34",font,Brushes.SlateGray,80,525);
+            }
+            using(var surface=new Surface((Bitmap)image.Clone()))
+            using(var editor=Open(surface,false))
+            {
+                var highlight=new HighlightContainer(surface){Left=565,Top=287,Width=215,Height=40};surface.AddElement(highlight,false);
+                var arrow=new ArrowContainer(surface){Left=480,Top=485,Width=-90,Height=-165};Style(arrow,Color.FromArgb(220,100,20),4);surface.AddElement(arrow,false);
+                var note=Label(surface,"Check clearance here",390,480,330,Color.FromArgb(180,75,15));
+                var box=new RectangleContainer(surface){Left=560,Top=408,Width=245,Height=48};Style(box,Color.FromArgb(0,145,170),3);box.SetFieldValue(FieldType.FILL_COLOR,Color.Transparent);surface.AddElement(box,false);
+                var obscure=new ObfuscateContainer(surface){Left=245,Top=520,Width=240,Height=43};surface.AddElement(obscure,false);
+                surface.DeselectAllElements();surface.SelectElement(note);
+                Capture(editor,folder,"BuckShot-Store-Screenshot-Annotate.png");surface.Modified=false;editor.Hide();
+                Console.WriteLine("Annotation: real arrow, text, highlight, rectangle and pixelization containers.");
+            }
+        }
+    }
+    static void CaptureGroup(string folder)
+    {
+        using(var image=new Bitmap(900,610))
+        {
+            using(var g=Graphics.FromImage(image))
+            using(var title=new Font("Segoe UI",24,FontStyle.Bold))
+            using(var font=new Font("Segoe UI",16))
+            {
+                g.Clear(Color.FromArgb(250,252,254));g.DrawString("ARRANGE A VISUAL NOTE",title,Brushes.SlateGray,65,45);
+                g.DrawString("Group a shape and label. Snap annotations to object points.",font,Brushes.SlateGray,65,100);
+            }
+            using(var surface=new Surface((Bitmap)image.Clone()))
+            using(var editor=Open(surface,false))
+            {
+                var box=new RectangleContainer(surface){Left=160,Top=220,Width=260,Height=170};Style(box,Color.FromArgb(0,145,170),4);box.SetFieldValue(FieldType.FILL_COLOR,Color.FromArgb(225,245,248));surface.AddElement(box,false);
+                var label=Label(surface,"Assembly bench",175,275,230,Color.DarkSlateGray);
+                var target=new RectangleContainer(surface){Left=640,Top=220,Width=140,Height=170};Style(target,Color.SlateGray,3);target.SetFieldValue(FieldType.FILL_COLOR,Color.WhiteSmoke);surface.AddElement(target,false);
+                Label(surface,"Storage",625,275,170,Color.SlateGray);
+                surface.SelectElement(box);surface.SelectElement(label);
+                if(!surface.GroupSelectedElements() || box.GroupId==Guid.Empty || box.GroupId!=label.GroupId)throw new Exception("Group was not created.");
+                // Use the normal point/through snapping engine; do not synthesize guide pixels.
+                var toolbar=Field<ToolStrip>(editor,"destinationsToolStrip");
+                foreach(ToolStripItem item in toolbar.Items){var host=item as ToolStripControlHost;if(host!=null && host.Control is CheckBox)((CheckBox)host.Control).Checked=true;}
+                typeof(Surface).GetMethod("SetObjectSnapping",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(surface,new object[]{true,true,12});
+                var snapped=(Point)typeof(Surface).GetMethod("SnapGesture",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(surface,new object[]{new Point(820,222),(Point?)new Point(420,220),box,true,null});
+                if(Field<object>(surface,"_snapTarget")==null)throw new Exception("Snap engine did not produce a target.");
+                surface.Invalidate();Capture(editor,folder,"BuckShot-Store-Screenshot-GroupSnapping.png");
+                Console.WriteLine("Grouped shape/label share id; real snap target active, endpoint="+snapped+".");surface.Modified=false;editor.Hide();
+            }
+        }
     }
     static void Capture(Form editor, string folder, string name)
     {
