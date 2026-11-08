@@ -1,0 +1,18 @@
+{
+  "capture": "Actual ImageEditorForm.DrawToBitmap, isolated .NET Framework process, in-memory design-time settings",
+  "logos": {
+    "poster": "720x1080",
+    "source": "assets/branding/buckshot-mark.svg",
+    "tile": "300x300",
+    "background": "white"
+  },
+  "sample": "Synthetic workshop layout with real editable rectangle/line dimensions and 25-degree rotation",
+  "templateSha256": "29eea5f5eff5a0c133fcf9243fbef8c93727314661d2b28fa8cea8286092afb7",
+  "sourcePackage": "Published BuckShot-Markup.msix 0.9.674.0",
+  "sourceSha256": "d799e3a2c42cfe669ed8162118cf169307cf7f35c6e715986e97a3786a51a40b",
+  "screenshots": {
+    "width": 1460,
+    "height": 960
+  },
+  "schemaRows": 453
+}
